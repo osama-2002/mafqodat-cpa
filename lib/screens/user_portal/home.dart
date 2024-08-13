@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:mafqodat/widgets/user_profile.dart';
 import 'package:material_symbols_icons/material_symbols_icons.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 
@@ -75,25 +76,7 @@ class _HomeState extends State<Home> {
       );
     }
     if (_currentIndex == 2) {
-      activePage = Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              "${userData!['name']}",
-              style: const TextStyle(fontSize: 24),
-            ),
-            Text(
-              "${userData!['gender']}",
-              style: const TextStyle(fontSize: 24),
-            ),
-            Text(
-              "${userData!['email']}",
-              style: const TextStyle(fontSize: 24),
-            ),
-          ],
-        ),
-      );
+      activePage = UserProfile(userData: userData!);
     }
     return Scaffold(
       appBar: AppBar(

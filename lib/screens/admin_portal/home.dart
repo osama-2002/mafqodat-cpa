@@ -1,6 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:mafqodat/widgets/admin_profile.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
@@ -13,6 +15,23 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   int _currentIndex = 0;
+  DocumentSnapshot? adminData;
+
+  void _getAdminData() async {
+    DocumentSnapshot data = await FirebaseFirestore.instance
+        .collection('admins')
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .get();
+    setState(() {
+      adminData = data;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _getAdminData();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +41,9 @@ class _HomeState extends State<Home> {
         children: [
           Text(
             translate("bismillah"),
-            style: const TextStyle(fontSize: 24,),
+            style: const TextStyle(
+              fontSize: 24,
+            ),
             textAlign: TextAlign.center,
           ),
         ],
@@ -35,7 +56,7 @@ class _HomeState extends State<Home> {
           children: [
             Text(
               "Claims",
-              style: const TextStyle(fontSize: 24),
+              style: TextStyle(fontSize: 24),
             ),
           ],
         ),
@@ -48,24 +69,14 @@ class _HomeState extends State<Home> {
           children: [
             Text(
               "Possible Matches",
-              style: const TextStyle(fontSize: 24),
+              style: TextStyle(fontSize: 24),
             ),
           ],
         ),
       );
     }
     if (_currentIndex == 3) {
-      activePage = const Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              "Profile",
-              style: const TextStyle(fontSize: 24),
-            ),
-          ],
-        ),
-      );
+      activePage = AdminProfile(adminData: adminData!);
     }
     return Scaffold(
       appBar: AppBar(

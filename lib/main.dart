@@ -32,16 +32,20 @@ class MyApp extends StatelessWidget {
   Future<bool?> _getUserType(String uid) async {
     DocumentSnapshot userDoc =
         await FirebaseFirestore.instance.collection('users').doc(uid).get();
+    DocumentSnapshot adminDoc =
+        await FirebaseFirestore.instance.collection('admins').doc(uid).get();
 
     if (userDoc.exists) {
-      return userDoc['isUser'] as bool?;
+      return true;
+    }
+    if (adminDoc.exists) {
+      return false;
     }
     return null;
   }
 
   @override
   Widget build(BuildContext context) {
-
     bool? isUser;
 
     final LocalizationDelegate localizationDelegate =
@@ -66,22 +70,35 @@ class MyApp extends StatelessWidget {
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               String uid = snapshot.data!.uid;
-              print(uid);
               return FutureBuilder<bool?>(
                 future: _getUserType(uid),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Container(color: Colors.white ,child: const Center(child: CircularProgressIndicator()));
+                    return Container(
+                      color: Colors.white,
+                      child: const Center(child: CircularProgressIndicator()),
+                    );
                   } else if (snapshot.hasError) {
-                    return Container(color: Colors.white ,child: const Center(child: Text('Error loading user data', style: TextStyle(color: Colors.black),)));
+                    return Container(
+                      color: Colors.white,
+                      child: const Center(
+                          child: Text(
+                        'Error loading user data',
+                        style: TextStyle(color: Colors.black),
+                      )),
+                    );
                   } else if (snapshot.hasData) {
                     isUser = snapshot.data;
-                    return isUser == true
-                        ? const user_portal.Home()
-                        : const admin_portal.Home();
-                  } else {
-                    return Container(color: Colors.white, child: const Center(child: Text('User data not found', style: TextStyle(color: Colors.black))));
+                    if (isUser == true) return const user_portal.Home();
+                    if (isUser == false) return const admin_portal.Home();
                   }
+                  return Container(
+                    color: Colors.white,
+                    child: const Center(
+                      child: Text('User data not found',
+                          style: TextStyle(color: Colors.black)),
+                    ),
+                  );
                 },
               );
             }

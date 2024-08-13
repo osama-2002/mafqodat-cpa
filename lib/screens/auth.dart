@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:mafqodat/widgets/cutom_text_field.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 
 class AuthenticationPage extends StatefulWidget {
@@ -16,8 +18,13 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
   final FocusScopeNode _focusScopeNode = FocusScopeNode();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _firstNameController = TextEditingController();
-  final TextEditingController _lastNameController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _nationalNumberController =
+      TextEditingController();
+      final TextEditingController _phoneNumberController =
+      TextEditingController();
   String _selectedGender = "Male";
   bool isLogin = true;
   bool isUser = true;
@@ -30,8 +37,12 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
   @override
   void dispose() {
     _focusScopeNode.dispose();
+    _nameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
+    _confirmPasswordController.dispose();
+    _nationalNumberController.dispose();
+    _phoneNumberController.dispose();
     super.dispose();
   }
 
@@ -80,305 +91,298 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                         child: Padding(
                           padding: const EdgeInsets.all(16.0),
                           child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              if (!isLogin)
-                                TextFormField(
-                                  controller: _firstNameController,
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return 'Please enter some text';
-                                    }
-                                    return null;
-                                  },
-                                  cursorHeight: 20,
-                                  autofocus: false,
-                                  decoration: InputDecoration(
-                                    labelText: 'First name',
-                                    labelStyle: TextStyle(
-                                      color: isUser
-                                          ? Theme.of(context)
-                                              .colorScheme
-                                              .primary
-                                          : Theme.of(context)
-                                              .colorScheme
-                                              .secondary,
-                                    ),
-                                    hintText: "Enter your First name",
-                                    contentPadding: const EdgeInsets.symmetric(
-                                      vertical: 10,
-                                      horizontal: 10,
-                                    ),
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(30),
-                                      borderSide: const BorderSide(
-                                          color: Colors.grey, width: 2),
-                                    ),
-                                    enabledBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(30),
-                                      borderSide: const BorderSide(
-                                          color: Colors.grey, width: 1.5),
-                                    ),
-                                    focusedBorder: OutlineInputBorder(
-                                      gapPadding: 0.0,
-                                      borderRadius: BorderRadius.circular(30),
-                                      borderSide: const BorderSide(
-                                          color: Colors.blue, width: 1.5),
-                                    ),
-                                  ),
-                                ),
-                              if (!isLogin) const SizedBox(height: 20),
-                              if (!isLogin)
-                                TextFormField(
-                                  controller: _lastNameController,
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return 'Please enter some text';
-                                    }
-                                    return null;
-                                  },
-                                  cursorHeight: 20,
-                                  autofocus: false,
-                                  decoration: InputDecoration(
-                                    labelText: 'Last name',
-                                    labelStyle: TextStyle(
-                                      color: isUser
-                                          ? Theme.of(context)
-                                              .colorScheme
-                                              .primary
-                                          : Theme.of(context)
-                                              .colorScheme
-                                              .secondary,
-                                    ),
-                                    hintText: "Enter your Last name",
-                                    contentPadding: const EdgeInsets.symmetric(
-                                      vertical: 10,
-                                      horizontal: 10,
-                                    ),
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(30),
-                                      borderSide: const BorderSide(
-                                          color: Colors.grey, width: 2),
-                                    ),
-                                    enabledBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(30),
-                                      borderSide: const BorderSide(
-                                          color: Colors.grey, width: 1.5),
-                                    ),
-                                    focusedBorder: OutlineInputBorder(
-                                      gapPadding: 0.0,
-                                      borderRadius: BorderRadius.circular(30),
-                                      borderSide: const BorderSide(
-                                          color: Colors.blue, width: 1.5),
-                                    ),
-                                  ),
-                                ),
-                              if (!isLogin) const SizedBox(height: 20),
-                              if (!isLogin)
-                                ToggleSwitch(
-                                  minWidth: 90.0,
-                                  initialLabelIndex: genderToggleSwitchIndex,
-                                  cornerRadius: 20.0,
-                                  activeFgColor: Colors.white,
-                                  inactiveBgColor: Colors.grey,
-                                  inactiveFgColor: Colors.white,
-                                  totalSwitches: 2,
-                                  labels: const ['Male', 'Female'],
-                                  icons: const [
-                                    FontAwesomeIcons.mars,
-                                    FontAwesomeIcons.venus
-                                  ],
-                                  activeBgColors: [
-                                    [Theme.of(context).colorScheme.primary],
-                                    const [Colors.pink]
-                                  ],
-                                  onToggle: (index) {
-                                    setState(() {
-                                      if (index == 0) {
-                                        _selectedGender = 'Male';
-                                        genderToggleSwitchIndex = 0;
-                                      } else {
-                                        _selectedGender = 'Female';
-                                        genderToggleSwitchIndex = 1;
-                                      }
-                                    });
-                                  },
-                                ),
-                              if (!isLogin) const SizedBox(height: 30),
-                              TextFormField(
-                                controller: _emailController,
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Please enter some text';
-                                  }
-                                  if (!value.contains('@')) {
-                                    return 'Invalid Email Format';
-                                  }
-                                  return null;
-                                },
-                                cursorHeight: 20,
-                                autofocus: false,
-                                decoration: InputDecoration(
-                                  labelText: 'Email ',
-                                  labelStyle: TextStyle(
-                                    color: isUser
-                                        ? Theme.of(context).colorScheme.primary
-                                        : Theme.of(context)
-                                            .colorScheme
-                                            .secondary,
-                                  ),
-                                  hintText: "example@domain.com",
-                                  prefixIcon: Icon(
-                                    Icons.email,
-                                    color: isUser
-                                        ? Theme.of(context).colorScheme.primary
-                                        : Theme.of(context)
-                                            .colorScheme
-                                            .secondary,
-                                  ),
-                                  contentPadding: const EdgeInsets.symmetric(
-                                    vertical: 10,
-                                    horizontal: 10,
-                                  ),
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(30),
-                                    borderSide: const BorderSide(
-                                        color: Colors.grey, width: 2),
-                                  ),
-                                  enabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(30),
-                                    borderSide: const BorderSide(
-                                        color: Colors.grey, width: 1.5),
-                                  ),
-                                  focusedBorder: OutlineInputBorder(
-                                    gapPadding: 0.0,
-                                    borderRadius: BorderRadius.circular(30),
-                                    borderSide: BorderSide(
-                                        color: isUser
-                                            ? Theme.of(context)
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: isLogin
+                                  ? [
+                                      CustomTextFormField(
+                                        controller: _emailController,
+                                        labelText: 'Email ',
+                                        hintText: 'example@domain.com',
+                                        isUser: isUser,
+                                        isPassword: false,
+                                        validator: (value) {
+                                          if (value == null || value.isEmpty) {
+                                            return 'This field can not be empty';
+                                          }
+                                          if (!value.contains('@')) {
+                                            return 'Invalid Email Format';
+                                          }
+                                          return null;
+                                        },
+                                        prefixIcon: Icons.email,
+                                      ),
+                                      const SizedBox(height: 30),
+                                      CustomTextFormField(
+                                        controller: _passwordController,
+                                        labelText: 'Password ',
+                                        hintText: '',
+                                        prefixIcon: Icons.lock,
+                                        isUser: isUser,
+                                        validator: (value) {
+                                          if (value == null || value.isEmpty) {
+                                            return 'This field can not be empty';
+                                          }
+                                          if (value.length < 5) {
+                                            return 'Password must contain 5 characters at least';
+                                          }
+                                          return null;
+                                        },
+                                        isPassword: true,
+                                      ),
+                                      const SizedBox(height: 30),
+                                      ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: isUser
+                                              ? Theme.of(context)
+                                                  .colorScheme
+                                                  .primary
+                                              : Theme.of(context)
+                                                  .colorScheme
+                                                  .secondary,
+                                        ),
+                                        onPressed: () {
+                                          submitInput();
+                                        },
+                                        child: Text(
+                                          isLogin ? 'Login' : 'signUp',
+                                          style: TextStyle(
+                                            fontSize: 18,
+                                            color: Theme.of(context)
                                                 .colorScheme
-                                                .primary
-                                            : Theme.of(context)
-                                                .colorScheme
-                                                .secondary,
-                                        width: 1.5),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 30),
-                              TextFormField(
-                                controller: _passwordController,
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Please enter some text';
-                                  }
-                                  if (value.length < 5) {
-                                    return 'Password must contain 5 characters at least';
-                                  }
-                                  return null;
-                                },
-                                obscureText: true,
-                                cursorHeight: 20,
-                                autofocus: false,
-                                decoration: InputDecoration(
-                                  labelText: 'Password ',
-                                  labelStyle: TextStyle(
-                                    color: isUser
-                                        ? Theme.of(context).colorScheme.primary
-                                        : Theme.of(context)
-                                            .colorScheme
-                                            .secondary,
-                                  ),
-                                  hintText: "Password",
-                                  prefixIcon: Icon(
-                                    Icons.pin,
-                                    color: isUser
-                                        ? Theme.of(context).colorScheme.primary
-                                        : Theme.of(context)
-                                            .colorScheme
-                                            .secondary,
-                                  ),
-                                  contentPadding: const EdgeInsets.symmetric(
-                                    vertical: 10,
-                                    horizontal: 10,
-                                  ),
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(30),
-                                    borderSide: const BorderSide(
-                                        color: Colors.grey, width: 2),
-                                  ),
-                                  enabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(30),
-                                    borderSide: const BorderSide(
-                                        color: Colors.grey, width: 1.5),
-                                  ),
-                                  focusedBorder: OutlineInputBorder(
-                                    gapPadding: 0.0,
-                                    borderRadius: BorderRadius.circular(30),
-                                    borderSide: BorderSide(
-                                        color: isUser
-                                            ? Theme.of(context)
-                                                .colorScheme
-                                                .primary
-                                            : Theme.of(context)
-                                                .colorScheme
-                                                .secondary,
-                                        width: 1.5),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 30),
-                              ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: isUser
-                                      ? Theme.of(context).colorScheme.primary
-                                      : Theme.of(context).colorScheme.secondary,
-                                ),
-                                onPressed: () {
-                                  submitInput();
-                                },
-                                child: Text(
-                                  isLogin ? 'Login' : 'signUp',
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    color:
-                                        Theme.of(context).colorScheme.onSurface,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ),
-                              if (isUser) const SizedBox(height: 15),
-                              if (isUser)
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      isLogin
-                                          ? "don't have an account?"
-                                          : "already has an account?",
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    TextButton(
-                                      onPressed: () {
-                                        setState(() {
-                                          isLogin = !isLogin;
-                                        });
-                                      },
-                                      child: Text(
-                                        isLogin ? "signUp" : "login",
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .primary,
+                                                .onSurface,
+                                            fontWeight: FontWeight.w600,
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                  ],
-                                )
-                            ],
-                          ),
+                                      if (isUser) const SizedBox(height: 15),
+                                      if (isUser)
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              isLogin
+                                                  ? "don't have an account?"
+                                                  : "already has an account?",
+                                              style: const TextStyle(
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                            TextButton(
+                                              onPressed: () {
+                                                setState(() {
+                                                  isLogin = !isLogin;
+                                                });
+                                              },
+                                              child: Text(
+                                                isLogin ? "signUp" : "login",
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .primary,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        )
+                                    ]
+                                  : [
+                                      CustomTextFormField(
+                                        controller: _nameController,
+                                        labelText: 'Name ',
+                                        hintText: 'Choose you display name',
+                                        isUser: isUser,
+                                        isPassword: false,
+                                        validator: (value) {
+                                          if (value == null || value.isEmpty) {
+                                            return 'This field can not be empty';
+                                          }
+                                          return null;
+                                        },
+                                        prefixIcon: Symbols.text_format,
+                                      ),
+                                      const SizedBox(height: 26),
+                                      CustomTextFormField(
+                                        controller: _nationalNumberController,
+                                        labelText: 'National Number ',
+                                        hintText: 'National number in your Id card',
+                                        isUser: isUser,
+                                        isPassword: false,
+                                        validator: (value) {
+                                          if (value == null || value.isEmpty) {
+                                            return 'This field can not be empty';
+                                          }
+                                          if (!RegExp(r'^[0-9]+$').hasMatch(value)) {
+                                            return 'National number consists of numbers only';
+                                          }
+                                          return null;
+                                        },
+                                        prefixIcon: Symbols.id_card,
+                                      ),
+                                      const SizedBox(height: 26),
+                                      ToggleSwitch(
+                                        minWidth: 90.0,
+                                        initialLabelIndex:
+                                            genderToggleSwitchIndex,
+                                        cornerRadius: 20.0,
+                                        activeFgColor: Colors.white,
+                                        inactiveBgColor: Colors.grey,
+                                        inactiveFgColor: Colors.white,
+                                        totalSwitches: 2,
+                                        labels: const ['Male', 'Female'],
+                                        icons: const [
+                                          FontAwesomeIcons.mars,
+                                          FontAwesomeIcons.venus
+                                        ],
+                                        activeBgColors: [
+                                          [
+                                            Theme.of(context)
+                                                .colorScheme
+                                                .primary
+                                          ],
+                                          const [Colors.pink]
+                                        ],
+                                        onToggle: (index) {
+                                          setState(() {
+                                            if (index == 0) {
+                                              _selectedGender = 'Male';
+                                              genderToggleSwitchIndex = 0;
+                                            } else {
+                                              _selectedGender = 'Female';
+                                              genderToggleSwitchIndex = 1;
+                                            }
+                                          });
+                                        },
+                                      ),
+                                      const SizedBox(height: 26),
+                                      CustomTextFormField(
+                                        controller: _emailController,
+                                        labelText: 'Email ',
+                                        hintText: 'example@domain.com',
+                                        isUser: isUser,
+                                        isPassword: false,
+                                        validator: (value) {
+                                          if (value == null || value.isEmpty) {
+                                            return 'This field can not be empty';
+                                          }
+                                          if (!value.contains('@')) {
+                                            return 'Invalid Email Format';
+                                          }
+                                          return null;
+                                        },
+                                        prefixIcon: Icons.email,
+                                      ),
+                                      const SizedBox(height: 26),
+                                      CustomTextFormField(
+                                        controller: _phoneNumberController,
+                                        labelText: 'Phone number ',
+                                        hintText: '7xxxxxxxx',
+                                        isUser: isUser,
+                                        isPassword: false,
+                                        validator: (value) {
+                                          if (value == null || value.isEmpty) {
+                                            return 'This field can not be empty';
+                                          }
+                                          if (!RegExp(r'^[0-9]+$').hasMatch(value)) {
+                                            return 'Invalid phone number';
+                                          }
+                                          return null;
+                                        },
+                                        prefixIcon: Icons.phone_sharp,
+                                      ),
+                                      const SizedBox(height: 26),
+                                      CustomTextFormField(
+                                        controller: _passwordController,
+                                        labelText: 'Password ',
+                                        hintText: 'Create a strong password',
+                                        prefixIcon: Icons.lock,
+                                        isUser: isUser,
+                                        validator: (value) {
+                                          if (value == null || value.isEmpty) {
+                                            return 'This field can not be empty';
+                                          }
+                                          if (value.length < 5) {
+                                            return 'Password must contain 5 characters at least';
+                                          }
+                                          return null;
+                                        },
+                                        isPassword: true,
+                                      ),
+                                      const SizedBox(height: 26),
+                                      CustomTextFormField(
+                                        controller: _confirmPasswordController,
+                                        labelText: 'Confirm password ',
+                                        hintText: 'Enter your password again',
+                                        prefixIcon: Icons.lock,
+                                        isUser: isUser,
+                                        validator: (value) {
+                                          if (value == null || value.isEmpty) {
+                                            return 'This field can not be empty';
+                                          }
+                                          if (value != _passwordController.text) {
+                                            return 'Wrong Password';
+                                          }
+                                          return null;
+                                        },
+                                        isPassword: true,
+                                      ),
+                                      const SizedBox(height: 30),
+                                      ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: isUser
+                                              ? Theme.of(context)
+                                                  .colorScheme
+                                                  .primary
+                                              : Theme.of(context)
+                                                  .colorScheme
+                                                  .secondary,
+                                        ),
+                                        onPressed: () {
+                                          submitInput();
+                                        },
+                                        child: Text(
+                                          isLogin ? 'Login' : 'signUp',
+                                          style: TextStyle(
+                                            fontSize: 18,
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .onSurface,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                      ),
+                                      if (isUser) const SizedBox(height: 15),
+                                      if (isUser)
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              isLogin
+                                                  ? "don't have an account?"
+                                                  : "already has an account?",
+                                              style: const TextStyle(
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                            TextButton(
+                                              onPressed: () {
+                                                setState(() {
+                                                  isLogin = !isLogin;
+                                                });
+                                              },
+                                              child: Text(
+                                                isLogin ? "signUp" : "login",
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .primary,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        )
+                                    ]),
                         ),
                       ),
                     ),
@@ -437,10 +441,11 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
 
   void saveUserData(String id) {
     FirebaseFirestore.instance.collection('users').doc(id).set({
+      'name': _nameController.text,
+      'gender': _selectedGender,
       'email': _emailController.text,
-      'isUser': true,
-      'name': '${_firstNameController.text} ${_lastNameController.text}',
-      'gender' : _selectedGender
+      'nationalNumber': _nationalNumberController.text,
+      'phoneNumber': _phoneNumberController.text,
     });
   }
 
