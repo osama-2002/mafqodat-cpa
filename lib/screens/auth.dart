@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:mafqodat/widgets/cutom_text_field.dart';
+import 'package:mafqodat/widgets/custom_text_field.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 
@@ -18,13 +18,10 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
   final FocusScopeNode _focusScopeNode = FocusScopeNode();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController =
-      TextEditingController();
+  final TextEditingController _confirmPasswordController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _nationalNumberController =
-      TextEditingController();
-      final TextEditingController _phoneNumberController =
-      TextEditingController();
+  final TextEditingController _nationalNumberController = TextEditingController();
+  final TextEditingController _phoneNumberController = TextEditingController();
   String _selectedGender = "Male";
   bool isLogin = true;
   bool isUser = true;

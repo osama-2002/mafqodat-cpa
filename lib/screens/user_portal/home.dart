@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:mafqodat/screens/user_portal/item_form.dart';
 import 'package:mafqodat/widgets/user_profile.dart';
 import 'package:material_symbols_icons/material_symbols_icons.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
@@ -47,14 +48,18 @@ class _HomeState extends State<Home> {
                   ),
                   const SizedBox(height: 50),
                   ElevatedButton.icon(
-                    onPressed: () {},
+                    onPressed: (){
+                      Navigator.of(context).push(MaterialPageRoute(builder: (context) => const ItemForm()));
+                    },
                     label: const Text('I have lost an item',
                         style: TextStyle(fontSize: 20)),
                     icon: const Icon(Symbols.person_raised_hand),
                   ),
                   const SizedBox(height: 30),
                   ElevatedButton.icon(
-                    onPressed: () {},
+                    onPressed: (){
+                      Navigator.of(context).push(MaterialPageRoute(builder: (context) => const ItemForm()));
+                    },
                     label: const Text('I have found an item',
                         style: TextStyle(fontSize: 20)),
                     icon: const Icon(Symbols.approval_delegation),

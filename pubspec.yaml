@@ -50,6 +50,7 @@ dependencies:
   cloud_firestore: ^4.14.0
   material_symbols_icons: ^4.2780.0
   crypto: ^3.0.3
+  dropdown_button2: ^2.3.9
 
 dev_dependencies:
   flutter_test:
