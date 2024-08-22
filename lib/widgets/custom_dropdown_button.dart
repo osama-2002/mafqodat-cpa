@@ -1,21 +1,23 @@
-import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
 
-final List<String> items = [
-  'A_Item1',
-  'A_Item2',
-  'A_Item3',
-  'A_Item4',
-  'B_Item1',
-  'B_Item2',
-  'B_Item3',
-  'B_Item4',
+final List<String> categories = [
+  'Mobile Phone',
+  'Watch',
+  'AirPods',
+  'Headset',
+  'Wallet',
+  'Bracelet',
+  'Neckless',
+  'Other',
 ];
 
+// ignore: must_be_immutable
 class CustomDropdownButton extends StatefulWidget {
-  CustomDropdownButton({super.key, required this.controller, required this.selectedValue});
+  CustomDropdownButton({super.key, required this.controller, required this.selectedValue, required this.onChanged});
   final TextEditingController controller;
   String? selectedValue;
+  final Function(String?) onChanged;
 
   @override
   State<CustomDropdownButton> createState() => _CustomDropdownButtonState();
@@ -50,11 +52,11 @@ class _CustomDropdownButtonState extends State<CustomDropdownButton> {
             ),
           ],
         ),
-        items: items
-            .map((item) => DropdownMenuItem(
-                  value: item,
+        items: categories
+            .map((category) => DropdownMenuItem(
+                  value: category,
                   child: Text(
-                    item,
+                    category,
                     style: const TextStyle(
                       fontSize: 14,
                     ),
@@ -66,6 +68,7 @@ class _CustomDropdownButtonState extends State<CustomDropdownButton> {
           setState(() {
             widget.selectedValue = value;
           });
+          widget.onChanged(value);
         },
         buttonStyleData: ButtonStyleData(
           height: 50,
@@ -98,8 +101,8 @@ class _CustomDropdownButtonState extends State<CustomDropdownButton> {
           offset: const Offset(-20, 0),
           scrollbarTheme: ScrollbarThemeData(
             radius: const Radius.circular(40),
-            thickness: MaterialStateProperty.all(6),
-            thumbVisibility: MaterialStateProperty.all(true),
+            thickness: WidgetStateProperty.all(6),
+            thumbVisibility: WidgetStateProperty.all(true),
           ),
         ),
         menuItemStyleData: const MenuItemStyleData(

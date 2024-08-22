@@ -1,10 +1,11 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:mafqodat/widgets/admin_profile.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 import 'package:material_symbols_icons/symbols.dart';
+
+import 'package:mafqodat/widgets/admin_profile.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
