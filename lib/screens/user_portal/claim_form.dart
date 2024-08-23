@@ -19,29 +19,21 @@ class ClaimForm extends StatefulWidget {
 }
 
 class _ClaimFormState extends State<ClaimForm> {
-  String? selectedValue;
-  final _formKey = GlobalKey<FormState>();
   final FocusScopeNode _focusScopeNode = FocusScopeNode();
-  final TextEditingController _searchController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+  String? selectedValue;
   final TextEditingController _descriptionController = TextEditingController();
+  final TextEditingController _searchController = TextEditingController();
   DateTime _selectedDate = DateTime.now();
   final ImagePicker _picker = ImagePicker();
-  List<XFile>? _selectedImages;
   Color? _currentColor;
+  List<XFile>? _selectedImages;
   double? latitude;
   double? longitude;
-
-  Future<void> _selectImages() async {
-    try {
-      final List<XFile> selectedImages = await _picker.pickMultiImage();
-      setState(() {
-        _selectedImages = selectedImages;
-      });
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('An error occurred, try again later')));
-    }
-  }
+  double? currentLatitude;
+  double? currentLongitude;
+  final GlobalKey<LocationInputState> _locationInputKey =
+      GlobalKey<LocationInputState>();
 
   void _unfocusTextFields() {
     _focusScopeNode.unfocus();
@@ -53,22 +45,16 @@ class _ClaimFormState extends State<ClaimForm> {
     });
   }
 
-  void _onLocationChanged(double latitude, double longitude) {
-    setState(() {
-      this.latitude = latitude;
-      this.longitude = longitude;
-    });
-  }
-
-  void _clearForm() {
-    setState(() {
-      _formKey.currentState!.reset();
-      selectedValue = null;
-      _descriptionController.clear();
-      _selectedDate = DateTime.now();
-      _selectedImages = [];
-      _currentColor = null;
-    });
+  Future<void> _selectImages() async {
+    try {
+      final List<XFile> selectedImages = await _picker.pickMultiImage();
+      setState(() {
+        _selectedImages = selectedImages;
+      });
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('An error occurred, try again later')));
+    }
   }
 
   void _pickColor(BuildContext context) {
@@ -108,6 +94,35 @@ class _ClaimFormState extends State<ClaimForm> {
         );
       },
     );
+  }
+
+  void _onCurrentLocationLoaded(
+      double currentLatitude, double currentLongitude) {
+    setState(() {
+      this.currentLatitude = currentLatitude;
+      this.currentLongitude = currentLongitude;
+    });
+  }
+
+  void _onLocationChanged(double latitude, double longitude) {
+    setState(() {
+      this.latitude = latitude;
+      this.longitude = longitude;
+    });
+  }
+
+  void _clearForm() {
+    _locationInputKey.currentState?.refreshLocation();
+    setState(() {
+      _formKey.currentState!.reset();
+      selectedValue = null;
+      _descriptionController.clear();
+      _selectedDate = DateTime.now();
+      _selectedImages = [];
+      _currentColor = null;
+      latitude = currentLatitude;
+      longitude = currentLongitude;
+    });
   }
 
   @override
@@ -224,7 +239,11 @@ class _ClaimFormState extends State<ClaimForm> {
                             ),
                             child: SizedBox(
                               height: 200,
-                              child: LocationInput(onChanged: _onLocationChanged),
+                              child: LocationInput(
+                                key: _locationInputKey,
+                                onLoaded: _onCurrentLocationLoaded,
+                                onChanged: _onLocationChanged,
+                              ),
                             ),
                           ),
                           const SizedBox(height: 16),

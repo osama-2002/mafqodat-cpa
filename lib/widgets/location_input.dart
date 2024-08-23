@@ -3,14 +3,16 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 
 class LocationInput extends StatefulWidget {
-  const LocationInput({super.key, required this.onChanged});
+  const LocationInput(
+      {super.key, required this.onChanged, required this.onLoaded});
   final void Function(double latitude, double longitude) onChanged;
+  final void Function(double latitude, double longitude) onLoaded;
 
   @override
-  State<LocationInput> createState() => _LocationInputState();
+  State<LocationInput> createState() => LocationInputState();
 }
 
-class _LocationInputState extends State<LocationInput> {
+class LocationInputState extends State<LocationInput> {
   double? latitude;
   double? longitude;
   Marker? _activeMarker;
@@ -19,6 +21,16 @@ class _LocationInputState extends State<LocationInput> {
   void initState() {
     super.initState();
     _getCurrentLocation();
+  }
+
+  void refreshLocation() async {
+    await _getCurrentLocation();
+    setState(() {
+      _activeMarker = Marker(
+        markerId: const MarkerId('selectedLocation'),
+        position: LatLng(latitude!, longitude!),
+      );
+    });
   }
 
   Future<void> _getCurrentLocation() async {
@@ -54,6 +66,7 @@ class _LocationInputState extends State<LocationInput> {
         position: LatLng(latitude!, longitude!),
       );
     });
+    widget.onLoaded(latitude!, longitude!);
     widget.onChanged(latitude!, longitude!);
   }
 

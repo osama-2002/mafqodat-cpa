@@ -19,28 +19,21 @@ class ReportForm extends StatefulWidget {
 }
 
 class _ReportFormState extends State<ReportForm> {
-  String? selectedValue;
-  final _formKey = GlobalKey<FormState>();
   final FocusScopeNode _focusScopeNode = FocusScopeNode();
-  final TextEditingController _searchController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+  String? selectedValue;
   final TextEditingController _descriptionController = TextEditingController();
-  DateTime _selectedDate = DateTime.now();
+  final TextEditingController _searchController = TextEditingController();
   final ImagePicker _picker = ImagePicker();
-  File? _selectedImage;
   Color? _currentColor;
+  DateTime _selectedDate = DateTime.now();
+  File? _selectedImage;
   double? latitude;
   double? longitude;
-
-  void _takePicture() async {
-    final pickedImage =
-        await _picker.pickImage(source: ImageSource.camera, maxWidth: 600);
-    if (pickedImage == null) {
-      return;
-    }
-    setState(() {
-      _selectedImage = File(pickedImage.path);
-    });
-  }
+  double? currentLatitude;
+  double? currentLongitude;
+  final GlobalKey<LocationInputState> _locationInputKey =
+      GlobalKey<LocationInputState>();
 
   void _unfocusTextFields() {
     _focusScopeNode.unfocus();
@@ -49,24 +42,6 @@ class _ReportFormState extends State<ReportForm> {
   void _onDropdownValueChanged(String? newValue) {
     setState(() {
       selectedValue = newValue;
-    });
-  }
-
-  void _onLocationChanged(double latitude, double longitude) {
-    setState(() {
-      this.latitude = latitude;
-      this.longitude = longitude;
-    });
-  }
-
-  void _clearForm() {
-    setState(() {
-      _formKey.currentState!.reset();
-      selectedValue = null;
-      _descriptionController.clear();
-      _selectedDate = DateTime.now();
-      _selectedImage = null;
-      _currentColor = null;
     });
   }
 
@@ -107,6 +82,46 @@ class _ReportFormState extends State<ReportForm> {
         );
       },
     );
+  }
+
+  void _takePicture() async {
+    final pickedImage =
+        await _picker.pickImage(source: ImageSource.camera, maxWidth: 600);
+    if (pickedImage == null) {
+      return;
+    }
+    setState(() {
+      _selectedImage = File(pickedImage.path);
+    });
+  }
+
+  void _onCurrentLocationLoaded(
+      double currentLatitude, double currentLongitude) {
+    setState(() {
+      this.currentLatitude = currentLatitude;
+      this.currentLongitude = currentLongitude;
+    });
+  }
+
+  void _onLocationChanged(double latitude, double longitude) {
+    setState(() {
+      this.latitude = latitude;
+      this.longitude = longitude;
+    });
+  }
+
+  void _clearForm() {
+    _locationInputKey.currentState?.refreshLocation();
+    setState(() {
+      _formKey.currentState!.reset();
+      selectedValue = null;
+      _descriptionController.clear();
+      _selectedDate = DateTime.now();
+      _selectedImage = null;
+      _currentColor = null;
+      latitude = currentLatitude;
+      longitude = currentLongitude;
+    });
   }
 
   @override
@@ -223,7 +238,11 @@ class _ReportFormState extends State<ReportForm> {
                             ),
                             child: SizedBox(
                               height: 200,
-                              child: LocationInput(onChanged: _onLocationChanged,),
+                              child: LocationInput(
+                                key: _locationInputKey,
+                                onLoaded: _onCurrentLocationLoaded,
+                                onChanged: _onLocationChanged,
+                              ),
                             ),
                           ),
                           const SizedBox(height: 16),
