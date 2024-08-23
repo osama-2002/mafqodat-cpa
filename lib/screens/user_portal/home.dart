@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:material_symbols_icons/material_symbols_icons.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:mafqodat/screens/user_portal/report_form.dart';
-import 'package:material_symbols_icons/material_symbols_icons.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 
+import 'package:mafqodat/screens/user_portal/report_form.dart';
 import 'package:mafqodat/screens/user_portal/claim_form.dart';
 import 'package:mafqodat/widgets/user_profile.dart';
 

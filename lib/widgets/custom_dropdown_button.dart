@@ -9,7 +9,7 @@ final List<String> categories = [
   'Wallet',
   'Bracelet',
   'Neckless',
-  'Other',
+  'Miscellaneous',
 ];
 
 // ignore: must_be_immutable

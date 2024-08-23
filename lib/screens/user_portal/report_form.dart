@@ -1,13 +1,15 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:scroll_date_picker/scroll_date_picker.dart';
+import 'package:image_picker/image_picker.dart';
 
 import 'package:mafqodat/widgets/custom_dropdown_button.dart';
 import 'package:mafqodat/widgets/custom_text_field.dart';
+import 'package:mafqodat/widgets/location_input.dart';
 
 class ReportForm extends StatefulWidget {
   const ReportForm({super.key});
@@ -25,6 +27,9 @@ class _ReportFormState extends State<ReportForm> {
   DateTime _selectedDate = DateTime.now();
   final ImagePicker _picker = ImagePicker();
   File? _selectedImage;
+  Color? _currentColor;
+  double? latitude;
+  double? longitude;
 
   void _takePicture() async {
     final pickedImage =
@@ -47,6 +52,13 @@ class _ReportFormState extends State<ReportForm> {
     });
   }
 
+  void _onLocationChanged(double latitude, double longitude) {
+    setState(() {
+      this.latitude = latitude;
+      this.longitude = longitude;
+    });
+  }
+
   void _clearForm() {
     setState(() {
       _formKey.currentState!.reset();
@@ -54,7 +66,47 @@ class _ReportFormState extends State<ReportForm> {
       _descriptionController.clear();
       _selectedDate = DateTime.now();
       _selectedImage = null;
+      _currentColor = null;
     });
+  }
+
+  void _pickColor(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Pick a primary color'),
+          content: SingleChildScrollView(
+            child: BlockPicker(
+              pickerColor: _currentColor,
+              availableColors: const [
+                Colors.red,
+                Colors.blue,
+                Colors.yellow,
+                Colors.green,
+                Colors.purple,
+                Colors.white,
+                Colors.orange,
+                Colors.black,
+              ],
+              onColorChanged: (Color color) {
+                setState(() {
+                  _currentColor = color;
+                });
+              },
+            ),
+          ),
+          actions: <Widget>[
+            ElevatedButton(
+              child: const Text('Select'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -122,6 +174,17 @@ class _ReportFormState extends State<ReportForm> {
                             },
                           ),
                           const SizedBox(height: 16),
+                          ElevatedButton(
+                            onPressed: () => _pickColor(context),
+                            child: _currentColor == null
+                                ? const Text('Pick a Color')
+                                : Icon(
+                                    Symbols.colors,
+                                    color: _currentColor,
+                                    size: 34,
+                                  ),
+                          ),
+                          const SizedBox(height: 16),
                           Container(
                             padding: const EdgeInsets.all(5),
                             width: double.infinity,
@@ -148,7 +211,21 @@ class _ReportFormState extends State<ReportForm> {
                             ),
                           ),
                           const SizedBox(height: 16),
-                          const Text('location'),
+                          Container(
+                            padding: const EdgeInsets.all(5),
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: Theme.of(context).colorScheme.primary,
+                                width: 2.0,
+                              ),
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
+                            child: SizedBox(
+                              height: 200,
+                              child: LocationInput(onChanged: _onLocationChanged,),
+                            ),
+                          ),
                           const SizedBox(height: 16),
                           Container(
                             padding: const EdgeInsets.all(5),
@@ -213,6 +290,7 @@ class _ReportFormState extends State<ReportForm> {
                               ),
                             ],
                           ),
+                          Text('latitude:$latitude longitude:$longitude'),
                         ],
                       ),
                     ),

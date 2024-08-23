@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:material_symbols_icons/material_symbols_icons.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class UserProfile extends StatelessWidget {
   const UserProfile({super.key, required this.userData});
