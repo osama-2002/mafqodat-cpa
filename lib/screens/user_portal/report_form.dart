@@ -111,7 +111,7 @@ class _ReportFormState extends State<ReportForm> {
   }
 
   void _clearForm() {
-    _locationInputKey.currentState?.refreshLocation();
+    //_locationInputKey.currentState?.refreshLocation();
     setState(() {
       _formKey.currentState!.reset();
       selectedValue = null;
@@ -309,7 +309,6 @@ class _ReportFormState extends State<ReportForm> {
                               ),
                             ],
                           ),
-                          Text('latitude:$latitude longitude:$longitude'),
                         ],
                       ),
                     ),

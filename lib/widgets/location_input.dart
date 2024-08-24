@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
+String googleMapsApiKey = dotenv.env['GOOGLE_MAPS_API_KEY']!;
 
 class LocationInput extends StatefulWidget {
-  const LocationInput(
-      {super.key, required this.onChanged, required this.onLoaded});
+  const LocationInput({
+    super.key, 
+    required this.onChanged, 
+    required this.onLoaded
+  });
+  
   final void Function(double latitude, double longitude) onChanged;
   final void Function(double latitude, double longitude) onLoaded;
 
@@ -21,16 +28,6 @@ class LocationInputState extends State<LocationInput> {
   void initState() {
     super.initState();
     _getCurrentLocation();
-  }
-
-  void refreshLocation() async {
-    await _getCurrentLocation();
-    setState(() {
-      _activeMarker = Marker(
-        markerId: const MarkerId('selectedLocation'),
-        position: LatLng(latitude!, longitude!),
-      );
-    });
   }
 
   Future<void> _getCurrentLocation() async {
@@ -71,7 +68,7 @@ class LocationInputState extends State<LocationInput> {
   }
 
   String get locationImage {
-    return 'https://maps.googleapis.com/maps/api/staticmap?center=$latitude,$longitude&zoom=16&size=600x400&maptype=roadmap&markers=color:red%7Clabel:A%7C$latitude,$longitude&key=AIzaSyCa7yZn2EAl_UyRT-1-gDZpY1YnXOK1hpg';
+    return 'https://maps.googleapis.com/maps/api/staticmap?center=$latitude,$longitude&zoom=16&size=600x400&maptype=roadmap&markers=color:red%7Clabel:A%7C$latitude,$longitude&key=$googleMapsApiKey';
   }
 
   void _selectLocation(BuildContext context) {
@@ -107,6 +104,10 @@ class LocationInputState extends State<LocationInput> {
         );
       },
     );
+  }
+
+  void refreshLocation() {
+    _getCurrentLocation();
   }
 
   @override
@@ -150,6 +151,7 @@ class _MapDialogState extends State<MapDialog> {
   late double latitude;
   late double longitude;
   Marker? _activeMarker;
+  GoogleMapController? _mapController;
 
   @override
   void initState() {
@@ -162,6 +164,16 @@ class _MapDialogState extends State<MapDialog> {
     );
   }
 
+  void _onMapCreated(GoogleMapController controller) {
+    _mapController = controller;
+    _mapController!.animateCamera(
+      CameraUpdate.newLatLngZoom(
+        LatLng(latitude, longitude),
+        16,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -171,6 +183,7 @@ class _MapDialogState extends State<MapDialog> {
           height: 300,
           padding: const EdgeInsets.all(10),
           child: GoogleMap(
+            onMapCreated: _onMapCreated,
             onTap: (location) {
               setState(() {
                 latitude = location.latitude;

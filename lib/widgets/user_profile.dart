@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mafqodat/screens/history.dart';
 import 'package:material_symbols_icons/material_symbols_icons.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -26,7 +27,9 @@ class UserProfile extends StatelessWidget {
                       radius: 40,
                       child: ClipOval(
                         child: Image.asset(
-                          userData['gender'] == 'Male' ? 'assets/images/male_avatar.webp':'assets/images/female_avatar.png',
+                          userData['gender'] == 'Male'
+                              ? 'assets/images/male_avatar.webp'
+                              : 'assets/images/female_avatar.png',
                           fit: BoxFit.cover,
                           width: 80,
                           height: 80,
@@ -128,7 +131,8 @@ class UserProfile extends StatelessWidget {
                               ],
                             ),
                           ),
-                          IconButton(onPressed: (){}, icon: const Icon(Icons.edit)),
+                          IconButton(
+                              onPressed: () {}, icon: const Icon(Icons.edit)),
                         ],
                       ),
                     ),
@@ -159,7 +163,8 @@ class UserProfile extends StatelessWidget {
                               ],
                             ),
                           ),
-                          IconButton(onPressed: (){}, icon: const Icon(Icons.edit)),
+                          IconButton(
+                              onPressed: () {}, icon: const Icon(Icons.edit)),
                         ],
                       ),
                     ),
@@ -174,7 +179,14 @@ class UserProfile extends StatelessWidget {
             child: Card(
               elevation: 30,
               child: InkWell(
-                onTap: () {},
+                onTap: () {
+                  Navigator.push<void>(
+                    context,
+                    MaterialPageRoute<void>(
+                      builder: (BuildContext context) => const ClaimsListScreen(),
+                    ),
+                  );
+                },
                 child: Padding(
                   padding:
                       const EdgeInsets.symmetric(vertical: 10, horizontal: 10),

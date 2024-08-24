@@ -1,4 +1,6 @@
 import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:flutter_translate/flutter_translate.dart';
@@ -6,6 +8,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:scroll_date_picker/scroll_date_picker.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:uuid/uuid.dart';
 
 import 'package:mafqodat/widgets/custom_dropdown_button.dart';
 import 'package:mafqodat/widgets/custom_text_field.dart';
@@ -34,6 +37,7 @@ class _ClaimFormState extends State<ClaimForm> {
   double? currentLongitude;
   final GlobalKey<LocationInputState> _locationInputKey =
       GlobalKey<LocationInputState>();
+  Uuid uuid = const Uuid();
 
   void _unfocusTextFields() {
     _focusScopeNode.unfocus();
@@ -123,6 +127,59 @@ class _ClaimFormState extends State<ClaimForm> {
       latitude = currentLatitude;
       longitude = currentLongitude;
     });
+  }
+
+  void _submitClaim() async {
+    final db = FirebaseFirestore.instance;
+    final storage = FirebaseStorage.instance;
+    String claimId = uuid.v4();
+
+    List<String> imageUrls = [];
+    if (_selectedImages != null) {
+      for (XFile image in _selectedImages!) {
+        String fileName =
+            '${claimId}_${DateTime.now().millisecondsSinceEpoch}.jpg';
+        try {
+          Reference ref = storage.ref().child('claims/$claimId/$fileName');
+          UploadTask uploadTask = ref.putFile(File(image.path));
+          TaskSnapshot snapshot = await uploadTask;
+
+          String downloadUrl = await snapshot.ref.getDownloadURL();
+          imageUrls.add(downloadUrl);
+        } catch (e) {
+          ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Failed to upload images')));
+          return;
+        }
+      }
+    }
+    try {
+      await db.collection('claims').doc(claimId).set(
+        {
+          'userId': FirebaseAuth.instance.currentUser!.uid,
+          'description': _descriptionController.text,
+          'color': _currentColor!.value,
+          'date': _selectedDate,
+          'location': GeoPoint(latitude!, longitude!),
+          'status': 'pending',
+          'type': selectedValue,
+          'imageUrls': imageUrls,
+        },
+      );
+      _clearForm();
+      if (mounted) Navigator.of(context).pop();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Submitted successfully'),
+        ),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed to submit claim: $e'),
+        ),
+      );
+    }
   }
 
   @override
@@ -287,6 +344,7 @@ class _ClaimFormState extends State<ClaimForm> {
                               ),
                             ),
                           ),
+                          const SizedBox(height: 16),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
@@ -294,13 +352,7 @@ class _ClaimFormState extends State<ClaimForm> {
                                 onPressed: () {
                                   if (_formKey.currentState!.validate() &&
                                       selectedValue != null) {
-                                    Navigator.of(context).pop();
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                        content: Text('Submitted successfully'),
-                                      ),
-                                    );
-                                    _clearForm();
+                                    _submitClaim();
                                   } else {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
@@ -319,7 +371,6 @@ class _ClaimFormState extends State<ClaimForm> {
                               ),
                             ],
                           ),
-                          Text('latitude:$latitude longitude:$longitude'),
                         ],
                       ),
                     ),

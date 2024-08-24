@@ -139,7 +139,7 @@ class _CustomDropdownButtonState extends State<CustomDropdownButton> {
             ),
           ),
           searchMatchFn: (item, searchValue) {
-            return item.value.toString().contains(searchValue);
+            return item.value.toString().toLowerCase().contains(searchValue);
           },
         ),
         onMenuStateChange: (isOpen) {
