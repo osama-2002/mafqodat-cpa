@@ -1,10 +1,11 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:mafqodat/widgets/custom_text_field.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:toggle_switch/toggle_switch.dart';
+
+import 'package:mafqodat/widgets/custom_text_field.dart';
 
 class AuthenticationPage extends StatefulWidget {
   const AuthenticationPage({super.key});
@@ -18,14 +19,16 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
   final FocusScopeNode _focusScopeNode = FocusScopeNode();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
   final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _nationalNumberController = TextEditingController();
+  final TextEditingController _nationalNumberController =
+      TextEditingController();
   final TextEditingController _phoneNumberController = TextEditingController();
   String _selectedGender = "Male";
+  int genderToggleSwitchIndex = 0;
   bool isLogin = true;
   bool isUser = true;
-  int genderToggleSwitchIndex = 0;
 
   void _unfocusTextFields() {
     _focusScopeNode.unfocus();
@@ -202,14 +205,16 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                                       CustomTextFormField(
                                         controller: _nationalNumberController,
                                         labelText: 'National Number ',
-                                        hintText: 'National number in your Id card',
+                                        hintText:
+                                            'National number in your Id card',
                                         isUser: isUser,
                                         isPassword: false,
                                         validator: (value) {
                                           if (value == null || value.isEmpty) {
                                             return 'This field can not be empty';
                                           }
-                                          if (!RegExp(r'^[0-9]+$').hasMatch(value)) {
+                                          if (!RegExp(r'^[0-9]+$')
+                                              .hasMatch(value)) {
                                             return 'National number consists of numbers only';
                                           }
                                           return null;
@@ -280,7 +285,8 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                                           if (value == null || value.isEmpty) {
                                             return 'This field can not be empty';
                                           }
-                                          if (!RegExp(r'^[0-9]+$').hasMatch(value)) {
+                                          if (!RegExp(r'^[0-9]+$')
+                                              .hasMatch(value)) {
                                             return 'Invalid phone number';
                                           }
                                           return null;
@@ -316,7 +322,8 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                                           if (value == null || value.isEmpty) {
                                             return 'This field can not be empty';
                                           }
-                                          if (value != _passwordController.text) {
+                                          if (value !=
+                                              _passwordController.text) {
                                             return 'Wrong Password';
                                           }
                                           return null;

@@ -24,7 +24,7 @@ class ClaimForm extends StatefulWidget {
 class _ClaimFormState extends State<ClaimForm> {
   final FocusScopeNode _focusScopeNode = FocusScopeNode();
   final _formKey = GlobalKey<FormState>();
-  String? selectedValue;
+  String? _selectedDropDownValue;
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _searchController = TextEditingController();
   DateTime _selectedDate = DateTime.now();
@@ -38,6 +38,7 @@ class _ClaimFormState extends State<ClaimForm> {
   final GlobalKey<LocationInputState> _locationInputKey =
       GlobalKey<LocationInputState>();
   Uuid uuid = const Uuid();
+  bool _isLoading = false;
 
   void _unfocusTextFields() {
     _focusScopeNode.unfocus();
@@ -45,7 +46,7 @@ class _ClaimFormState extends State<ClaimForm> {
 
   void _onDropdownValueChanged(String? newValue) {
     setState(() {
-      selectedValue = newValue;
+      _selectedDropDownValue = newValue;
     });
   }
 
@@ -119,7 +120,7 @@ class _ClaimFormState extends State<ClaimForm> {
     _locationInputKey.currentState?.refreshLocation();
     setState(() {
       _formKey.currentState!.reset();
-      selectedValue = null;
+      _selectedDropDownValue = null;
       _descriptionController.clear();
       _selectedDate = DateTime.now();
       _selectedImages = [];
@@ -130,6 +131,9 @@ class _ClaimFormState extends State<ClaimForm> {
   }
 
   void _submitClaim() async {
+    setState(() {
+      _isLoading = true;
+    });
     final db = FirebaseFirestore.instance;
     final storage = FirebaseStorage.instance;
     String claimId = uuid.v4();
@@ -162,7 +166,7 @@ class _ClaimFormState extends State<ClaimForm> {
           'date': _selectedDate,
           'location': GeoPoint(latitude!, longitude!),
           'status': 'pending',
-          'type': selectedValue,
+          'type': _selectedDropDownValue,
           'imageUrls': imageUrls,
         },
       );
@@ -229,7 +233,7 @@ class _ClaimFormState extends State<ClaimForm> {
                         children: [
                           CustomDropdownButton(
                             controller: _searchController,
-                            selectedValue: selectedValue,
+                            selectedDropDownValue: _selectedDropDownValue,
                             onChanged: _onDropdownValueChanged,
                           ),
                           const SizedBox(height: 16),
@@ -351,7 +355,7 @@ class _ClaimFormState extends State<ClaimForm> {
                               ElevatedButton(
                                 onPressed: () {
                                   if (_formKey.currentState!.validate() &&
-                                      selectedValue != null) {
+                                      _selectedDropDownValue != null) {
                                     _submitClaim();
                                   } else {
                                     ScaffoldMessenger.of(context).showSnackBar(
@@ -362,7 +366,9 @@ class _ClaimFormState extends State<ClaimForm> {
                                     );
                                   }
                                 },
-                                child: const Text('Submit'),
+                                child: _isLoading
+                                    ? const CircularProgressIndicator()
+                                    : const Text('Submit'),
                               ),
                               const SizedBox(width: 32),
                               ElevatedButton(

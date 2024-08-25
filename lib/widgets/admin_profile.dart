@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_translate/flutter_translate.dart';
 
 class AdminProfile extends StatelessWidget {
   const AdminProfile({super.key, required this.adminData});
@@ -25,7 +26,9 @@ class AdminProfile extends StatelessWidget {
                       radius: 40,
                       child: ClipOval(
                         child: Image.asset(
-                          adminData['gender'] == 'Male' ? 'assets/images/admin_male_avatar.png':'assets/images/admin_female_avatar.png',
+                          adminData['gender'] == 'male'
+                              ? 'assets/images/admin_male_avatar.png'
+                              : 'assets/images/admin_female_avatar.png',
                           fit: BoxFit.cover,
                           width: 80,
                           height: 80,
@@ -51,14 +54,23 @@ class AdminProfile extends StatelessWidget {
                   ],
                 ),
               ),
-              Positioned(
-                right: 20,
-                top: 20,
-                child: IconButton(
-                  icon: const Icon(Icons.edit),
-                  onPressed: () {},
-                ),
-              ),
+              LocalizedApp.of(context).delegate.currentLocale.toString() == 'en'
+                  ? Positioned(
+                      right: 20,
+                      top: 20,
+                      child: IconButton(
+                        icon: const Icon(Icons.edit),
+                        onPressed: () {},
+                      ),
+                    )
+                  : Positioned(
+                      left: 20,
+                      top: 20,
+                      child: IconButton(
+                        icon: const Icon(Icons.edit),
+                        onPressed: () {},
+                      ),
+                    ),
             ],
           ),
           Container(

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:mafqodat/screens/history.dart';
+import 'package:flutter_translate/flutter_translate.dart';
 import 'package:material_symbols_icons/material_symbols_icons.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+
+import 'package:mafqodat/screens/user_portal/history.dart';
 
 class UserProfile extends StatelessWidget {
   const UserProfile({super.key, required this.userData});
@@ -55,14 +57,23 @@ class UserProfile extends StatelessWidget {
                   ],
                 ),
               ),
-              Positioned(
-                right: 20,
-                top: 24,
-                child: IconButton(
-                  icon: const Icon(Icons.edit),
-                  onPressed: () {},
-                ),
-              ),
+              LocalizedApp.of(context).delegate.currentLocale.toString() == 'en'
+                  ? Positioned(
+                      right: 20,
+                      top: 20,
+                      child: IconButton(
+                        icon: const Icon(Icons.edit),
+                        onPressed: () {},
+                      ),
+                    )
+                  : Positioned(
+                      left: 20,
+                      top: 20,
+                      child: IconButton(
+                        icon: const Icon(Icons.edit),
+                        onPressed: () {},
+                      ),
+                    ),
             ],
           ),
           Container(
@@ -183,7 +194,8 @@ class UserProfile extends StatelessWidget {
                   Navigator.push<void>(
                     context,
                     MaterialPageRoute<void>(
-                      builder: (BuildContext context) => const ClaimsListScreen(),
+                      builder: (BuildContext context) =>
+                          const ClaimsAndReports(),
                     ),
                   );
                 },

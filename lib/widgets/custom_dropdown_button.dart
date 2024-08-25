@@ -14,9 +14,13 @@ final List<String> categories = [
 
 // ignore: must_be_immutable
 class CustomDropdownButton extends StatefulWidget {
-  CustomDropdownButton({super.key, required this.controller, required this.selectedValue, required this.onChanged});
+  CustomDropdownButton(
+      {super.key,
+      required this.controller,
+      required this.selectedDropDownValue,
+      required this.onChanged});
   final TextEditingController controller;
-  String? selectedValue;
+  String? selectedDropDownValue;
   final Function(String?) onChanged;
 
   @override
@@ -63,10 +67,10 @@ class _CustomDropdownButtonState extends State<CustomDropdownButton> {
                   ),
                 ))
             .toList(),
-        value: widget.selectedValue,
+        value: widget.selectedDropDownValue,
         onChanged: (value) {
           setState(() {
-            widget.selectedValue = value;
+            widget.selectedDropDownValue = value;
           });
           widget.onChanged(value);
         },

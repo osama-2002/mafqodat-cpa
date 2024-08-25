@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 
+import 'package:mafqodat/screens/admin_portal/history.dart';
 import 'package:mafqodat/widgets/admin_profile.dart';
 
 class Home extends StatefulWidget {
@@ -51,17 +52,7 @@ class _HomeState extends State<Home> {
       ),
     );
     if (_currentIndex == 1) {
-      activePage = const Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              "Claims",
-              style: TextStyle(fontSize: 24),
-            ),
-          ],
-        ),
-      );
+      activePage = const ClaimsAndReports();
     }
     if (_currentIndex == 2) {
       activePage = const Center(
@@ -89,8 +80,48 @@ class _HomeState extends State<Home> {
               Icons.exit_to_app,
               color: Theme.of(context).colorScheme.onSurface,
             ),
-            onPressed: () async {
-              await FirebaseAuth.instance.signOut();
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                    content: const Text(
+                      "Are you sure you want to sign out?",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: Text(
+                          'Cancel',
+                          style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w700,
+                              color: Theme.of(context).colorScheme.secondary),
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () async {
+                          await FirebaseAuth.instance.signOut();
+                          Navigator.of(context).pop();
+                        },
+                        child: Text(
+                          'Confirm',
+                          style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w700,
+                              color: Theme.of(context).colorScheme.secondary),
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              );
             },
           ),
         ],

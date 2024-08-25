@@ -6,12 +6,9 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 String googleMapsApiKey = dotenv.env['GOOGLE_MAPS_API_KEY']!;
 
 class LocationInput extends StatefulWidget {
-  const LocationInput({
-    super.key, 
-    required this.onChanged, 
-    required this.onLoaded
-  });
-  
+  const LocationInput(
+      {super.key, required this.onChanged, required this.onLoaded});
+
   final void Function(double latitude, double longitude) onChanged;
   final void Function(double latitude, double longitude) onLoaded;
 

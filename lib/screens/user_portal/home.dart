@@ -50,8 +50,9 @@ class _HomeState extends State<Home> {
                   ),
                   const SizedBox(height: 50),
                   ElevatedButton.icon(
-                    onPressed: (){
-                      Navigator.of(context).push(MaterialPageRoute(builder: (context) => const ClaimForm()));
+                    onPressed: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => const ClaimForm()));
                     },
                     label: const Text('I have lost an item',
                         style: TextStyle(fontSize: 20)),
@@ -59,8 +60,9 @@ class _HomeState extends State<Home> {
                   ),
                   const SizedBox(height: 30),
                   ElevatedButton.icon(
-                    onPressed: (){
-                      Navigator.of(context).push(MaterialPageRoute(builder: (context) => const ReportForm()));
+                    onPressed: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => const ReportForm()));
                     },
                     label: const Text('I have found an item',
                         style: TextStyle(fontSize: 20)),
@@ -95,8 +97,48 @@ class _HomeState extends State<Home> {
               Icons.exit_to_app,
               color: Theme.of(context).colorScheme.onSurface,
             ),
-            onPressed: () async {
-              await FirebaseAuth.instance.signOut();
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                    content: const Text(
+                      "Are you sure you want to sign out?",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text(
+                          'Cancel',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () async {
+                          await FirebaseAuth.instance.signOut();
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text(
+                          'Confirm',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              );
             },
           ),
         ],

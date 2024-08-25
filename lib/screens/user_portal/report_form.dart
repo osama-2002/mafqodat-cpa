@@ -1,4 +1,6 @@
 import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:flutter_translate/flutter_translate.dart';
@@ -6,6 +8,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:scroll_date_picker/scroll_date_picker.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:uuid/uuid.dart';
 
 import 'package:mafqodat/widgets/custom_dropdown_button.dart';
 import 'package:mafqodat/widgets/custom_text_field.dart';
@@ -21,7 +24,7 @@ class ReportForm extends StatefulWidget {
 class _ReportFormState extends State<ReportForm> {
   final FocusScopeNode _focusScopeNode = FocusScopeNode();
   final _formKey = GlobalKey<FormState>();
-  String? selectedValue;
+  String? _selectedDropDownValue;
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _searchController = TextEditingController();
   final ImagePicker _picker = ImagePicker();
@@ -34,6 +37,8 @@ class _ReportFormState extends State<ReportForm> {
   double? currentLongitude;
   final GlobalKey<LocationInputState> _locationInputKey =
       GlobalKey<LocationInputState>();
+  Uuid uuid = const Uuid();
+  bool _isLoading = false;
 
   void _unfocusTextFields() {
     _focusScopeNode.unfocus();
@@ -41,7 +46,7 @@ class _ReportFormState extends State<ReportForm> {
 
   void _onDropdownValueChanged(String? newValue) {
     setState(() {
-      selectedValue = newValue;
+      _selectedDropDownValue = newValue;
     });
   }
 
@@ -111,10 +116,10 @@ class _ReportFormState extends State<ReportForm> {
   }
 
   void _clearForm() {
-    //_locationInputKey.currentState?.refreshLocation();
+    _locationInputKey.currentState?.refreshLocation();
     setState(() {
       _formKey.currentState!.reset();
-      selectedValue = null;
+      _selectedDropDownValue = null;
       _descriptionController.clear();
       _selectedDate = DateTime.now();
       _selectedImage = null;
@@ -122,6 +127,59 @@ class _ReportFormState extends State<ReportForm> {
       latitude = currentLatitude;
       longitude = currentLongitude;
     });
+  }
+
+  void _submitReport() async {
+    setState(() {
+      _isLoading = true;
+    });
+    final db = FirebaseFirestore.instance;
+    final storage = FirebaseStorage.instance;
+    String reportId = uuid.v4();
+    String downloadUrl = "";
+
+    if (_selectedImage != null) {
+      String fileName =
+          '${reportId}_${DateTime.now().millisecondsSinceEpoch}.jpg';
+      try {
+        Reference ref = storage.ref().child('reports/$reportId/$fileName');
+        UploadTask uploadTask = ref.putFile(File(_selectedImage!.path));
+        TaskSnapshot snapshot = await uploadTask;
+
+        downloadUrl = await snapshot.ref.getDownloadURL();
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Failed to upload images')));
+        return;
+      }
+    }
+    try {
+      await db.collection('reports').doc(reportId).set(
+        {
+          'userId': FirebaseAuth.instance.currentUser!.uid,
+          'description': _descriptionController.text,
+          'color': _currentColor!.value,
+          'date': _selectedDate,
+          'location': GeoPoint(latitude!, longitude!),
+          'status': 'pending',
+          'type': _selectedDropDownValue,
+          'imageUrl': downloadUrl,
+        },
+      );
+      _clearForm();
+      if (mounted) Navigator.of(context).pop();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Submitted successfully'),
+        ),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed to submit report: $e'),
+        ),
+      );
+    }
   }
 
   @override
@@ -171,7 +229,7 @@ class _ReportFormState extends State<ReportForm> {
                         children: [
                           CustomDropdownButton(
                             controller: _searchController,
-                            selectedValue: selectedValue,
+                            selectedDropDownValue: _selectedDropDownValue,
                             onChanged: _onDropdownValueChanged,
                           ),
                           const SizedBox(height: 16),
@@ -283,14 +341,9 @@ class _ReportFormState extends State<ReportForm> {
                               ElevatedButton(
                                 onPressed: () {
                                   if (_formKey.currentState!.validate() &&
-                                      selectedValue != null) {
-                                    Navigator.of(context).pop();
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                        content: Text('Submitted successfully'),
-                                      ),
-                                    );
-                                    _clearForm();
+                                      _selectedDropDownValue != null &&
+                                      _selectedImage != null) {
+                                    _submitReport();
                                   } else {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
@@ -300,7 +353,9 @@ class _ReportFormState extends State<ReportForm> {
                                     );
                                   }
                                 },
-                                child: const Text('Submit'),
+                                child: _isLoading
+                                    ? const CircularProgressIndicator()
+                                    : const Text('Submit'),
                               ),
                               const SizedBox(width: 32),
                               ElevatedButton(
