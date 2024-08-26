@@ -70,6 +70,29 @@ class _ReportState extends State<Report> {
                 Row(
                   children: [
                     const Text(
+                      "Type: ",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                      ),
+                      textAlign: TextAlign.start,
+                    ),
+                    Expanded(
+                      child: Text(
+                        widget.reportData['type'],
+                        style: const TextStyle(
+                          fontSize: 16,
+                        ),
+                        softWrap: true,
+                        overflow: TextOverflow.visible,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                Row(
+                  children: [
+                    const Text(
                       "Description: ",
                       style: TextStyle(
                         fontSize: 16,
@@ -112,14 +135,14 @@ class _ReportState extends State<Report> {
                 Row(
                   children: [
                     const Text(
-                      'Date: ',
+                      'Timestamp: ',
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
                     Text(
-                      DateFormat('yyyy-MM-dd   hh a')
+                      DateFormat('dd-MM-yyyy   hh a')
                           .format(widget.reportData['date'].toDate()),
                       style: const TextStyle(
                         fontSize: 16,

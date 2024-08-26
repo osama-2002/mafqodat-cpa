@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:material_symbols_icons/material_symbols_icons.dart';
@@ -5,9 +6,140 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:mafqodat/screens/user_portal/history.dart';
 
-class UserProfile extends StatelessWidget {
+class UserProfile extends StatefulWidget {
   const UserProfile({super.key, required this.userData});
   final DocumentSnapshot userData;
+
+  @override
+  State<UserProfile> createState() => _UserProfileState();
+}
+
+class _UserProfileState extends State<UserProfile> {
+  final TextEditingController _newNameController = TextEditingController();
+  final TextEditingController _newPhoneNumberController = TextEditingController();
+  
+  void _showEditInfoDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Edit Info"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                "Update the fields you want to edit. You don't need to fill out all fields.",
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: _newNameController,
+                decoration: InputDecoration(
+                  labelText: " New Display Name",
+                  labelStyle: TextStyle(
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                  hintStyle: TextStyle(
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    gapPadding: 0.0,
+                    borderSide: BorderSide(
+                      color: Theme.of(context).colorScheme.primary,
+                      width: 1.5,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: _newPhoneNumberController,
+                decoration: InputDecoration(
+                  labelText: " New Phone Number",
+                  labelStyle: TextStyle(
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                  hintStyle: TextStyle(
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    gapPadding: 0.0,
+                    borderSide: BorderSide(
+                      color: Theme.of(context).colorScheme.primary,
+                      width: 1.5,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                _newNameController.clear();
+                _newPhoneNumberController.clear();
+                Navigator.of(context).pop();
+              },
+              child: Text(
+                'Cancel',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+              ),
+            ),
+            TextButton(
+              onPressed: () async {
+                if (_newNameController.text.isNotEmpty ||
+                    _newPhoneNumberController.text.isNotEmpty) {
+                  if (_newNameController.text.isNotEmpty) {
+                    await FirebaseFirestore.instance
+                        .collection('users')
+                        .doc(FirebaseAuth.instance.currentUser!.uid)
+                        .update(
+                      {
+                        'name': _newNameController.text,
+                      },
+                    );
+                  }
+                  if (_newPhoneNumberController.text.isNotEmpty) {
+                    await FirebaseFirestore.instance
+                        .collection('users')
+                        .doc(FirebaseAuth.instance.currentUser!.uid)
+                        .update(
+                      {
+                        'phoneNumber': _newPhoneNumberController.text,
+                      },
+                    );
+                  }
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text("Close the application and open it again"),
+                    ),
+                  );
+                }
+                _newNameController.clear();
+                _newPhoneNumberController.clear();
+                Navigator.of(context).pop();
+              },
+              child: Text(
+                'Confirm',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +161,7 @@ class UserProfile extends StatelessWidget {
                       radius: 40,
                       child: ClipOval(
                         child: Image.asset(
-                          userData['gender'] == 'Male'
+                          widget.userData['gender'] == 'Male'
                               ? 'assets/images/male_avatar.webp'
                               : 'assets/images/female_avatar.png',
                           fit: BoxFit.cover,
@@ -43,7 +175,7 @@ class UserProfile extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "${userData['name']}",
+                          "${widget.userData['name']}",
                           style: const TextStyle(
                               fontSize: 24, fontWeight: FontWeight.bold),
                         ),
@@ -63,7 +195,7 @@ class UserProfile extends StatelessWidget {
                       top: 20,
                       child: IconButton(
                         icon: const Icon(Icons.edit),
-                        onPressed: () {},
+                        onPressed: _showEditInfoDialog,
                       ),
                     )
                   : Positioned(
@@ -71,7 +203,7 @@ class UserProfile extends StatelessWidget {
                       top: 20,
                       child: IconButton(
                         icon: const Icon(Icons.edit),
-                        onPressed: () {},
+                        onPressed: _showEditInfoDialog,
                       ),
                     ),
             ],
@@ -105,7 +237,7 @@ class UserProfile extends StatelessWidget {
                                 ),
                                 const SizedBox(height: 5),
                                 Text(
-                                  "${userData['nationalNumber']}",
+                                  "${widget.userData['nationalNumber']}",
                                   style: TextStyle(
                                       fontSize: 16, color: Colors.grey[600]),
                                 ),
@@ -135,15 +267,13 @@ class UserProfile extends StatelessWidget {
                                 ),
                                 const SizedBox(height: 5),
                                 Text(
-                                  "+962 ${userData['phoneNumber']}",
+                                  "+962 ${widget.userData['phoneNumber']}",
                                   style: TextStyle(
                                       fontSize: 16, color: Colors.grey[600]),
                                 ),
                               ],
                             ),
                           ),
-                          IconButton(
-                              onPressed: () {}, icon: const Icon(Icons.edit)),
                         ],
                       ),
                     ),
@@ -167,15 +297,13 @@ class UserProfile extends StatelessWidget {
                                 ),
                                 const SizedBox(height: 5),
                                 Text(
-                                  "${userData['email']}",
+                                  "${widget.userData['email']}",
                                   style: TextStyle(
                                       fontSize: 16, color: Colors.grey[600]),
                                 ),
                               ],
                             ),
                           ),
-                          IconButton(
-                              onPressed: () {}, icon: const Icon(Icons.edit)),
                         ],
                       ),
                     ),

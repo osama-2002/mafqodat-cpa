@@ -21,7 +21,7 @@ class _HomeState extends State<Home> {
   int _currentIndex = 0;
   DocumentSnapshot? adminData;
 
-  void _getAdminData() async {
+  void getAdminData() async {
     DocumentSnapshot data = await FirebaseFirestore.instance
         .collection('admins')
         .doc(FirebaseAuth.instance.currentUser!.uid)
@@ -34,7 +34,7 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
-    _getAdminData();
+    getAdminData();
   }
 
   @override
@@ -61,7 +61,7 @@ class _HomeState extends State<Home> {
       );
     }
     if (_currentIndex == 3) {
-      activePage = AdminProfile(adminData: adminData!);
+      activePage = AdminProfile(adminData: adminData!,);
     }
     return Scaffold(
       appBar: AppBar(

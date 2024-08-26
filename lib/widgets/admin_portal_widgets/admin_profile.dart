@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -17,6 +18,8 @@ class AdminProfile extends StatefulWidget {
 class _AdminProfileState extends State<AdminProfile> {
   final geocoder = FlGeocoder(googleMapsApiKey);
   String? formattedAddress = '';
+  final TextEditingController _newNameController = TextEditingController();
+  final TextEditingController _newPhoneNumberController = TextEditingController();
 
   Future<void> _getFormattedAddress() async {
     final coordinates = Location(
@@ -31,6 +34,129 @@ class _AdminProfileState extends State<AdminProfile> {
     setState(() {
       formattedAddress = results[0].formattedAddress;
     });
+  }
+
+  void _showEditInfoDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Edit Info"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                "Update the fields you want to edit. You don't need to fill out all fields.",
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: _newNameController,
+                decoration: InputDecoration(
+                  labelText: " New Display Name",
+                  labelStyle: TextStyle(
+                    color: Theme.of(context).colorScheme.secondary,
+                  ),
+                  hintStyle: TextStyle(
+                    color: Theme.of(context).colorScheme.secondary,
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    gapPadding: 0.0,
+                    borderSide: BorderSide(
+                      color: Theme.of(context).colorScheme.secondary,
+                      width: 1.5,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: _newPhoneNumberController,
+                decoration: InputDecoration(
+                  labelText: " New Phone Number",
+                  labelStyle: TextStyle(
+                    color: Theme.of(context).colorScheme.secondary,
+                  ),
+                  hintStyle: TextStyle(
+                    color: Theme.of(context).colorScheme.secondary,
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    gapPadding: 0.0,
+                    borderSide: BorderSide(
+                      color: Theme.of(context).colorScheme.secondary,
+                      width: 1.5,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                _newNameController.clear();
+                _newPhoneNumberController.clear();
+                Navigator.of(context).pop();
+              },
+              child: Text(
+                'Cancel',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
+                  color: Theme.of(context).colorScheme.secondary,
+                ),
+              ),
+            ),
+            TextButton(
+              onPressed: () async {
+                if (_newNameController.text.isNotEmpty ||
+                    _newPhoneNumberController.text.isNotEmpty) {
+                  if (_newNameController.text.isNotEmpty) {
+                    await FirebaseFirestore.instance
+                        .collection('admins')
+                        .doc(FirebaseAuth.instance.currentUser!.uid)
+                        .update(
+                      {
+                        'name': _newNameController.text,
+                      },
+                    );
+                  }
+                  if (_newPhoneNumberController.text.isNotEmpty) {
+                    await FirebaseFirestore.instance
+                        .collection('admins')
+                        .doc(FirebaseAuth.instance.currentUser!.uid)
+                        .update(
+                      {
+                        'phoneNumber': _newPhoneNumberController.text,
+                      },
+                    );
+                  }
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text("Close the application and open it again"),
+                    ),
+                  );
+                }
+                _newNameController.clear();
+                _newPhoneNumberController.clear();
+                Navigator.of(context).pop();
+              },
+              child: Text(
+                'Confirm',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
+                  color: Theme.of(context).colorScheme.secondary,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -93,7 +219,7 @@ class _AdminProfileState extends State<AdminProfile> {
                       top: 20,
                       child: IconButton(
                         icon: const Icon(Icons.edit),
-                        onPressed: () {},
+                        onPressed: _showEditInfoDialog,
                       ),
                     )
                   : Positioned(
@@ -101,7 +227,7 @@ class _AdminProfileState extends State<AdminProfile> {
                       top: 20,
                       child: IconButton(
                         icon: const Icon(Icons.edit),
-                        onPressed: () {},
+                        onPressed: _showEditInfoDialog,
                       ),
                     ),
             ],

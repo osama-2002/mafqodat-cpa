@@ -8,7 +8,7 @@ final List<String> categories = [
   'Headset',
   'Wallet',
   'Bracelet',
-  'Neckless',
+  'Necklace',
   'Miscellaneous',
 ];
 

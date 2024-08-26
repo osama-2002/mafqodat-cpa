@@ -84,7 +84,7 @@ class _ClaimsAndReportsState extends State<ClaimsAndReports> {
                   if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
                     return Column(
                       children: [
-                        const SizedBox(height: 320),
+                        const SizedBox(height: 270),
                         Center(
                           child: _selectedTab == 'Claims'
                               ? const Text(

@@ -84,7 +84,7 @@ class _ItemsListState extends State<ItemsList> {
                   ),
                 ],
               ),
-              const SizedBox(height: 340),
+              const SizedBox(height: 280),
               const Center(
                 child: Text(
                   'No items found.',
