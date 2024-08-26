@@ -7,7 +7,7 @@ import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 
 import 'package:mafqodat/screens/user_portal/report_form.dart';
 import 'package:mafqodat/screens/user_portal/claim_form.dart';
-import 'package:mafqodat/widgets/user_profile.dart';
+import 'package:mafqodat/widgets/user_portal_widgets/user_profile.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});

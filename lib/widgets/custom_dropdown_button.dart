@@ -18,9 +18,13 @@ class CustomDropdownButton extends StatefulWidget {
       {super.key,
       required this.controller,
       required this.selectedDropDownValue,
+      this.isUser = true,
+      this.isFilter = false,
       required this.onChanged});
   final TextEditingController controller;
   String? selectedDropDownValue;
+  final bool isUser;
+  final bool isFilter;
   final Function(String?) onChanged;
 
   @override
@@ -33,20 +37,20 @@ class _CustomDropdownButtonState extends State<CustomDropdownButton> {
     return DropdownButtonHideUnderline(
       child: DropdownButton2<String>(
         isExpanded: true,
-        hint: const Row(
+        hint: Row(
           children: [
-            Icon(
+            const Icon(
               Icons.list,
               size: 16,
               color: Colors.black,
             ),
-            SizedBox(
+            const SizedBox(
               width: 4,
             ),
             Expanded(
               child: Text(
-                ' Category',
-                style: TextStyle(
+                widget.isFilter ? ' Filter' : ' Category',
+                style: const TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.bold,
                   color: Colors.black,
@@ -83,7 +87,9 @@ class _CustomDropdownButtonState extends State<CustomDropdownButton> {
             border: Border.all(
               color: Colors.black26,
             ),
-            color: Theme.of(context).colorScheme.primary,
+            color: widget.isUser
+                ? Theme.of(context).colorScheme.primary
+                : Theme.of(context).colorScheme.secondary,
           ),
           elevation: 2,
         ),
@@ -100,7 +106,9 @@ class _CustomDropdownButtonState extends State<CustomDropdownButton> {
           width: 200,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(14),
-            color: Theme.of(context).colorScheme.primary,
+            color: widget.isUser
+                ? Theme.of(context).colorScheme.primary
+                : Theme.of(context).colorScheme.secondary,
           ),
           offset: const Offset(-20, 0),
           scrollbarTheme: ScrollbarThemeData(

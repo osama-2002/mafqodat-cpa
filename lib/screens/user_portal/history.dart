@@ -3,8 +3,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 
-import 'package:mafqodat/widgets/claim.dart';
-import 'package:mafqodat/widgets/report.dart';
+import 'package:mafqodat/widgets/user_portal_widgets/claim.dart';
+import 'package:mafqodat/widgets/user_portal_widgets/report.dart';
 
 class ClaimsAndReports extends StatefulWidget {
   const ClaimsAndReports({super.key});

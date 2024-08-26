@@ -5,8 +5,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 
+import 'package:mafqodat/screens/admin_portal/add_item.dart';
+import 'package:mafqodat/widgets/admin_portal_widgets/items_list.dart';
 import 'package:mafqodat/screens/admin_portal/history.dart';
-import 'package:mafqodat/widgets/admin_profile.dart';
+import 'package:mafqodat/widgets/admin_portal_widgets/admin_profile.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -37,22 +39,13 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    Widget activePage = Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            translate("bismillah"),
-            style: const TextStyle(
-              fontSize: 24,
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
+    Widget activePage = const SingleChildScrollView(
+      child: ItemsList(),
     );
     if (_currentIndex == 1) {
-      activePage = const ClaimsAndReports();
+      activePage = ClaimsAndReports(
+        adminData: adminData,
+      );
     }
     if (_currentIndex == 2) {
       activePage = const Center(
@@ -169,7 +162,13 @@ class _HomeState extends State<Home> {
       ),
       floatingActionButton: _currentIndex == 0
           ? FloatingActionButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                  return AddItem(
+                    adminData: adminData!,
+                  );
+                }));
+              },
               backgroundColor: Theme.of(context).colorScheme.surface,
               child: Icon(
                 Symbols.place_item_sharp,

@@ -9,10 +9,14 @@ import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:scroll_date_picker/scroll_date_picker.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:uuid/uuid.dart';
+import 'package:fl_geocoder/fl_geocoder.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'package:mafqodat/widgets/custom_dropdown_button.dart';
 import 'package:mafqodat/widgets/custom_text_field.dart';
 import 'package:mafqodat/widgets/location_input.dart';
+
+String googleMapsApiKey = dotenv.env['GOOGLE_MAPS_API_KEY']!;
 
 class ClaimForm extends StatefulWidget {
   const ClaimForm({super.key});
@@ -29,14 +33,15 @@ class _ClaimFormState extends State<ClaimForm> {
   final TextEditingController _searchController = TextEditingController();
   DateTime _selectedDate = DateTime.now();
   final ImagePicker _picker = ImagePicker();
-  Color? _currentColor;
+  Color? _selectedColor;
   List<XFile>? _selectedImages;
   double? latitude;
   double? longitude;
   double? currentLatitude;
   double? currentLongitude;
-  final GlobalKey<LocationInputState> _locationInputKey =
-      GlobalKey<LocationInputState>();
+  final GlobalKey<LocationInputState> _locationInputKey = GlobalKey<LocationInputState>();
+  final geocoder = FlGeocoder(googleMapsApiKey);
+  String formattedAddress = '';
   Uuid uuid = const Uuid();
   bool _isLoading = false;
 
@@ -70,7 +75,7 @@ class _ClaimFormState extends State<ClaimForm> {
           title: const Text('Pick a primary color'),
           content: SingleChildScrollView(
             child: BlockPicker(
-              pickerColor: _currentColor,
+              pickerColor: _selectedColor,
               availableColors: const [
                 Colors.red,
                 Colors.blue,
@@ -83,7 +88,7 @@ class _ClaimFormState extends State<ClaimForm> {
               ],
               onColorChanged: (Color color) {
                 setState(() {
-                  _currentColor = color;
+                  _selectedColor = color;
                 });
               },
             ),
@@ -116,6 +121,18 @@ class _ClaimFormState extends State<ClaimForm> {
     });
   }
 
+  Future<void> _getFormattedAddress() async {
+    final coordinates = Location(latitude!, longitude!);
+    final results = await geocoder.findAddressesFromLocationCoordinates(
+      location: coordinates,
+      useDefaultResultTypeFilter: true,
+    );
+
+    setState(() {
+      formattedAddress = results[0].formattedAddress!;
+    });
+  }
+
   void _clearForm() {
     _locationInputKey.currentState?.refreshLocation();
     setState(() {
@@ -124,7 +141,7 @@ class _ClaimFormState extends State<ClaimForm> {
       _descriptionController.clear();
       _selectedDate = DateTime.now();
       _selectedImages = [];
-      _currentColor = null;
+      _selectedColor = null;
       latitude = currentLatitude;
       longitude = currentLongitude;
     });
@@ -157,17 +174,27 @@ class _ClaimFormState extends State<ClaimForm> {
         }
       }
     }
+    await _getFormattedAddress();
+    String region;
+    if (formattedAddress.toLowerCase().contains("amman")) {
+      region = "amman";
+    } else if (formattedAddress.toLowerCase().contains("zarqa")) {
+      region = "zarqa";
+    } else {
+      region = "other";
+    }
     try {
       await db.collection('claims').doc(claimId).set(
         {
           'userId': FirebaseAuth.instance.currentUser!.uid,
           'description': _descriptionController.text,
-          'color': _currentColor!.value,
+          'color': _selectedColor!.value,
           'date': _selectedDate,
           'location': GeoPoint(latitude!, longitude!),
           'status': 'pending',
           'type': _selectedDropDownValue,
           'imageUrls': imageUrls,
+          'region': region,
         },
       );
       _clearForm();
@@ -218,7 +245,7 @@ class _ClaimFormState extends State<ClaimForm> {
           node: _focusScopeNode,
           child: Center(
             child: Container(
-              margin: const EdgeInsets.symmetric(horizontal: 20),
+              margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
               child: Card(
                 color: Colors.white,
                 borderOnForeground: false,
@@ -253,11 +280,11 @@ class _ClaimFormState extends State<ClaimForm> {
                           const SizedBox(height: 16),
                           ElevatedButton(
                             onPressed: () => _pickColor(context),
-                            child: _currentColor == null
+                            child: _selectedColor == null
                                 ? const Text('Pick a Color')
                                 : Icon(
                                     Symbols.colors,
-                                    color: _currentColor,
+                                    color: _selectedColor,
                                     size: 34,
                                   ),
                           ),
@@ -355,7 +382,8 @@ class _ClaimFormState extends State<ClaimForm> {
                               ElevatedButton(
                                 onPressed: () {
                                   if (_formKey.currentState!.validate() &&
-                                      _selectedDropDownValue != null) {
+                                      _selectedDropDownValue != null &&
+                                      _selectedColor != null) {
                                     _submitClaim();
                                   } else {
                                     ScaffoldMessenger.of(context).showSnackBar(

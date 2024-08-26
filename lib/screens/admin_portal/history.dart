@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 
-import 'package:mafqodat/widgets/claim.dart';
-import 'package:mafqodat/widgets/report.dart';
+import 'package:mafqodat/widgets/user_portal_widgets/claim.dart';
+import 'package:mafqodat/widgets/user_portal_widgets/report.dart';
 
 class ClaimsAndReports extends StatefulWidget {
-  const ClaimsAndReports({super.key});
-
+  const ClaimsAndReports({super.key, required this.adminData});
+  final DocumentSnapshot? adminData;
   @override
   State<ClaimsAndReports> createState() => _ClaimsAndReportsState();
 }
@@ -59,9 +59,11 @@ class _ClaimsAndReportsState extends State<ClaimsAndReports> {
                 stream: _selectedTab == 'Claims'
                     ? FirebaseFirestore.instance
                         .collection('claims')
+                        .where('region', isEqualTo: widget.adminData!['region'])
                         .snapshots()
                     : FirebaseFirestore.instance
                         .collection('reports')
+                        .where('region', isEqualTo: widget.adminData!['region'])
                         .snapshots(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {

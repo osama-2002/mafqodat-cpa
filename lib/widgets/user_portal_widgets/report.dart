@@ -3,8 +3,13 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:fl_geocoder/fl_geocoder.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:intl/intl.dart';
 
-class Report extends StatelessWidget {
+String googleMapsApiKey = dotenv.env['GOOGLE_MAPS_API_KEY']!;
+
+class Report extends StatefulWidget {
   const Report(
       {super.key,
       required this.id,
@@ -13,6 +18,35 @@ class Report extends StatelessWidget {
   final String id;
   final Map<String, dynamic> reportData;
   final String imageUrl;
+
+  @override
+  State<Report> createState() => _ReportState();
+}
+
+class _ReportState extends State<Report> {
+  final geocoder = FlGeocoder(googleMapsApiKey);
+  String? formattedAddress = '';
+
+  Future<void> _getFormattedAddress() async {
+    final coordinates = Location(
+      widget.reportData['location'].latitude,
+      widget.reportData['location'].longitude,
+    );
+    final results = await geocoder.findAddressesFromLocationCoordinates(
+      location: coordinates,
+      useDefaultResultTypeFilter: true,
+    );
+
+    setState(() {
+      formattedAddress = results[0].formattedAddress;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _getFormattedAddress();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,22 +61,71 @@ class Report extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Text(
-                  reportData['description'],
-                  style: const TextStyle(
-                    fontSize: 18.0,
-                    fontWeight: FontWeight.bold,
-                  ),
+                const SizedBox(height: 12),
+                const Text(
+                  'Found Item Report',
+                  style: TextStyle(fontWeight: FontWeight.w700, fontSize: 18),
                 ),
-                const SizedBox(height: 8.0),
-                Text(
-                  'Status: ${reportData['status']}',
-                  style: const TextStyle(fontSize: 16),
+                const SizedBox(height: 12),
+                Row(
+                  children: [
+                    const Text(
+                      "Description: ",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                      ),
+                      textAlign: TextAlign.start,
+                    ),
+                    Expanded(
+                      child: Text(
+                        widget.reportData['description'],
+                        style: const TextStyle(
+                          fontSize: 16,
+                        ),
+                        softWrap: true,
+                        overflow: TextOverflow.visible,
+                      ),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 8),
-                Text(
-                  'Date: ${reportData['date'].toDate().toString()}',
-                  style: const TextStyle(fontSize: 16),
+                Row(
+                  children: [
+                    const Text(
+                      'Status: ',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                      ),
+                      textAlign: TextAlign.start,
+                    ),
+                    Text(
+                      widget.reportData['status'],
+                      style: const TextStyle(
+                        fontSize: 16,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    const Text(
+                      'Date: ',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    Text(
+                      DateFormat('yyyy-MM-dd   hh a')
+                          .format(widget.reportData['date'].toDate()),
+                      style: const TextStyle(
+                        fontSize: 16,
+                      ),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 8),
                 Container(
@@ -57,11 +140,11 @@ class Report extends StatelessWidget {
                   ),
                   child: SizedBox(
                     height: 150,
-                    child: imageUrl.isNotEmpty
+                    child: widget.imageUrl.isNotEmpty
                         ? Padding(
                             padding: const EdgeInsets.all(4),
                             child: Image.network(
-                              imageUrl,
+                              widget.imageUrl,
                               fit: BoxFit.cover,
                               width: 150,
                               height: 150,
@@ -93,15 +176,16 @@ class Report extends StatelessWidget {
                     height: 150,
                     child: GoogleMap(
                       initialCameraPosition: CameraPosition(
-                        target: LatLng(reportData['location'].latitude,
-                            reportData['location'].longitude),
+                        target: LatLng(widget.reportData['location'].latitude,
+                            widget.reportData['location'].longitude),
                         zoom: 12,
                       ),
                       markers: {
                         Marker(
                           markerId: const MarkerId('marker_1'),
-                          position: LatLng(reportData['location'].latitude,
-                              reportData['location'].longitude),
+                          position: LatLng(
+                              widget.reportData['location'].latitude,
+                              widget.reportData['location'].longitude),
                         ),
                       },
                       gestureRecognizers: {
@@ -113,6 +197,29 @@ class Report extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 8),
+                Row(
+                  children: [
+                    const Text(
+                      "Address: ",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                      ),
+                      textAlign: TextAlign.start,
+                    ),
+                    Expanded(
+                      child: Text(
+                        "$formattedAddress",
+                        style: const TextStyle(
+                          fontSize: 16,
+                        ),
+                        softWrap: true,
+                        overflow: TextOverflow.visible,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 14),
                 ElevatedButton.icon(
                   onPressed: () {
                     showDialog(
@@ -144,7 +251,7 @@ class Report extends StatelessWidget {
                                 try {
                                   FirebaseFirestore.instance
                                       .collection('reports')
-                                      .doc(id)
+                                      .doc(widget.id)
                                       .delete();
                                 } catch (e) {
                                   ScaffoldMessenger.of(context).showSnackBar(
@@ -184,7 +291,7 @@ class Report extends StatelessWidget {
                 height: 50,
                 decoration: BoxDecoration(
                   border: Border.all(
-                    color: Color(reportData['color']),
+                    color: Color(widget.reportData['color']),
                     width: 2,
                   ),
                   borderRadius: BorderRadius.circular(8),
@@ -192,7 +299,7 @@ class Report extends StatelessWidget {
                 child: Center(
                     child: Icon(
                   Icons.color_lens_outlined,
-                  color: Color(reportData['color']),
+                  color: Color(widget.reportData['color']),
                 )),
               ),
             )

@@ -1,18 +1,22 @@
 import 'dart:io';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:scroll_date_picker/scroll_date_picker.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:uuid/uuid.dart';
+import 'package:fl_geocoder/fl_geocoder.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'package:mafqodat/widgets/custom_dropdown_button.dart';
 import 'package:mafqodat/widgets/custom_text_field.dart';
 import 'package:mafqodat/widgets/location_input.dart';
+
+String googleMapsApiKey = dotenv.env['GOOGLE_MAPS_API_KEY']!;
 
 class ReportForm extends StatefulWidget {
   const ReportForm({super.key});
@@ -28,15 +32,16 @@ class _ReportFormState extends State<ReportForm> {
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _searchController = TextEditingController();
   final ImagePicker _picker = ImagePicker();
-  Color? _currentColor;
+  Color? _selectedColor;
   DateTime _selectedDate = DateTime.now();
   File? _selectedImage;
   double? latitude;
   double? longitude;
   double? currentLatitude;
   double? currentLongitude;
-  final GlobalKey<LocationInputState> _locationInputKey =
-      GlobalKey<LocationInputState>();
+  final GlobalKey<LocationInputState> _locationInputKey = GlobalKey<LocationInputState>();
+  final geocoder = FlGeocoder(googleMapsApiKey);
+  String _formattedAddress = '';
   Uuid uuid = const Uuid();
   bool _isLoading = false;
 
@@ -58,7 +63,7 @@ class _ReportFormState extends State<ReportForm> {
           title: const Text('Pick a primary color'),
           content: SingleChildScrollView(
             child: BlockPicker(
-              pickerColor: _currentColor,
+              pickerColor: _selectedColor,
               availableColors: const [
                 Colors.red,
                 Colors.blue,
@@ -71,7 +76,7 @@ class _ReportFormState extends State<ReportForm> {
               ],
               onColorChanged: (Color color) {
                 setState(() {
-                  _currentColor = color;
+                  _selectedColor = color;
                 });
               },
             ),
@@ -115,6 +120,18 @@ class _ReportFormState extends State<ReportForm> {
     });
   }
 
+  Future<void> _getFormattedAddress() async {
+    final coordinates = Location(latitude!, longitude!);
+    final results = await geocoder.findAddressesFromLocationCoordinates(
+      location: coordinates,
+      useDefaultResultTypeFilter: true,
+    );
+
+    setState(() {
+      _formattedAddress = results[0].formattedAddress!;
+    });
+  }
+
   void _clearForm() {
     _locationInputKey.currentState?.refreshLocation();
     setState(() {
@@ -123,7 +140,7 @@ class _ReportFormState extends State<ReportForm> {
       _descriptionController.clear();
       _selectedDate = DateTime.now();
       _selectedImage = null;
-      _currentColor = null;
+      _selectedColor = null;
       latitude = currentLatitude;
       longitude = currentLongitude;
     });
@@ -153,17 +170,27 @@ class _ReportFormState extends State<ReportForm> {
         return;
       }
     }
+    await _getFormattedAddress();
+    String region;
+    if (_formattedAddress.toLowerCase().contains("amman")) {
+      region = "amman";
+    } else if (_formattedAddress.toLowerCase().contains("zarqa")) {
+      region = "zarqa";
+    } else {
+      region = "other";
+    }
     try {
       await db.collection('reports').doc(reportId).set(
         {
           'userId': FirebaseAuth.instance.currentUser!.uid,
           'description': _descriptionController.text,
-          'color': _currentColor!.value,
+          'color': _selectedColor!.value,
           'date': _selectedDate,
           'location': GeoPoint(latitude!, longitude!),
           'status': 'pending',
           'type': _selectedDropDownValue,
           'imageUrl': downloadUrl,
+          'region': region,
         },
       );
       _clearForm();
@@ -214,7 +241,7 @@ class _ReportFormState extends State<ReportForm> {
           node: _focusScopeNode,
           child: Center(
             child: Container(
-              margin: const EdgeInsets.symmetric(horizontal: 20),
+              margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
               child: Card(
                 color: Colors.white,
                 borderOnForeground: false,
@@ -249,11 +276,11 @@ class _ReportFormState extends State<ReportForm> {
                           const SizedBox(height: 16),
                           ElevatedButton(
                             onPressed: () => _pickColor(context),
-                            child: _currentColor == null
+                            child: _selectedColor == null
                                 ? const Text('Pick a Color')
                                 : Icon(
                                     Symbols.colors,
-                                    color: _currentColor,
+                                    color: _selectedColor,
                                     size: 34,
                                   ),
                           ),
@@ -342,6 +369,7 @@ class _ReportFormState extends State<ReportForm> {
                                 onPressed: () {
                                   if (_formKey.currentState!.validate() &&
                                       _selectedDropDownValue != null &&
+                                      _selectedColor != null &&
                                       _selectedImage != null) {
                                     _submitReport();
                                   } else {

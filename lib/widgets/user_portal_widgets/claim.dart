@@ -3,8 +3,13 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:fl_geocoder/fl_geocoder.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:intl/intl.dart';
 
-class Claim extends StatelessWidget {
+String googleMapsApiKey = dotenv.env['GOOGLE_MAPS_API_KEY']!;
+
+class Claim extends StatefulWidget {
   const Claim(
       {super.key,
       required this.id,
@@ -13,6 +18,35 @@ class Claim extends StatelessWidget {
   final String id;
   final Map<String, dynamic> claimData;
   final List<dynamic> imageUrls;
+
+  @override
+  State<Claim> createState() => _ClaimState();
+}
+
+class _ClaimState extends State<Claim> {
+  final geocoder = FlGeocoder(googleMapsApiKey);
+  String? formattedAddress = '';
+
+  Future<void> _getFormattedAddress() async {
+    final coordinates = Location(
+      widget.claimData['location'].latitude,
+      widget.claimData['location'].longitude,
+    );
+    final results = await geocoder.findAddressesFromLocationCoordinates(
+      location: coordinates,
+      useDefaultResultTypeFilter: true,
+    );
+
+    setState(() {
+      formattedAddress = results[0].formattedAddress;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _getFormattedAddress();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,12 +76,15 @@ class Claim extends StatelessWidget {
                       ),
                       textAlign: TextAlign.start,
                     ),
-                    Text(
-                      claimData['description'],
-                      style: const TextStyle(
-                        fontSize: 16,
+                    Expanded(
+                      child: Text(
+                        widget.claimData['description'],
+                        style: const TextStyle(
+                          fontSize: 16,
+                        ),
+                        softWrap: true,
+                        overflow: TextOverflow.visible,
                       ),
-                      textAlign: TextAlign.start,
                     ),
                   ],
                 ),
@@ -63,7 +100,7 @@ class Claim extends StatelessWidget {
                       textAlign: TextAlign.start,
                     ),
                     Text(
-                      claimData['status'],
+                      widget.claimData['status'],
                       style: const TextStyle(
                         fontSize: 16,
                       ),
@@ -74,14 +111,15 @@ class Claim extends StatelessWidget {
                 Row(
                   children: [
                     const Text(
-                      'Date: ',
+                      'Timestamp: ',
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
                     Text(
-                      claimData['date'].toDate().toString(),
+                      DateFormat('yyyy-MM-dd   hh a')
+                          .format(widget.claimData['date'].toDate()),
                       style: const TextStyle(
                         fontSize: 16,
                       ),
@@ -101,15 +139,15 @@ class Claim extends StatelessWidget {
                   ),
                   child: SizedBox(
                     height: 150,
-                    child: imageUrls.isNotEmpty
+                    child: widget.imageUrls.isNotEmpty
                         ? ListView.builder(
                             scrollDirection: Axis.horizontal,
-                            itemCount: imageUrls.length,
+                            itemCount: widget.imageUrls.length,
                             itemBuilder: (context, imageIndex) {
                               return Padding(
                                 padding: const EdgeInsets.all(4),
                                 child: Image.network(
-                                  imageUrls[imageIndex],
+                                  widget.imageUrls[imageIndex],
                                   fit: BoxFit.cover,
                                   width: 150,
                                   height: 150,
@@ -142,15 +180,16 @@ class Claim extends StatelessWidget {
                     height: 150,
                     child: GoogleMap(
                       initialCameraPosition: CameraPosition(
-                        target: LatLng(claimData['location'].latitude,
-                            claimData['location'].longitude),
+                        target: LatLng(widget.claimData['location'].latitude,
+                            widget.claimData['location'].longitude),
                         zoom: 12,
                       ),
                       markers: {
                         Marker(
                           markerId: const MarkerId('marker_1'),
-                          position: LatLng(claimData['location'].latitude,
-                              claimData['location'].longitude),
+                          position: LatLng(
+                              widget.claimData['location'].latitude,
+                              widget.claimData['location'].longitude),
                         ),
                       },
                       gestureRecognizers: {
@@ -161,7 +200,30 @@ class Claim extends StatelessWidget {
                     ),
                   ),
                 ),
-                const SizedBox(height: 18),
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    const Text(
+                      'Address: ',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                      ),
+                      textAlign: TextAlign.start,
+                    ),
+                    Expanded(
+                      child: Text(
+                        "$formattedAddress",
+                        style: const TextStyle(
+                          fontSize: 16,
+                        ),
+                        softWrap: true,
+                        overflow: TextOverflow.visible,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 14),
                 ElevatedButton.icon(
                   onPressed: () {
                     showDialog(
@@ -193,7 +255,7 @@ class Claim extends StatelessWidget {
                                 try {
                                   FirebaseFirestore.instance
                                       .collection('claims')
-                                      .doc(id)
+                                      .doc(widget.id)
                                       .delete();
                                 } catch (e) {
                                   ScaffoldMessenger.of(context).showSnackBar(
@@ -233,7 +295,7 @@ class Claim extends StatelessWidget {
                 height: 50,
                 decoration: BoxDecoration(
                   border: Border.all(
-                    color: Color(claimData['color']),
+                    color: Color(widget.claimData['color']),
                     width: 2,
                   ),
                   borderRadius: BorderRadius.circular(8),
@@ -241,7 +303,7 @@ class Claim extends StatelessWidget {
                 child: Center(
                     child: Icon(
                   Icons.color_lens_outlined,
-                  color: Color(claimData['color']),
+                  color: Color(widget.claimData['color']),
                 )),
               ),
             )

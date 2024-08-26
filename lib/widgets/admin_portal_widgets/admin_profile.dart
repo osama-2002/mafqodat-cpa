@@ -1,10 +1,43 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_translate/flutter_translate.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:fl_geocoder/fl_geocoder.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-class AdminProfile extends StatelessWidget {
+String googleMapsApiKey = dotenv.env['GOOGLE_MAPS_API_KEY']!;
+
+class AdminProfile extends StatefulWidget {
   const AdminProfile({super.key, required this.adminData});
   final DocumentSnapshot adminData;
+
+  @override
+  State<AdminProfile> createState() => _AdminProfileState();
+}
+
+class _AdminProfileState extends State<AdminProfile> {
+  final geocoder = FlGeocoder(googleMapsApiKey);
+  String? formattedAddress = '';
+
+  Future<void> _getFormattedAddress() async {
+    final coordinates = Location(
+      widget.adminData['location'].latitude,
+      widget.adminData['location'].longitude,
+    );
+    final results = await geocoder.findAddressesFromLocationCoordinates(
+      location: coordinates,
+      useDefaultResultTypeFilter: true,
+    );
+
+    setState(() {
+      formattedAddress = results[0].formattedAddress;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _getFormattedAddress();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +59,7 @@ class AdminProfile extends StatelessWidget {
                       radius: 40,
                       child: ClipOval(
                         child: Image.asset(
-                          adminData['gender'] == 'male'
+                          widget.adminData['gender'] == 'male'
                               ? 'assets/images/admin_male_avatar.png'
                               : 'assets/images/admin_female_avatar.png',
                           fit: BoxFit.cover,
@@ -40,7 +73,7 @@ class AdminProfile extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "${adminData['name']}",
+                          "${widget.adminData['name']}",
                           style: const TextStyle(
                               fontSize: 24, fontWeight: FontWeight.bold),
                         ),
@@ -102,7 +135,7 @@ class AdminProfile extends StatelessWidget {
                                 ),
                                 const SizedBox(height: 5),
                                 Text(
-                                  "${adminData['location']}",
+                                  "$formattedAddress",
                                   style: TextStyle(
                                       fontSize: 16, color: Colors.grey[600]),
                                 ),
@@ -162,7 +195,7 @@ class AdminProfile extends StatelessWidget {
                                 ),
                                 const SizedBox(height: 5),
                                 Text(
-                                  "+962 ${adminData['phoneNumber']}",
+                                  "+962 ${widget.adminData['phoneNumber']}",
                                   style: TextStyle(
                                       fontSize: 16, color: Colors.grey[600]),
                                 ),
@@ -192,7 +225,7 @@ class AdminProfile extends StatelessWidget {
                                 ),
                                 const SizedBox(height: 5),
                                 Text(
-                                  "${adminData['email']}",
+                                  "${widget.adminData['email']}",
                                   style: TextStyle(
                                       fontSize: 16, color: Colors.grey[600]),
                                 ),

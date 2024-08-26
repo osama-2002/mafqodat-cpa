@@ -38,7 +38,7 @@ ext {
 
 android {
     namespace = "com.example.mafqodat"
-    compileSdk = flutter.compileSdkVersion
+    compileSdk = 34
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
