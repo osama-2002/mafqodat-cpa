@@ -301,7 +301,10 @@ class _ReportState extends State<Report> {
                   ),
                   label: const Text(
                     'Delete',
-                    style: TextStyle(color: Colors.red),
+                    style: TextStyle(
+                      color: Colors.red,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
               ],

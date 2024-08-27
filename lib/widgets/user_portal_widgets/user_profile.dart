@@ -1,7 +1,7 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_translate/flutter_translate.dart';
 import 'package:material_symbols_icons/material_symbols_icons.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_translate/flutter_translate.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:mafqodat/screens/user_portal/history.dart';
@@ -17,7 +17,7 @@ class UserProfile extends StatefulWidget {
 class _UserProfileState extends State<UserProfile> {
   final TextEditingController _newNameController = TextEditingController();
   final TextEditingController _newPhoneNumberController = TextEditingController();
-  
+
   void _showEditInfoDialog() {
     showDialog(
       context: context,

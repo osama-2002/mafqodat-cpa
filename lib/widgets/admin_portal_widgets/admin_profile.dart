@@ -19,7 +19,8 @@ class _AdminProfileState extends State<AdminProfile> {
   final geocoder = FlGeocoder(googleMapsApiKey);
   String? formattedAddress = '';
   final TextEditingController _newNameController = TextEditingController();
-  final TextEditingController _newPhoneNumberController = TextEditingController();
+  final TextEditingController _newPhoneNumberController =
+      TextEditingController();
 
   Future<void> _getFormattedAddress() async {
     final coordinates = Location(

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
+import 'package:material_symbols_icons/symbols.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:fl_geocoder/fl_geocoder.dart';
@@ -155,7 +157,7 @@ class _ClaimState extends State<Claim> {
                   width: double.infinity,
                   decoration: BoxDecoration(
                     border: Border.all(
-                      color: Theme.of(context).colorScheme.primary,
+                      color: Theme.of(context).colorScheme.secondary,
                       width: 2,
                     ),
                     borderRadius: BorderRadius.circular(8),
@@ -194,7 +196,7 @@ class _ClaimState extends State<Claim> {
                   width: double.infinity,
                   decoration: BoxDecoration(
                     border: Border.all(
-                      color: Theme.of(context).colorScheme.primary,
+                      color: Theme.of(context).colorScheme.secondary,
                       width: 2,
                     ),
                     borderRadius: BorderRadius.circular(8),
@@ -254,6 +256,81 @@ class _ClaimState extends State<Claim> {
                       builder: (context) {
                         return AlertDialog(
                           content: const Text(
+                            "The report will be deleted, and the system will notify the user to resubmit the claim with additional details and supporting evidence",
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: Text(
+                                'Cancel',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w700,
+                                  color: Theme.of(context).colorScheme.secondary,
+                                ),
+                              ),
+                            ),
+                            TextButton(
+                              onPressed: () async {
+                                DocumentSnapshot<Map<String, dynamic>> adminData = await FirebaseFirestore.instance.collection('admins').doc(FirebaseAuth.instance.currentUser!.uid).get();
+                                try {
+                                  FirebaseFirestore.instance.collection('claims_notifications').add(
+                                    {
+                                      'userId': widget.claimData['userId'],
+                                      'title': 'Claim Resubmission Request',
+                                      'message':
+                                          'Your claim has been rejected. Please resubmit the claim with additional details and supporting evidence.',
+                                      'timestamp': Timestamp.now(),
+                                      'adminContact': "${adminData['email']}\n${adminData['phoneNumber']}",
+                                    },
+                                  );
+                                  FirebaseFirestore.instance
+                                      .collection('claims')
+                                      .doc(widget.id)
+                                      .delete();
+                                } catch (e) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(content: Text("$e")));
+                                }
+                                Navigator.of(context).pop();
+                              },
+                              child: Text(
+                                'Confirm',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w700,
+                                  color: Theme.of(context).colorScheme.secondary,
+                                ),
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  },
+                  icon: Icon(
+                    Symbols.unknown_document,
+                    color: Theme.of(context).colorScheme.secondary,
+                  ),
+                  label: Text(
+                    'Request Resubmission',
+                    style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontWeight: FontWeight.w600,),
+                  ),
+                ),
+                const SizedBox(height: 14),
+                ElevatedButton.icon(
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          content: const Text(
                             "Are you sure you want to delete this claim?",
                             style: TextStyle(
                               fontSize: 18,
@@ -265,11 +342,12 @@ class _ClaimState extends State<Claim> {
                               onPressed: () {
                                 Navigator.of(context).pop();
                               },
-                              child: const Text(
+                              child: Text(
                                 'Cancel',
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w700,
+                                  color: Theme.of(context).colorScheme.secondary,
                                 ),
                               ),
                             ),
@@ -286,11 +364,12 @@ class _ClaimState extends State<Claim> {
                                 }
                                 Navigator.of(context).pop();
                               },
-                              child: const Text(
+                              child: Text(
                                 'Confirm',
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w700,
+                                  color: Theme.of(context).colorScheme.secondary,
                                 ),
                               ),
                             ),
@@ -305,10 +384,7 @@ class _ClaimState extends State<Claim> {
                   ),
                   label: const Text(
                     'Delete',
-                    style: TextStyle(
-                      color: Colors.red,
-                      fontWeight: FontWeight.w600,
-                    ),
+                    style: TextStyle(color: Colors.red, fontWeight: FontWeight.w600,),
                   ),
                 ),
               ],

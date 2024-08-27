@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 
-import 'package:mafqodat/widgets/user_portal_widgets/claim.dart';
-import 'package:mafqodat/widgets/user_portal_widgets/report.dart';
+import 'package:mafqodat/widgets/admin_portal_widgets/claim.dart';
+import 'package:mafqodat/widgets/admin_portal_widgets/report.dart';
 
 class ClaimsAndReports extends StatefulWidget {
   const ClaimsAndReports({super.key, required this.adminData});

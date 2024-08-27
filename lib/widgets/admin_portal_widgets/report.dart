@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
+import 'package:material_symbols_icons/symbols.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:fl_geocoder/fl_geocoder.dart';
@@ -9,28 +11,28 @@ import 'package:intl/intl.dart';
 
 String googleMapsApiKey = dotenv.env['GOOGLE_MAPS_API_KEY']!;
 
-class Claim extends StatefulWidget {
-  const Claim(
+class Report extends StatefulWidget {
+  const Report(
       {super.key,
       required this.id,
-      required this.claimData,
-      required this.imageUrls});
+      required this.reportData,
+      required this.imageUrl});
   final String id;
-  final Map<String, dynamic> claimData;
-  final List<dynamic> imageUrls;
+  final Map<String, dynamic> reportData;
+  final String imageUrl;
 
   @override
-  State<Claim> createState() => _ClaimState();
+  State<Report> createState() => _ReportState();
 }
 
-class _ClaimState extends State<Claim> {
+class _ReportState extends State<Report> {
   final geocoder = FlGeocoder(googleMapsApiKey);
   String? formattedAddress = '';
 
   Future<void> _getFormattedAddress() async {
     final coordinates = Location(
-      widget.claimData['location'].latitude,
-      widget.claimData['location'].longitude,
+      widget.reportData['location'].latitude,
+      widget.reportData['location'].longitude,
     );
     final results = await geocoder.findAddressesFromLocationCoordinates(
       location: coordinates,
@@ -59,10 +61,11 @@ class _ClaimState extends State<Claim> {
           children: [
             Column(
               mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const SizedBox(height: 12),
                 const Text(
-                  'Lost Item Claim',
+                  'Found Item Report',
                   style: TextStyle(fontWeight: FontWeight.w700, fontSize: 18),
                 ),
                 const SizedBox(height: 12),
@@ -78,7 +81,7 @@ class _ClaimState extends State<Claim> {
                     ),
                     Expanded(
                       child: Text(
-                        widget.claimData['type'],
+                        widget.reportData['type'],
                         style: const TextStyle(
                           fontSize: 16,
                         ),
@@ -101,7 +104,7 @@ class _ClaimState extends State<Claim> {
                     ),
                     Expanded(
                       child: Text(
-                        widget.claimData['description'],
+                        widget.reportData['description'],
                         style: const TextStyle(
                           fontSize: 16,
                         ),
@@ -123,7 +126,7 @@ class _ClaimState extends State<Claim> {
                       textAlign: TextAlign.start,
                     ),
                     Text(
-                      widget.claimData['status'],
+                      widget.reportData['status'],
                       style: const TextStyle(
                         fontSize: 16,
                       ),
@@ -142,7 +145,7 @@ class _ClaimState extends State<Claim> {
                     ),
                     Text(
                       DateFormat('dd-MM-yyyy   hh a')
-                          .format(widget.claimData['date'].toDate()),
+                          .format(widget.reportData['date'].toDate()),
                       style: const TextStyle(
                         fontSize: 16,
                       ),
@@ -155,37 +158,32 @@ class _ClaimState extends State<Claim> {
                   width: double.infinity,
                   decoration: BoxDecoration(
                     border: Border.all(
-                      color: Theme.of(context).colorScheme.primary,
-                      width: 2,
+                      color: Theme.of(context).colorScheme.secondary,
+                      width: 2.0,
                     ),
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(8.0),
                   ),
                   child: SizedBox(
                     height: 150,
-                    child: widget.imageUrls.isNotEmpty
-                        ? ListView.builder(
-                            scrollDirection: Axis.horizontal,
-                            itemCount: widget.imageUrls.length,
-                            itemBuilder: (context, imageIndex) {
-                              return Padding(
-                                padding: const EdgeInsets.all(4),
-                                child: Image.network(
-                                  widget.imageUrls[imageIndex],
-                                  fit: BoxFit.cover,
-                                  width: 150,
-                                  height: 150,
-                                ),
-                              );
-                            },
+                    child: widget.imageUrl.isNotEmpty
+                        ? Padding(
+                            padding: const EdgeInsets.all(4),
+                            child: Image.network(
+                              widget.imageUrl,
+                              fit: BoxFit.cover,
+                              width: 150,
+                              height: 150,
+                            ),
                           )
                         : const Center(
                             child: Text(
-                            'No images uploaded',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w700,
+                              'No images uploaded',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w700,
+                              ),
                             ),
-                          )),
+                          ),
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -194,25 +192,25 @@ class _ClaimState extends State<Claim> {
                   width: double.infinity,
                   decoration: BoxDecoration(
                     border: Border.all(
-                      color: Theme.of(context).colorScheme.primary,
-                      width: 2,
+                      color: Theme.of(context).colorScheme.secondary,
+                      width: 2.0,
                     ),
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(8.0),
                   ),
                   child: SizedBox(
                     height: 150,
                     child: GoogleMap(
                       initialCameraPosition: CameraPosition(
-                        target: LatLng(widget.claimData['location'].latitude,
-                            widget.claimData['location'].longitude),
+                        target: LatLng(widget.reportData['location'].latitude,
+                            widget.reportData['location'].longitude),
                         zoom: 12,
                       ),
                       markers: {
                         Marker(
                           markerId: const MarkerId('marker_1'),
                           position: LatLng(
-                              widget.claimData['location'].latitude,
-                              widget.claimData['location'].longitude),
+                              widget.reportData['location'].latitude,
+                              widget.reportData['location'].longitude),
                         ),
                       },
                       gestureRecognizers: {
@@ -227,7 +225,7 @@ class _ClaimState extends State<Claim> {
                 Row(
                   children: [
                     const Text(
-                      'Address: ',
+                      "Address: ",
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w700,
@@ -248,13 +246,50 @@ class _ClaimState extends State<Claim> {
                 ),
                 const SizedBox(height: 14),
                 ElevatedButton.icon(
+                  onPressed: () async {
+                    final adminId = FirebaseAuth.instance.currentUser!.uid;
+                    final DocumentSnapshot<Map<String, dynamic>> adminData =
+                        await FirebaseFirestore.instance
+                            .collection('admins')
+                            .doc(adminId)
+                            .get();
+                    await FirebaseFirestore.instance.collection('items').add({
+                      'adminId': adminId,
+                      'description': widget.reportData['description'],
+                      'color': widget.reportData['color'],
+                      'date': DateTime.now(),
+                      'location': adminData['location'],
+                      'type': widget.reportData['type'],
+                      'imageUrl': widget.reportData['imageUrl'],
+                    });
+                    await FirebaseFirestore.instance
+                        .collection('reports')
+                        .doc(widget.id)
+                        .delete();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Added to items list')));
+                  },
+                  icon: Icon(
+                    Symbols.task_alt,
+                    color: Theme.of(context).colorScheme.secondary,
+                  ),
+                  label: Text(
+                    'Handed Over',
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.secondary,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 14),
+                ElevatedButton.icon(
                   onPressed: () {
                     showDialog(
                       context: context,
                       builder: (context) {
                         return AlertDialog(
                           content: const Text(
-                            "Are you sure you want to delete this claim?",
+                            "Are you sure you want to delete this report?",
                             style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.w700,
@@ -265,11 +300,13 @@ class _ClaimState extends State<Claim> {
                               onPressed: () {
                                 Navigator.of(context).pop();
                               },
-                              child: const Text(
+                              child: Text(
                                 'Cancel',
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w700,
+                                  color:
+                                      Theme.of(context).colorScheme.secondary,
                                 ),
                               ),
                             ),
@@ -277,7 +314,7 @@ class _ClaimState extends State<Claim> {
                               onPressed: () {
                                 try {
                                   FirebaseFirestore.instance
-                                      .collection('claims')
+                                      .collection('reports')
                                       .doc(widget.id)
                                       .delete();
                                 } catch (e) {
@@ -286,11 +323,13 @@ class _ClaimState extends State<Claim> {
                                 }
                                 Navigator.of(context).pop();
                               },
-                              child: const Text(
+                              child: Text(
                                 'Confirm',
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w700,
+                                  color:
+                                      Theme.of(context).colorScheme.secondary,
                                 ),
                               ),
                             ),
@@ -321,7 +360,7 @@ class _ClaimState extends State<Claim> {
                 height: 50,
                 decoration: BoxDecoration(
                   border: Border.all(
-                    color: Color(widget.claimData['color']),
+                    color: Color(widget.reportData['color']),
                     width: 2,
                   ),
                   borderRadius: BorderRadius.circular(8),
@@ -329,7 +368,7 @@ class _ClaimState extends State<Claim> {
                 child: Center(
                     child: Icon(
                   Icons.color_lens_outlined,
-                  color: Color(widget.claimData['color']),
+                  color: Color(widget.reportData['color']),
                 )),
               ),
             )

@@ -61,7 +61,9 @@ class _HomeState extends State<Home> {
       );
     }
     if (_currentIndex == 3) {
-      activePage = AdminProfile(adminData: adminData!,);
+      activePage = AdminProfile(
+        adminData: adminData!,
+      );
     }
     return Scaffold(
       appBar: AppBar(
@@ -121,17 +123,39 @@ class _HomeState extends State<Home> {
       ),
       body: activePage,
       drawer: Drawer(
-        child: IconButton(
-          onPressed: () {
-            if (LocalizedApp.of(context).delegate.currentLocale.toString() ==
-                'en') {
-              changeLocale(context, 'ar');
-            } else {
-              changeLocale(context, 'en');
-            }
-            Navigator.of(context).pop();
-          },
-          icon: const Icon(Icons.translate),
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            DrawerHeader(
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.secondary,
+              ),
+              child: Text(
+                'Menu',
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onPrimary,
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            ListTile(
+              leading: const Icon(Icons.translate),
+              title: Text(translate("Change Language")),
+              onTap: () {
+                if (LocalizedApp.of(context)
+                        .delegate
+                        .currentLocale
+                        .toString() ==
+                    'en') {
+                  changeLocale(context, 'ar');
+                } else {
+                  changeLocale(context, 'en');
+                }
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
         ),
       ),
       bottomNavigationBar: SalomonBottomBar(

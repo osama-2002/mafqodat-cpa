@@ -5,6 +5,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 
+import 'package:mafqodat/widgets/user_portal_widgets/guide.dart';
+import 'package:mafqodat/widgets/user_portal_widgets/notifications_list.dart';
 import 'package:mafqodat/screens/user_portal/report_form.dart';
 import 'package:mafqodat/screens/user_portal/claim_form.dart';
 import 'package:mafqodat/widgets/user_portal_widgets/user_profile.dart';
@@ -72,16 +74,8 @@ class _HomeState extends State<Home> {
               : [const CircularProgressIndicator()]),
     );
     if (_currentIndex == 1) {
-      activePage = const Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              "You don't have any notifications",
-              style: TextStyle(fontSize: 24),
-            ),
-          ],
-        ),
+      activePage = const SingleChildScrollView(
+        child: NotificationsList(),
       );
     }
     if (_currentIndex == 2) {
@@ -145,17 +139,47 @@ class _HomeState extends State<Home> {
       ),
       body: activePage,
       drawer: Drawer(
-        child: IconButton(
-          onPressed: () {
-            if (LocalizedApp.of(context).delegate.currentLocale.toString() ==
-                'en') {
-              changeLocale(context, 'ar');
-            } else {
-              changeLocale(context, 'en');
-            }
-            Navigator.of(context).pop();
-          },
-          icon: const Icon(Icons.translate),
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            DrawerHeader(
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.primary,
+              ),
+              child: Text(
+                'Menu',
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onPrimary,
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            ListTile(
+              leading: const Icon(Icons.translate),
+              title: Text(translate("Change Language")),
+              onTap: () {
+                if (LocalizedApp.of(context)
+                        .delegate
+                        .currentLocale
+                        .toString() ==
+                    'en') {
+                  changeLocale(context, 'ar');
+                } else {
+                  changeLocale(context, 'en');
+                }
+                Navigator.of(context).pop();
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.help),
+              title: const Text('Guide'),
+              onTap: () {
+                Navigator.of(context).push(
+                    MaterialPageRoute(builder: (context) => const GuidePage()));
+              },
+            ),
+          ],
         ),
       ),
       bottomNavigationBar: SalomonBottomBar(

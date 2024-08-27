@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -35,11 +36,13 @@ class _ReportFormState extends State<ReportForm> {
   Color? _selectedColor;
   DateTime _selectedDate = DateTime.now();
   File? _selectedImage;
+  String imageUrl = "";
   double? latitude;
   double? longitude;
   double? currentLatitude;
   double? currentLongitude;
-  final GlobalKey<LocationInputState> _locationInputKey = GlobalKey<LocationInputState>();
+  final GlobalKey<LocationInputState> _locationInputKey =
+      GlobalKey<LocationInputState>();
   final geocoder = FlGeocoder(googleMapsApiKey);
   String _formattedAddress = '';
   Uuid uuid = const Uuid();
@@ -146,6 +149,61 @@ class _ReportFormState extends State<ReportForm> {
     });
   }
 
+  Future<void> _generateNotification() async {
+    final db = FirebaseFirestore.instance;
+
+    try {
+      final stations = await db.collection('admins').get();
+      GeoPoint? nearestStationLocation;
+      String? nearestAdminContact;
+      double shortestDistance = double.infinity;
+
+      for (QueryDocumentSnapshot<Map<String, dynamic>> station
+          in stations.docs) {
+        final stationLocation = station['location'] as GeoPoint;
+        final adminEmail = station['email'] as String;
+        final adminPhoneNumber = station['phoneNumber'] as String;
+
+        final double distance = _calculateDistance(
+          latitude!,
+          longitude!,
+          stationLocation.latitude,
+          stationLocation.longitude,
+        );
+
+        if (distance < shortestDistance) {
+          shortestDistance = distance;
+          nearestStationLocation = stationLocation;
+          nearestAdminContact = "$adminEmail\n$adminPhoneNumber";
+        }
+      }
+
+      if (nearestStationLocation != null && nearestAdminContact != null) {
+        await db.collection('reports_notifications').add({
+          'userId': FirebaseAuth.instance.currentUser!.uid,
+          'message': 'Thanks for reporting and helping the community!',
+          'nearestStationLocation': nearestStationLocation,
+          'adminContact': nearestAdminContact,
+          'timestamp': Timestamp.now(),
+          'imageUrl': imageUrl,
+        });
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to generate notification: $e')),
+      );
+    }
+  }
+
+  double _calculateDistance(
+      double lat1, double lon1, double lat2, double lon2) {
+    const double p = 0.017453292519943295;
+    double a = 0.5 -
+        cos((lat2 - lat1) * p) / 2 +
+        cos(lat1 * p) * cos(lat2 * p) * (1 - cos((lon2 - lon1) * p)) / 2;
+    return 12742 * asin(sqrt(a));
+  }
+
   void _submitReport() async {
     setState(() {
       _isLoading = true;
@@ -153,7 +211,6 @@ class _ReportFormState extends State<ReportForm> {
     final db = FirebaseFirestore.instance;
     final storage = FirebaseStorage.instance;
     String reportId = uuid.v4();
-    String downloadUrl = "";
 
     if (_selectedImage != null) {
       String fileName =
@@ -163,7 +220,7 @@ class _ReportFormState extends State<ReportForm> {
         UploadTask uploadTask = ref.putFile(File(_selectedImage!.path));
         TaskSnapshot snapshot = await uploadTask;
 
-        downloadUrl = await snapshot.ref.getDownloadURL();
+        imageUrl = await snapshot.ref.getDownloadURL();
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Failed to upload images')));
@@ -189,15 +246,16 @@ class _ReportFormState extends State<ReportForm> {
           'location': GeoPoint(latitude!, longitude!),
           'status': 'pending',
           'type': _selectedDropDownValue,
-          'imageUrl': downloadUrl,
+          'imageUrl': imageUrl,
           'region': region,
         },
       );
+      await _generateNotification();
       _clearForm();
       if (mounted) Navigator.of(context).pop();
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Submitted successfully'),
+          content: Text('Submitted successfully, Check Notifications'),
         ),
       );
     } catch (e) {
