@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mafqodat/widgets/admin_portal_widgets/matches_list.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -7,7 +8,7 @@ import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 
 import 'package:mafqodat/screens/admin_portal/add_item.dart';
 import 'package:mafqodat/widgets/admin_portal_widgets/items_list.dart';
-import 'package:mafqodat/screens/admin_portal/history.dart';
+import 'package:mafqodat/widgets/admin_portal_widgets/claims_and_reports.dart';
 import 'package:mafqodat/widgets/admin_portal_widgets/admin_profile.dart';
 
 class Home extends StatefulWidget {
@@ -19,10 +20,10 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   int _currentIndex = 0;
-  DocumentSnapshot? adminData;
+  DocumentSnapshot<Map<String, dynamic>>? adminData;
 
   void getAdminData() async {
-    DocumentSnapshot data = await FirebaseFirestore.instance
+    DocumentSnapshot<Map<String, dynamic>> data = await FirebaseFirestore.instance
         .collection('admins')
         .doc(FirebaseAuth.instance.currentUser!.uid)
         .get();
@@ -44,20 +45,12 @@ class _HomeState extends State<Home> {
     );
     if (_currentIndex == 1) {
       activePage = ClaimsAndReports(
-        adminData: adminData,
+        adminData: adminData!,
       );
     }
     if (_currentIndex == 2) {
-      activePage = const Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              "Possible Matches",
-              style: TextStyle(fontSize: 24),
-            ),
-          ],
-        ),
+      activePage = Matches(
+        adminData: adminData!,
       );
     }
     if (_currentIndex == 3) {

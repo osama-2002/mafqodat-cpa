@@ -1,12 +1,10 @@
-import 'package:flutter/gestures.dart';
-import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 
-import 'package:mafqodat/widgets/user_portal_widgets/guide.dart';
-
-class ClaimNotification extends StatelessWidget {
-  const ClaimNotification({super.key, required this.data, required this.id});
+class MatchNotification extends StatelessWidget {
+  const MatchNotification({super.key, required this.id, required this.data});
   final String id;
   final Map<String, dynamic> data;
 
@@ -52,7 +50,7 @@ class ClaimNotification extends StatelessWidget {
                     onPressed: () async {
                       try {
                         await FirebaseFirestore.instance
-                            .collection('claims_notifications')
+                            .collection('matches_notifications')
                             .doc(id)
                             .delete();
                       } catch (e) {
@@ -84,6 +82,19 @@ class ClaimNotification extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Expanded(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: AspectRatio(
+                        aspectRatio: 1.4,
+                        child: Image.network(
+                          data['imageUrl'],
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -91,52 +102,47 @@ class ClaimNotification extends StatelessWidget {
                           children: [
                             Expanded(
                               child: Text(
-                                data['message'],
+                                data['title'],
                                 style: const TextStyle(
-                                  fontWeight: FontWeight.w600,
+                                  fontWeight: FontWeight.bold,
                                   fontSize: 16,
                                 ),
                               ),
                             ),
                           ],
                         ),
-                        const Divider(color: Colors.grey),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: RichText(
-                                text: TextSpan(
-                                  style: const TextStyle(
-                                    fontSize: 16,
-                                    color: Colors.black,
-                                  ),
-                                  children: [
-                                    const TextSpan(text: "Check the "),
-                                    TextSpan(
-                                      text: "Guide Page",
-                                      style: TextStyle(
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .primary,
-                                          fontWeight: FontWeight.bold,
-                                          decoration: TextDecoration.underline),
-                                      recognizer: TapGestureRecognizer()
-                                        ..onTap = () => Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      const GuidePage()),
-                                            ),
-                                    ),
-                                    const TextSpan(
-                                        text:
-                                            "  to learn how to submit a more effective claim."),
-                                  ],
-                                ),
-                              ),
+                        const SizedBox(height: 8),
+                        InkWell(
+                          onTap: () async {
+                            final geoPoint =
+                                data['location'] as GeoPoint;
+                            final latitude = geoPoint.latitude;
+                            final longitude = geoPoint.longitude;
+                            final url = Uri(
+                              scheme: 'https',
+                              host: 'www.google.com',
+                              path: '/maps/search/',
+                              queryParameters: {
+                                'api': '1',
+                                'query': '$latitude,$longitude',
+                              },
+                            );
+
+                            if (await canLaunchUrl(url)) {
+                              await launchUrl(url);
+                            } else {
+                              throw 'Could not launch $url';
+                            }
+                          },
+                          child: Text(
+                            "Press here to check the station where the match was found",
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.primary,
+                              fontWeight: FontWeight.w700,
+                              decoration: TextDecoration.underline,
                             ),
-                          ],
-                        )
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -159,7 +165,7 @@ class ClaimNotification extends StatelessWidget {
                           ),
                         ),
                         Text(
-                          data['adminContact'],
+                          data['contactInfo'],
                           style: const TextStyle(
                             fontSize: 14,
                           ),

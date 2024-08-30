@@ -7,14 +7,15 @@ import 'package:mafqodat/widgets/admin_portal_widgets/report.dart';
 
 class ClaimsAndReports extends StatefulWidget {
   const ClaimsAndReports({super.key, required this.adminData});
-  final DocumentSnapshot? adminData;
+  final DocumentSnapshot adminData;
   @override
   State<ClaimsAndReports> createState() => _ClaimsAndReportsState();
 }
 
 class _ClaimsAndReportsState extends State<ClaimsAndReports> {
   String _selectedTab = "Claims";
-  int genderToggleSwitchIndex = 0;
+  int tabToggleSwitchIndex = 0;
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,7 +30,7 @@ class _ClaimsAndReportsState extends State<ClaimsAndReports> {
                 children: [
                   ToggleSwitch(
                     minWidth: 90.0,
-                    initialLabelIndex: genderToggleSwitchIndex,
+                    initialLabelIndex: tabToggleSwitchIndex,
                     cornerRadius: 20.0,
                     activeFgColor: Colors.white,
                     inactiveBgColor: Colors.grey,
@@ -44,10 +45,10 @@ class _ClaimsAndReportsState extends State<ClaimsAndReports> {
                       setState(() {
                         if (index == 0) {
                           _selectedTab = 'Claims';
-                          genderToggleSwitchIndex = 0;
+                          tabToggleSwitchIndex = 0;
                         } else {
                           _selectedTab = 'Reports';
-                          genderToggleSwitchIndex = 1;
+                          tabToggleSwitchIndex = 1;
                         }
                       });
                     },
@@ -59,11 +60,11 @@ class _ClaimsAndReportsState extends State<ClaimsAndReports> {
                 stream: _selectedTab == 'Claims'
                     ? FirebaseFirestore.instance
                         .collection('claims')
-                        .where('region', isEqualTo: widget.adminData!['region'])
+                        .where('region', isEqualTo: widget.adminData['region'])
                         .snapshots()
                     : FirebaseFirestore.instance
                         .collection('reports')
-                        .where('region', isEqualTo: widget.adminData!['region'])
+                        .where('region', isEqualTo: widget.adminData['region'])
                         .snapshots(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {

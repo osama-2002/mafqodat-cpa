@@ -144,7 +144,7 @@ class _ReportState extends State<Report> {
                       ),
                     ),
                     Text(
-                      DateFormat('dd-MM-yyyy   hh a')
+                      DateFormat('dd-MM-yyyy   hh:mm a')
                           .format(widget.reportData['date'].toDate()),
                       style: const TextStyle(
                         fontSize: 16,

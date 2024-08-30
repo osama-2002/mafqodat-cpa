@@ -175,7 +175,7 @@ class ReportNotification extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              DateFormat('dd-MM-yyyy   hh a')
+                              DateFormat('dd-MM-yyyy   hh:mm a')
                                   .format(data['timestamp'].toDate()),
                               style: const TextStyle(
                                 fontSize: 12,

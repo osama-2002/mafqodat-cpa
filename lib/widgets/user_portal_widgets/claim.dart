@@ -141,7 +141,7 @@ class _ClaimState extends State<Claim> {
                       ),
                     ),
                     Text(
-                      DateFormat('dd-MM-yyyy   hh a')
+                      DateFormat('dd-MM-yyyy   hh:mm a')
                           .format(widget.claimData['date'].toDate()),
                       style: const TextStyle(
                         fontSize: 16,
