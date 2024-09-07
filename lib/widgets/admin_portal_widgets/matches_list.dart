@@ -26,7 +26,6 @@ class _MatchesState extends State<Matches> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const SizedBox(height: 12),
           StreamBuilder(
             stream:
                 FirebaseFirestore.instance.collection('matches').where('isRejected', isNotEqualTo: true).snapshots(),

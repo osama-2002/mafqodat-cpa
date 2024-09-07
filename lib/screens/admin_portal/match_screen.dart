@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:intl/intl.dart';
 
 class MatchScreen extends StatefulWidget {
   final DocumentSnapshot<Map<String, dynamic>> adminData;
@@ -26,15 +27,21 @@ class _MatchScreenState extends State<MatchScreen> {
   bool _isLoading = true;
 
   void _fetchData() async {
-  final itemDoc = await FirebaseFirestore.instance.collection('items').doc(widget.itemId).get();
-  final claimDoc = await FirebaseFirestore.instance.collection('claims').doc(widget.claimId).get();
+    final itemDoc = await FirebaseFirestore.instance
+        .collection('items')
+        .doc(widget.itemId)
+        .get();
+    final claimDoc = await FirebaseFirestore.instance
+        .collection('claims')
+        .doc(widget.claimId)
+        .get();
 
-  setState(() {
-    itemData = itemDoc.data()!;
-    claimData = claimDoc.data()!;
-    _isLoading = false;
-  });
-}
+    setState(() {
+      itemData = itemDoc.data()!;
+      claimData = claimDoc.data()!;
+      _isLoading = false;
+    });
+  }
 
   @override
   void initState() {
@@ -49,52 +56,66 @@ class _MatchScreenState extends State<MatchScreen> {
         title: const Text('Match Details'),
         backgroundColor: Theme.of(context).colorScheme.secondary,
       ),
-      body: _isLoading ? const Center(child: CircularProgressIndicator()) : Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildComparisonSection(
-              title: 'Category',
-              claimValue: claimData['type'],
-              itemValue: itemData['type'],
-            ),
-            _buildComparisonSection(
-              title: 'Description',
-              claimValue: claimData['description'],
-              itemValue: itemData['description'],
-            ),
-            _buildComparisonSection(
-              title: 'Date',
-              claimValue: claimData['date'].toDate().toString(),
-              itemValue: itemData['date'].toDate().toString(),
-            ),
-            _buildLocationComparison(),
-            _buildImageComparisonSection(),
-            const Spacer(),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ElevatedButton(
-                  onPressed: () => _handleDecision(context, true),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Theme.of(context).colorScheme.primary,
-                  ),
-                  child: const Text('Accept', style: TextStyle(color: Colors.black),),
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildComparisonSection(
+                      title: 'Category',
+                      claimValue: claimData['type'],
+                      itemValue: itemData['type'],
+                    ),
+                    _buildComparisonSection(
+                      title: 'Description',
+                      claimValue: claimData['description'],
+                      itemValue: itemData['description'],
+                    ),
+                    _buildComparisonSection(
+                      title: 'Date',
+                      claimValue: DateFormat('dd-MM-yyyy   hh:mm a')
+                          .format(claimData['date'].toDate()),
+                      itemValue: DateFormat('dd-MM-yyyy   hh:mm a')
+                          .format(itemData['date'].toDate()),
+                    ),
+                    _buildLocationComparison(),
+                    _buildImageComparisonSection(),
+                    const SizedBox(height: 30),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        ElevatedButton(
+                          onPressed: () => _handleDecision(context, true),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor:
+                                Theme.of(context).colorScheme.primary,
+                          ),
+                          child: const Text(
+                            'Accept',
+                            style: TextStyle(color: Colors.black),
+                          ),
+                        ),
+                        const SizedBox(width: 32),
+                        ElevatedButton(
+                          onPressed: () => _handleDecision(context, false),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor:
+                                Theme.of(context).colorScheme.secondary,
+                          ),
+                          child: const Text(
+                            'Reject',
+                            style: TextStyle(color: Colors.black),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
-                const SizedBox(width: 32),
-                ElevatedButton(
-                  onPressed: () => _handleDecision(context, false),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Theme.of(context).colorScheme.secondary,
-                  ),
-                  child: const Text('Reject', style: TextStyle(color: Colors.black),),
-                ),
-              ],
+              ),
             ),
-          ],
-        ),
-      ),
     );
   }
 
@@ -130,44 +151,50 @@ class _MatchScreenState extends State<MatchScreen> {
           child: Row(
             children: [
               Expanded(
-                child: GoogleMap(
-                  initialCameraPosition: CameraPosition(
-                    target: LatLng(
-                      claimData['location'].latitude,
-                      claimData['location'].longitude,
-                    ),
-                    zoom: 14.0,
-                  ),
-                  markers: {
-                    Marker(
-                      markerId: const MarkerId('claimLocation'),
-                      position: LatLng(
+                child: SizedBox(
+                  height: 200,
+                  child: GoogleMap(
+                    initialCameraPosition: CameraPosition(
+                      target: LatLng(
                         claimData['location'].latitude,
                         claimData['location'].longitude,
                       ),
+                      zoom: 14.0,
                     ),
-                  },
+                    markers: {
+                      Marker(
+                        markerId: const MarkerId('claimLocation'),
+                        position: LatLng(
+                          claimData['location'].latitude,
+                          claimData['location'].longitude,
+                        ),
+                      ),
+                    },
+                  ),
                 ),
               ),
               const VerticalDivider(),
               Expanded(
-                child: GoogleMap(
-                  initialCameraPosition: CameraPosition(
-                    target: LatLng(
-                      itemData['location'].latitude,
-                      itemData['location'].longitude,
-                    ),
-                    zoom: 14.0,
-                  ),
-                  markers: {
-                    Marker(
-                      markerId: const MarkerId('itemLocation'),
-                      position: LatLng(
+                child: SizedBox(
+                  height: 200,
+                  child: GoogleMap(
+                    initialCameraPosition: CameraPosition(
+                      target: LatLng(
                         itemData['location'].latitude,
                         itemData['location'].longitude,
                       ),
+                      zoom: 14.0,
                     ),
-                  },
+                    markers: {
+                      Marker(
+                        markerId: const MarkerId('itemLocation'),
+                        position: LatLng(
+                          itemData['location'].latitude,
+                          itemData['location'].longitude,
+                        ),
+                      ),
+                    },
+                  ),
                 ),
               ),
             ],
@@ -182,15 +209,16 @@ class _MatchScreenState extends State<MatchScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildSectionTitle('Images'),
-        Row(
-          children: [
-            Expanded(
-                child: _buildImageSection(claimData['imageUrls'], 'Claim')),
-            const VerticalDivider(),
-            Expanded(
-                child:
-                    _buildImageSection([itemData['imageUrl']], 'Item')),
-          ],
+        SizedBox(
+          height: 200,
+          child: Row(
+            children: [
+              Expanded(
+                  child: _buildImageSection(claimData['imageUrls'], 'Claim')),
+              const VerticalDivider(),
+              Expanded(child: _buildImageSection([itemData['imageUrl']], 'Item')),
+            ],
+          ),
         ),
       ],
     );
@@ -214,7 +242,7 @@ class _MatchScreenState extends State<MatchScreen> {
       children: [
         Text(label),
         SizedBox(
-          height: 100,
+          height: 170,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             itemCount: imageUrls.length,
@@ -224,8 +252,8 @@ class _MatchScreenState extends State<MatchScreen> {
                 child: Image.network(
                   imageUrls[index],
                   fit: BoxFit.cover,
-                  width: 100,
-                  height: 100,
+                  width: 170,
+                  height: 300,
                 ),
               );
             },
@@ -257,6 +285,10 @@ class _MatchScreenState extends State<MatchScreen> {
           .update({
         'status': 'Match Found',
       });
+      await FirebaseFirestore.instance
+          .collection('matches')
+          .doc(widget.matchId)
+          .delete();
     } else {
       FirebaseFirestore.instance
           .collection('matches')
