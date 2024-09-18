@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_translate/flutter_translate.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:mafqodat/screens/forgotten_password.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 
@@ -58,6 +60,22 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
           title: Text(
             isLogin ? 'Login Page' : 'Sign Up Page',
           ),
+          actions: [
+            IconButton(
+              onPressed: () {
+                if (LocalizedApp.of(context)
+                        .delegate
+                        .currentLocale
+                        .toString() ==
+                    'en') {
+                  changeLocale(context, 'ar');
+                } else {
+                  changeLocale(context, 'en');
+                }
+              },
+              icon: const Icon(Icons.translate),
+            ),
+          ],
         ),
         body: FocusScope(
           node: _focusScopeNode,
@@ -129,7 +147,33 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                                         },
                                         isPassword: true,
                                       ),
-                                      const SizedBox(height: 30),
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) {
+                                                return ForgottenPassword(
+                                                  isUser: isUser,
+                                                );
+                                              },
+                                            ),
+                                          );
+                                        },
+                                        child: Text(
+                                          "Forgotten Password?",
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.w600,
+                                              color: isUser
+                                                  ? Theme.of(context)
+                                                      .colorScheme
+                                                      .primary
+                                                  : Theme.of(context)
+                                                      .colorScheme
+                                                      .secondary),
+                                        ),
+                                      ),
+                                      const SizedBox(height: 16),
                                       ElevatedButton(
                                         style: ElevatedButton.styleFrom(
                                           backgroundColor: isUser
@@ -330,7 +374,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                                         },
                                         isPassword: true,
                                       ),
-                                      const SizedBox(height: 30),
+                                      const SizedBox(height: 20),
                                       ElevatedButton(
                                         style: ElevatedButton.styleFrom(
                                           backgroundColor: isUser
@@ -355,7 +399,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                                           ),
                                         ),
                                       ),
-                                      if (isUser) const SizedBox(height: 15),
+                                      if (isUser) const SizedBox(height: 12),
                                       if (isUser)
                                         Row(
                                           mainAxisAlignment:
@@ -425,6 +469,10 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
     try {
       if (_formKey.currentState!.validate()) {
         if (isLogin) {
+          // var emailAdmin = await isAdminEmail(_emailController.text);
+          // if ((isUser && emailAdmin) || (!isUser && !emailAdmin)) {
+          //   _showSnackBar("Invalid email or password");
+          // }
           await FirebaseAuth.instance.signInWithEmailAndPassword(
             email: _emailController.text,
             password: _passwordController.text,
@@ -441,6 +489,15 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
     } on FirebaseAuthException catch (e) {
       _handleAuthErrors(e);
     }
+  }
+
+  Future<bool> isAdminEmail(String email) async {
+    QuerySnapshot adminSnapshot =
+        await FirebaseFirestore.instance.collection('admins').where('email', isEqualTo: email).get();
+    if (adminSnapshot.docs.isNotEmpty) {
+      return true;
+    }
+    return false;
   }
 
   void saveUserData(String id) {

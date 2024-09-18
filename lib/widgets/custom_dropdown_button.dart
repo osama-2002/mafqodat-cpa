@@ -2,13 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 
 final List<String> categories = [
+  'Card (Bank, ID, etc.)',
+  'Wallet',
   'Mobile Phone',
+  'Official Document',
+  'Key',
+  'Laptop',
+  'Bag/Backpack',
   'Watch',
   'AirPods',
   'Headset',
-  'Wallet',
   'Bracelet',
   'Necklace',
+  'Clothing',
+  'Camera',
+  'Chargers/Adapters',
+  'Glasses/Sunglasses',
   'Miscellaneous',
 ];
 

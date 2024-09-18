@@ -52,13 +52,17 @@ class _AddItemState extends State<AddItem> {
               pickerColor: _selectedColor,
               availableColors: const [
                 Colors.red,
+                Colors.green,
                 Colors.blue,
                 Colors.yellow,
-                Colors.green,
-                Colors.purple,
-                Colors.white,
-                Colors.orange,
                 Colors.black,
+                Colors.white,
+                Colors.purple,
+                Colors.orange,
+                Colors.pink,
+                Colors.teal,
+                Colors.brown,
+                Colors.grey,
               ],
               onColorChanged: (Color color) {
                 setState(() {
