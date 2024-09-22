@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:mafqodat/widgets/custom_dropdown_button.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 
 import 'package:mafqodat/widgets/admin_portal_widgets/claim.dart';
@@ -15,7 +16,15 @@ class ClaimsAndReports extends StatefulWidget {
 class _ClaimsAndReportsState extends State<ClaimsAndReports> {
   String _selectedTab = "Claims";
   int tabToggleSwitchIndex = 0;
-  
+  String? filter;
+  final TextEditingController _searchController = TextEditingController();
+
+  void _onDropdownValueChanged(String? value) {
+    setState(() {
+      filter = value;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -27,45 +36,93 @@ class _ClaimsAndReportsState extends State<ClaimsAndReports> {
             children: [
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  ToggleSwitch(
-                    minWidth: 90.0,
-                    initialLabelIndex: tabToggleSwitchIndex,
-                    cornerRadius: 20.0,
-                    activeFgColor: Colors.white,
-                    inactiveBgColor: Colors.grey,
-                    inactiveFgColor: Colors.white,
-                    totalSwitches: 2,
-                    labels: const ['Claims', 'Reports'],
-                    activeBgColors: [
-                      [Theme.of(context).colorScheme.secondary],
-                      [Theme.of(context).colorScheme.secondary],
+                  Column(
+                    children: [
+                      const SizedBox(height: 5),
+                      ToggleSwitch(
+                        minWidth: 90.0,
+                        initialLabelIndex: tabToggleSwitchIndex,
+                        cornerRadius: 20.0,
+                        activeFgColor: Colors.white,
+                        inactiveBgColor: Colors.grey,
+                        inactiveFgColor: Colors.white,
+                        totalSwitches: 2,
+                        labels: const ['Claims', 'Reports'],
+                        activeBgColors: [
+                          [Theme.of(context).colorScheme.secondary],
+                          [Theme.of(context).colorScheme.secondary],
+                        ],
+                        onToggle: (index) {
+                          setState(() {
+                            if (index == 0) {
+                              _selectedTab = 'Claims';
+                              tabToggleSwitchIndex = 0;
+                            } else {
+                              _selectedTab = 'Reports';
+                              tabToggleSwitchIndex = 1;
+                            }
+                          });
+                        },
+                      ),
                     ],
-                    onToggle: (index) {
-                      setState(() {
-                        if (index == 0) {
-                          _selectedTab = 'Claims';
-                          tabToggleSwitchIndex = 0;
-                        } else {
-                          _selectedTab = 'Reports';
-                          tabToggleSwitchIndex = 1;
-                        }
-                      });
-                    },
+                  ),
+                  const SizedBox(width: 24),
+                  Column(
+                    children: [
+                      CustomDropdownButton(
+                        isUser: false,
+                        isFilter: true,
+                        controller: _searchController,
+                        selectedDropDownValue: filter,
+                        onChanged: _onDropdownValueChanged,
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          setState(() {
+                            filter = null;
+                          });
+                        },
+                        child: Text(
+                          'Reset Filter',
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.secondary,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
               const SizedBox(height: 12),
               StreamBuilder<QuerySnapshot>(
                 stream: _selectedTab == 'Claims'
-                    ? FirebaseFirestore.instance
-                        .collection('claims')
-                        .where('region', isEqualTo: widget.adminData['region'])
-                        .snapshots()
-                    : FirebaseFirestore.instance
-                        .collection('reports')
-                        .where('region', isEqualTo: widget.adminData['region'])
-                        .snapshots(),
+                    ? filter == null
+                        ? FirebaseFirestore.instance
+                            .collection('claims')
+                            .where('region',
+                                isEqualTo: widget.adminData['region'])
+                            .snapshots()
+                        : FirebaseFirestore.instance
+                            .collection('claims')
+                            .where('region',
+                                isEqualTo: widget.adminData['region'])
+                            .where('type', isEqualTo: filter)
+                            .snapshots()
+                    : filter == null
+                        ? FirebaseFirestore.instance
+                            .collection('reports')
+                            .where('region',
+                                isEqualTo: widget.adminData['region'])
+                            .snapshots()
+                        : FirebaseFirestore.instance
+                            .collection('reports')
+                            .where('region',
+                                isEqualTo: widget.adminData['region'])
+                            .where('type', isEqualTo: filter)
+                            .snapshots(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(child: CircularProgressIndicator());

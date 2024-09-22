@@ -128,6 +128,7 @@ class _ItemsListState extends State<ItemsList> {
                 ),
               ],
             ),
+            const SizedBox(height: 12),
             ListView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),

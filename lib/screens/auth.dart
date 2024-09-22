@@ -30,7 +30,6 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
   String _selectedGender = "Male";
   int genderToggleSwitchIndex = 0;
   bool isLogin = true;
-  bool isUser = true;
 
   void _unfocusTextFields() {
     _focusScopeNode.unfocus();
@@ -54,9 +53,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
       onTap: _unfocusTextFields,
       child: Scaffold(
         appBar: AppBar(
-          backgroundColor: isUser
-              ? Theme.of(context).colorScheme.primary
-              : Theme.of(context).colorScheme.secondary,
+          backgroundColor: Theme.of(context).colorScheme.primary,
           title: Text(
             isLogin ? 'Login Page' : 'Sign Up Page',
           ),
@@ -116,7 +113,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                                         controller: _emailController,
                                         labelText: 'Email ',
                                         hintText: 'example@domain.com',
-                                        isUser: isUser,
+                                        isUser: true,
                                         isPassword: false,
                                         validator: (value) {
                                           if (value == null || value.isEmpty) {
@@ -135,7 +132,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                                         labelText: 'Password ',
                                         hintText: '',
                                         prefixIcon: Icons.lock,
-                                        isUser: isUser,
+                                        isUser: true,
                                         validator: (value) {
                                           if (value == null || value.isEmpty) {
                                             return 'This field can not be empty';
@@ -153,8 +150,8 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                                             context,
                                             MaterialPageRoute(
                                               builder: (context) {
-                                                return ForgottenPassword(
-                                                  isUser: isUser,
+                                                return const ForgottenPassword(
+                                                  isUser: true,
                                                 );
                                               },
                                             ),
@@ -164,25 +161,13 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                                           "Forgotten Password?",
                                           style: TextStyle(
                                               fontWeight: FontWeight.w600,
-                                              color: isUser
-                                                  ? Theme.of(context)
-                                                      .colorScheme
-                                                      .primary
-                                                  : Theme.of(context)
-                                                      .colorScheme
-                                                      .secondary),
+                                              color: Theme.of(context).colorScheme.primary),
                                         ),
                                       ),
                                       const SizedBox(height: 16),
                                       ElevatedButton(
                                         style: ElevatedButton.styleFrom(
-                                          backgroundColor: isUser
-                                              ? Theme.of(context)
-                                                  .colorScheme
-                                                  .primary
-                                              : Theme.of(context)
-                                                  .colorScheme
-                                                  .secondary,
+                                          backgroundColor: Theme.of(context).colorScheme.primary,
                                         ),
                                         onPressed: () {
                                           submitInput();
@@ -198,8 +183,8 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                                           ),
                                         ),
                                       ),
-                                      if (isUser) const SizedBox(height: 15),
-                                      if (isUser)
+                                       const SizedBox(height: 15),
+                                      
                                         Row(
                                           mainAxisAlignment:
                                               MainAxisAlignment.center,
@@ -235,7 +220,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                                         controller: _nameController,
                                         labelText: 'Name ',
                                         hintText: 'Choose you display name',
-                                        isUser: isUser,
+                                        isUser: true,
                                         isPassword: false,
                                         validator: (value) {
                                           if (value == null || value.isEmpty) {
@@ -251,7 +236,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                                         labelText: 'National Number ',
                                         hintText:
                                             'National number in your Id card',
-                                        isUser: isUser,
+                                        isUser: true,
                                         isPassword: false,
                                         validator: (value) {
                                           if (value == null || value.isEmpty) {
@@ -305,7 +290,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                                         controller: _emailController,
                                         labelText: 'Email ',
                                         hintText: 'example@domain.com',
-                                        isUser: isUser,
+                                        isUser: true,
                                         isPassword: false,
                                         validator: (value) {
                                           if (value == null || value.isEmpty) {
@@ -323,7 +308,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                                         controller: _phoneNumberController,
                                         labelText: 'Phone number ',
                                         hintText: '7xxxxxxxx',
-                                        isUser: isUser,
+                                        isUser: true,
                                         isPassword: false,
                                         validator: (value) {
                                           if (value == null || value.isEmpty) {
@@ -343,7 +328,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                                         labelText: 'Password ',
                                         hintText: 'Create a strong password',
                                         prefixIcon: Icons.lock,
-                                        isUser: isUser,
+                                        isUser: true,
                                         validator: (value) {
                                           if (value == null || value.isEmpty) {
                                             return 'This field can not be empty';
@@ -361,7 +346,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                                         labelText: 'Confirm password ',
                                         hintText: 'Enter your password again',
                                         prefixIcon: Icons.lock,
-                                        isUser: isUser,
+                                        isUser: true,
                                         validator: (value) {
                                           if (value == null || value.isEmpty) {
                                             return 'This field can not be empty';
@@ -377,13 +362,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                                       const SizedBox(height: 20),
                                       ElevatedButton(
                                         style: ElevatedButton.styleFrom(
-                                          backgroundColor: isUser
-                                              ? Theme.of(context)
-                                                  .colorScheme
-                                                  .primary
-                                              : Theme.of(context)
-                                                  .colorScheme
-                                                  .secondary,
+                                          backgroundColor: Theme.of(context).colorScheme.primary,
                                         ),
                                         onPressed: () {
                                           submitInput();
@@ -399,8 +378,8 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                                           ),
                                         ),
                                       ),
-                                      if (isUser) const SizedBox(height: 12),
-                                      if (isUser)
+                                       const SizedBox(height: 12),
+                                      
                                         Row(
                                           mainAxisAlignment:
                                               MainAxisAlignment.center,
@@ -435,27 +414,6 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                       ),
                     ),
                   ),
-                  if (isLogin)
-                    ToggleSwitch(
-                      minWidth: 90.0,
-                      cornerRadius: 20.0,
-                      activeBgColors: [
-                        [Theme.of(context).colorScheme.primary],
-                        [Theme.of(context).colorScheme.secondary]
-                      ],
-                      activeFgColor: Theme.of(context).colorScheme.onSurface,
-                      inactiveBgColor: const Color.fromARGB(255, 200, 200, 200),
-                      inactiveFgColor: Theme.of(context).colorScheme.onSurface,
-                      initialLabelIndex: isUser ? 0 : 1,
-                      totalSwitches: 2,
-                      labels: const ['User', 'Admin'],
-                      radiusStyle: true,
-                      onToggle: (index) {
-                        setState(() {
-                          isUser = !isUser;
-                        });
-                      },
-                    ),
                 ],
               ),
             ),
@@ -469,10 +427,6 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
     try {
       if (_formKey.currentState!.validate()) {
         if (isLogin) {
-          // var emailAdmin = await isAdminEmail(_emailController.text);
-          // if ((isUser && emailAdmin) || (!isUser && !emailAdmin)) {
-          //   _showSnackBar("Invalid email or password");
-          // }
           await FirebaseAuth.instance.signInWithEmailAndPassword(
             email: _emailController.text,
             password: _passwordController.text,
@@ -489,15 +443,6 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
     } on FirebaseAuthException catch (e) {
       _handleAuthErrors(e);
     }
-  }
-
-  Future<bool> isAdminEmail(String email) async {
-    QuerySnapshot adminSnapshot =
-        await FirebaseFirestore.instance.collection('admins').where('email', isEqualTo: email).get();
-    if (adminSnapshot.docs.isNotEmpty) {
-      return true;
-    }
-    return false;
   }
 
   void saveUserData(String id) {
