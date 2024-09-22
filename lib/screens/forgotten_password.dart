@@ -65,6 +65,7 @@ class _ForgottenPasswordState extends State<ForgottenPassword> {
                       const Text(
                         'Enter your email address below to reset your password.',
                         style: TextStyle(fontWeight: FontWeight.bold),
+                        textAlign: TextAlign.center,
                       ),
                       const SizedBox(height: 8),
                       CustomTextFormField(

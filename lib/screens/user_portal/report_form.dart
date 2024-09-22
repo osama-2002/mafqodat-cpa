@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:math';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -9,6 +10,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:scroll_date_picker/scroll_date_picker.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:time_picker_spinner_pop_up/time_picker_spinner_pop_up.dart';
 import 'package:uuid/uuid.dart';
 import 'package:fl_geocoder/fl_geocoder.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -359,16 +361,135 @@ class _ReportFormState extends State<ReportForm> {
                             ),
                             child: SizedBox(
                               height: 100,
-                              child: ScrollDatePicker(
-                                selectedDate: _selectedDate,
-                                locale: LocalizedApp.of(context)
-                                    .delegate
-                                    .currentLocale,
-                                onDateTimeChanged: (DateTime value) {
-                                  setState(() {
-                                    _selectedDate = value;
-                                  });
-                                },
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  TimePickerSpinnerPopUp(
+                                    mode: CupertinoDatePickerMode.date,
+                                    timeWidgetBuilder: (time) {
+                                      return Container(
+                                        decoration: BoxDecoration(
+                                          border: Border.all(
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .primary
+                                                  .withOpacity(0.8),
+                                              width: 1.75),
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                        ),
+                                        padding: const EdgeInsets.fromLTRB(
+                                            12, 10, 12, 10),
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Image.asset(
+                                              'assets/images/time_picker_calendar_icon.png',
+                                              height: 26,
+                                              width: 26,
+                                              color: Theme.of(context)
+                                                  .iconTheme
+                                                  .color,
+                                            ),
+                                            const SizedBox(width: 8),
+                                            Text(
+                                              "${_selectedDate.day.toString()}/${_selectedDate.month.toString().padLeft(2, '0')}/${_selectedDate.year.toString()}",
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                                fontStyle: FontStyle.normal,
+                                                fontWeight: FontWeight.w700,
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .onSurface,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    },
+                                    initTime: _selectedDate,
+                                    minTime: DateTime.now().subtract(
+                                      const Duration(days: 30),
+                                    ),
+                                    maxTime: DateTime.now(),
+                                    barrierColor: Theme.of(context)
+                                        .colorScheme
+                                        .primary
+                                        .withOpacity(0.1),
+                                    onChange: (dateTime) {
+                                      setState(() {
+                                        _selectedDate = DateTime(
+                                          dateTime.year,
+                                          dateTime.month,
+                                          dateTime.day,
+                                          _selectedDate.hour,
+                                          _selectedDate.minute,
+                                        );
+                                      });
+                                    },
+                                  ),
+                                  const SizedBox(width: 20),
+                                  TimePickerSpinnerPopUp(
+                                    timeWidgetBuilder: (time) {
+                                      return Container(
+                                        decoration: BoxDecoration(
+                                          border: Border.all(
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .primary
+                                                  .withOpacity(0.8),
+                                              width: 1.75),
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                        ),
+                                        padding: const EdgeInsets.fromLTRB(
+                                            12, 10, 12, 10),
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Image.asset(
+                                              'assets/images/time_picker_clock_icon.png',
+                                              height: 26,
+                                              width: 26,
+                                              color: Theme.of(context)
+                                                  .iconTheme
+                                                  .color,
+                                            ),
+                                            const SizedBox(width: 8),
+                                            Text(
+                                              "${_selectedDate.hour.toString().padLeft(2, '0')}:${_selectedDate.minute.toString().padLeft(2, '0')}",
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                                fontStyle: FontStyle.normal,
+                                                fontWeight: FontWeight.w700,
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .onSurface,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    },
+                                    mode: CupertinoDatePickerMode.time,
+                                    initTime: _selectedDate,
+                                    onChange: (dateTime) {
+                                      setState(() {
+                                        _selectedDate = DateTime(
+                                          _selectedDate.year,
+                                          _selectedDate.month,
+                                          _selectedDate.day,
+                                          dateTime.hour,
+                                          dateTime.minute,
+                                        );
+                                      });
+                                    },
+                                    barrierColor: Theme.of(context)
+                                        .colorScheme
+                                        .primary
+                                        .withOpacity(0.1),
+                                  ),
+                                ],
                               ),
                             ),
                           ),
