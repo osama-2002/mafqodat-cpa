@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_translate/flutter_translate.dart';
 
 import 'package:mafqodat/widgets/custom_text_field.dart';
 
@@ -21,7 +22,7 @@ class _ForgottenPasswordState extends State<ForgottenPassword> {
       await FirebaseAuth.instance
           .sendPasswordResetEmail(email: _emailController.text);
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Email Sent")),
+        SnackBar(content: Text(translate("AnEmailSent"))),
       );
       setState(() {
         _emailSent = true;
@@ -37,7 +38,7 @@ class _ForgottenPasswordState extends State<ForgottenPassword> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Forgotten Password'),
+        title: Text(translate("ForgottenPassword")),
       ),
       body: Center(
         child: Container(
@@ -50,9 +51,9 @@ class _ForgottenPasswordState extends State<ForgottenPassword> {
                   children: [
                     Image.asset('assets/images/email_icon.png'),
                     const SizedBox(height: 28),
-                    const Text(
-                      'An email has been sent to your\nemail address.',
-                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                     Text(
+                      translate("AnEmailSent"),
+                      style:const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                       textAlign: TextAlign.center,
                     ),
                   ],
@@ -62,9 +63,9 @@ class _ForgottenPasswordState extends State<ForgottenPassword> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Text(
-                        'Enter your email address below to reset your password.',
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                       Text(
+                        translate("EnterEmail"),
+                        style:const TextStyle(fontWeight: FontWeight.bold),
                         textAlign: TextAlign.center,
                       ),
                       const SizedBox(height: 8),
@@ -73,11 +74,11 @@ class _ForgottenPasswordState extends State<ForgottenPassword> {
                         prefixIcon: Icons.email,
                         isPassword: false,
                         controller: _emailController,
-                        labelText: "Email ",
+                        labelText: "${translate("Email")} ",
                         hintText: "example@domain.com",
                         validator: (value) {
                           if (value!.isEmpty) {
-                            return 'Please enter your email address';
+                            return translate("EnterEmail");
                           }
                           return null;
                         },
@@ -90,7 +91,7 @@ class _ForgottenPasswordState extends State<ForgottenPassword> {
                           }
                         },
                         child: Text(
-                          'Send Email',
+                          translate("Send"),
                           style: TextStyle(
                             color: widget.isUser
                                 ? Theme.of(context).colorScheme.primary

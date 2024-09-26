@@ -64,7 +64,7 @@ class _ReportFormState extends State<ReportForm> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Pick a primary color'),
+          title:Text(translate("PickCol")),
           content: SingleChildScrollView(
             child: BlockPicker(
               pickerColor: _selectedColor,
@@ -91,7 +91,7 @@ class _ReportFormState extends State<ReportForm> {
           ),
           actions: <Widget>[
             ElevatedButton(
-              child: const Text('Select'),
+              child: Text(translate("Select")),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -195,7 +195,7 @@ class _ReportFormState extends State<ReportForm> {
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to generate notification: $e')),
+        SnackBar(content: Text("${translate("NotiProb")} $e")),
       );
     }
   }
@@ -228,7 +228,7 @@ class _ReportFormState extends State<ReportForm> {
         imageUrl = await snapshot.ref.getDownloadURL();
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Failed to upload images')));
+            SnackBar(content: Text(translate("ImageProb"))));
         return;
       }
     }
@@ -259,14 +259,14 @@ class _ReportFormState extends State<ReportForm> {
       _clearForm();
       if (mounted) Navigator.of(context).pop();
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Submitted successfully, Check Notifications'),
+        SnackBar(
+          content: Text(translate("GoodSubmit")),
         ),
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Failed to submit report: $e'),
+          content: Text("${translate("BadSubmit")} $e"),
         ),
       );
     }
@@ -325,13 +325,13 @@ class _ReportFormState extends State<ReportForm> {
                           const SizedBox(height: 16),
                           CustomTextFormField(
                             controller: _descriptionController,
-                            labelText: 'Description',
-                            hintText: 'describe what have you lost',
+                            labelText: translate("Description"),
+                            hintText: translate("DescriptionHint"),
                             prefixIcon: Icons.description_outlined,
                             isUser: true,
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return 'Please enter a description';
+                                return translate("DescriptionHint");
                               }
                               return null;
                             },
@@ -340,7 +340,7 @@ class _ReportFormState extends State<ReportForm> {
                           ElevatedButton(
                             onPressed: () => _pickColor(context),
                             child: _selectedColor == null
-                                ? const Text('Pick a Color')
+                                ? Text(translate("PickCol"))
                                 : Icon(
                                     Symbols.colors,
                                     color: _selectedColor,
@@ -538,7 +538,7 @@ class _ReportFormState extends State<ReportForm> {
                                           _takePicture();
                                         },
                                         icon: const Icon(Icons.camera),
-                                        label: const Text('Take a picture'),
+                                        label: Text(translate("TakePic")),
                                       ),
                               ),
                             ),
@@ -556,21 +556,21 @@ class _ReportFormState extends State<ReportForm> {
                                     _submitReport();
                                   } else {
                                     ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
+                                      SnackBar(
                                         content: Text(
-                                            'Please fill the required fields'),
+                                            translate("PleaseFill")),
                                       ),
                                     );
                                   }
                                 },
                                 child: _isLoading
                                     ? const CircularProgressIndicator()
-                                    : const Text('Submit'),
+                                    : Text(translate("Submit")),
                               ),
                               const SizedBox(width: 32),
                               ElevatedButton(
                                 onPressed: _clearForm,
-                                child: const Text('Clear'),
+                                child:Text(translate("Clear")),
                               ),
                             ],
                           ),

@@ -1,6 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_translate/flutter_translate.dart';
 import 'package:intl/intl.dart';
 
 import 'package:mafqodat/widgets/user_portal_widgets/guide.dart';
@@ -27,9 +28,9 @@ class ClaimNotification extends StatelessWidget {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
-                content: const Text(
-                  "Are you sure you want to delete this notification?",
-                  style: TextStyle(
+                content: Text(
+                  translate("SureDeleteNoti?"),
+                  style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w700,
                   ),
@@ -40,7 +41,7 @@ class ClaimNotification extends StatelessWidget {
                       Navigator.of(context).pop();
                     },
                     child: Text(
-                      'Cancel',
+                      translate("Cancel"),
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w700,
@@ -62,7 +63,7 @@ class ClaimNotification extends StatelessWidget {
                       Navigator.of(context).pop();
                     },
                     child: Text(
-                      'Confirm',
+                      translate("Confirm"),
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w700,
@@ -111,9 +112,9 @@ class ClaimNotification extends StatelessWidget {
                                     color: Colors.black,
                                   ),
                                   children: [
-                                    const TextSpan(text: "Check the "),
+                                    TextSpan(text: translate("Check")),
                                     TextSpan(
-                                      text: "Guide Page",
+                                      text: translate("GuidePage"),
                                       style: TextStyle(
                                           color: Theme.of(context)
                                               .colorScheme
@@ -128,9 +129,9 @@ class ClaimNotification extends StatelessWidget {
                                                       const GuidePage()),
                                             ),
                                     ),
-                                    const TextSpan(
+                                    TextSpan(
                                         text:
-                                            "  to learn how to submit a more effective claim."),
+                                            translate("ToSubmit")),
                                   ],
                                 ),
                               ),
@@ -151,9 +152,9 @@ class ClaimNotification extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          "Contact Info:",
-                          style: TextStyle(
+                        Text(
+                          translate("Contact"),
+                          style:const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
                           ),

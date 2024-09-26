@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_translate/flutter_translate.dart';
 
 class Item extends StatelessWidget {
   const Item({super.key, required this.data, required this.id});
@@ -17,9 +18,9 @@ class Item extends StatelessWidget {
             context: context,
             builder: (context) {
               return AlertDialog(
-                content: const Text(
-                  "Are you sure you want to delete this item?",
-                  style: TextStyle(
+                content: Text(
+                  translate("SureDeleteItem?"),
+                  style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w700,
                   ),
@@ -30,7 +31,7 @@ class Item extends StatelessWidget {
                       Navigator.of(context).pop();
                     },
                     child: Text(
-                      'Cancel',
+                      translate("Cancel"),
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w700,
@@ -52,7 +53,7 @@ class Item extends StatelessWidget {
                       Navigator.of(context).pop();
                     },
                     child: Text(
-                      'Confirm',
+                      translate("Confirm"),
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w700,

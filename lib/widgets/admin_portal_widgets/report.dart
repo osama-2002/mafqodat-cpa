@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
+import 'package:flutter_translate/flutter_translate.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -64,16 +65,16 @@ class _ReportState extends State<Report> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const SizedBox(height: 12),
-                const Text(
-                  'Found Item Report',
-                  style: TextStyle(fontWeight: FontWeight.w700, fontSize: 18),
+                Text(
+                  translate("FoundReport"),
+                  style:const TextStyle(fontWeight: FontWeight.w700, fontSize: 18),
                 ),
                 const SizedBox(height: 12),
                 Row(
                   children: [
-                    const Text(
-                      "Type: ",
-                      style: TextStyle(
+                    Text(
+                      translate("Type"),
+                      style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w700,
                       ),
@@ -94,9 +95,9 @@ class _ReportState extends State<Report> {
                 const SizedBox(height: 12),
                 Row(
                   children: [
-                    const Text(
-                      "Description: ",
-                      style: TextStyle(
+                    Text(
+                      translate("Description"),
+                      style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w700,
                       ),
@@ -117,9 +118,9 @@ class _ReportState extends State<Report> {
                 const SizedBox(height: 8),
                 Row(
                   children: [
-                    const Text(
-                      'Status: ',
-                      style: TextStyle(
+                    Text(
+                      translate("Status"),
+                      style:const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w700,
                       ),
@@ -136,9 +137,9 @@ class _ReportState extends State<Report> {
                 const SizedBox(height: 8),
                 Row(
                   children: [
-                    const Text(
-                      'Timestamp: ',
-                      style: TextStyle(
+                    Text(
+                      translate("Timestamp"),
+                      style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w700,
                       ),
@@ -175,10 +176,10 @@ class _ReportState extends State<Report> {
                               height: 150,
                             ),
                           )
-                        : const Center(
+                        : Center(
                             child: Text(
-                              'No images uploaded',
-                              style: TextStyle(
+                              translate("NoImage"),
+                              style: const TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.w700,
                               ),
@@ -224,9 +225,9 @@ class _ReportState extends State<Report> {
                 const SizedBox(height: 8),
                 Row(
                   children: [
-                    const Text(
-                      "Address: ",
-                      style: TextStyle(
+                    Text(
+                      translate("Address"),
+                      style:const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w700,
                       ),
@@ -274,7 +275,7 @@ class _ReportState extends State<Report> {
                     color: Theme.of(context).colorScheme.secondary,
                   ),
                   label: Text(
-                    'Handed Over',
+                    translate("Handed"),
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.secondary,
                       fontWeight: FontWeight.w600,
@@ -288,9 +289,9 @@ class _ReportState extends State<Report> {
                       context: context,
                       builder: (context) {
                         return AlertDialog(
-                          content: const Text(
-                            "Are you sure you want to delete this report?",
-                            style: TextStyle(
+                          content:Text(
+                            translate("SureDeleteRep?"),
+                            style:const TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.w700,
                             ),
@@ -301,7 +302,7 @@ class _ReportState extends State<Report> {
                                 Navigator.of(context).pop();
                               },
                               child: Text(
-                                'Cancel',
+                                translate("Cancel"),
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w700,
@@ -324,7 +325,7 @@ class _ReportState extends State<Report> {
                                 Navigator.of(context).pop();
                               },
                               child: Text(
-                                'Confirm',
+                                translate("Confirm"),
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w700,
@@ -342,9 +343,9 @@ class _ReportState extends State<Report> {
                     Icons.delete_outline,
                     color: Colors.red,
                   ),
-                  label: const Text(
-                    'Delete',
-                    style: TextStyle(
+                  label: Text(
+                    translate("Delete"),
+                    style:const TextStyle(
                       color: Colors.red,
                       fontWeight: FontWeight.w600,
                     ),

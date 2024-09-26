@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_translate/flutter_translate.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
 
@@ -53,7 +54,7 @@ class _MatchScreenState extends State<MatchScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Match Details'),
+        title: Text(translate("MatchDetails")),
         backgroundColor: Theme.of(context).colorScheme.secondary,
       ),
       body: _isLoading
@@ -65,17 +66,17 @@ class _MatchScreenState extends State<MatchScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     _buildComparisonSection(
-                      title: 'Category',
+                      title: translate("Category"),
                       claimValue: claimData['type'],
                       itemValue: itemData['type'],
                     ),
                     _buildComparisonSection(
-                      title: 'Description',
+                      title: translate("Description"),
                       claimValue: claimData['description'],
                       itemValue: itemData['description'],
                     ),
                     _buildComparisonSection(
-                      title: 'Date',
+                      title: translate("Date"),
                       claimValue: DateFormat('dd-MM-yyyy   hh:mm a')
                           .format(claimData['date'].toDate()),
                       itemValue: DateFormat('dd-MM-yyyy   hh:mm a')
@@ -93,9 +94,9 @@ class _MatchScreenState extends State<MatchScreen> {
                             backgroundColor:
                                 Theme.of(context).colorScheme.primary,
                           ),
-                          child: const Text(
-                            'Accept',
-                            style: TextStyle(color: Colors.black),
+                          child: Text(
+                            translate("Accept"),
+                            style: const TextStyle(color: Colors.black),
                           ),
                         ),
                         const SizedBox(width: 32),
@@ -105,9 +106,9 @@ class _MatchScreenState extends State<MatchScreen> {
                             backgroundColor:
                                 Theme.of(context).colorScheme.secondary,
                           ),
-                          child: const Text(
-                            'Reject',
-                            style: TextStyle(color: Colors.black),
+                          child:  Text(
+                            translate("Reject"),
+                            style:const TextStyle(color: Colors.black),
                           ),
                         ),
                       ],
@@ -131,9 +132,9 @@ class _MatchScreenState extends State<MatchScreen> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Expanded(child: Text('Claim: $claimValue')),
+            Expanded(child: Text("${translate("Claim")}$claimValue")),
             const VerticalDivider(),
-            Expanded(child: Text('Item: $itemValue')),
+            Expanded(child: Text("${translate("Item")}$itemValue")),
           ],
         ),
         const Divider(),

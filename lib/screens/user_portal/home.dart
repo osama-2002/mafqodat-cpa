@@ -56,8 +56,8 @@ class _HomeState extends State<Home> {
                       Navigator.of(context).push(MaterialPageRoute(
                           builder: (context) => const ClaimForm()));
                     },
-                    label: const Text('I have lost an item',
-                        style: TextStyle(fontSize: 20)),
+                    label: Text(translate("LostButton"),
+                        style:const TextStyle(fontSize: 20)),
                     icon: const Icon(Symbols.person_raised_hand),
                   ),
                   const SizedBox(height: 30),
@@ -66,8 +66,8 @@ class _HomeState extends State<Home> {
                       Navigator.of(context).push(MaterialPageRoute(
                           builder: (context) => const ReportForm()));
                     },
-                    label: const Text('I have found an item',
-                        style: TextStyle(fontSize: 20)),
+                    label: Text(translate("FoundButton"),
+                        style:const TextStyle(fontSize: 20)),
                     icon: const Icon(Symbols.approval_delegation),
                   ),
                 ]
@@ -96,9 +96,9 @@ class _HomeState extends State<Home> {
                 context: context,
                 builder: (context) {
                   return AlertDialog(
-                    content: const Text(
-                      "Are you sure you want to sign out?",
-                      style: TextStyle(
+                    content: Text(
+                      translate("SignOut?"),
+                      style:const  TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w700,
                       ),
@@ -108,9 +108,9 @@ class _HomeState extends State<Home> {
                         onPressed: () {
                           Navigator.of(context).pop();
                         },
-                        child: const Text(
-                          'Cancel',
-                          style: TextStyle(
+                        child:  Text(
+                          translate("Cancel"),
+                          style:const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w700,
                           ),
@@ -147,7 +147,7 @@ class _HomeState extends State<Home> {
                 color: Theme.of(context).colorScheme.primary,
               ),
               child: Text(
-                'Menu',
+                translate("Menu"),
                 style: TextStyle(
                   color: Theme.of(context).colorScheme.onPrimary,
                   fontSize: 24,
@@ -173,7 +173,7 @@ class _HomeState extends State<Home> {
             ),
             ListTile(
               leading: const Icon(Icons.help),
-              title: const Text('Guide'),
+              title:  Text(translate("GUide")),
               onTap: () {
                 Navigator.of(context).push(
                     MaterialPageRoute(builder: (context) => const GuidePage()));
@@ -188,17 +188,17 @@ class _HomeState extends State<Home> {
         items: [
           SalomonBottomBarItem(
             icon: const Icon(Icons.search),
-            title: const Text("Home"),
+            title: Text(translate("Home")),
             selectedColor: Theme.of(context).colorScheme.primary,
           ),
           SalomonBottomBarItem(
             icon: const Icon(Icons.notifications),
-            title: const Text("Notifications"),
+            title: Text(translate("Notifications")),
             selectedColor: Theme.of(context).colorScheme.primary,
           ),
           SalomonBottomBarItem(
             icon: const Icon(Icons.person),
-            title: const Text("Profile"),
+            title: Text(translate("Profile")),
             selectedColor: Theme.of(context).colorScheme.primary,
           ),
         ],

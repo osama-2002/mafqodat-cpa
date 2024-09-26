@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_translate/flutter_translate.dart';
 
 import 'package:mafqodat/widgets/user_portal_widgets/claim_notification.dart';
 import 'package:mafqodat/widgets/user_portal_widgets/match_notification.dart';
@@ -74,13 +75,13 @@ class _NotificationsListState extends State<NotificationsList> {
                           reportsSnapshot.data!.docs.isEmpty;
 
                       if (hasNoMatches && hasNoClaims && hasNoReports) {
-                        return const Center(
+                        return  Center(
                           child: Column(
                             children: [
-                              SizedBox(height: 320),
+                              const SizedBox(height: 320),
                               Text(
-                                'No new notifications found',
-                                style: TextStyle(
+                                translate("NoNotification"),
+                                style:const TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.w700,
                                   color: Colors.black54,

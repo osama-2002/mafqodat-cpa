@@ -65,7 +65,7 @@ class _ClaimFormState extends State<ClaimForm> {
       });
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('An error occurred, try again later')));
+          SnackBar(content: Text(translate("ErrorOc"))));
     }
   }
 
@@ -74,7 +74,7 @@ class _ClaimFormState extends State<ClaimForm> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Pick a primary color'),
+          title:  Text(translate("PickCol")),
           content: SingleChildScrollView(
             child: BlockPicker(
               pickerColor: _selectedColor,
@@ -101,7 +101,7 @@ class _ClaimFormState extends State<ClaimForm> {
           ),
           actions: <Widget>[
             ElevatedButton(
-              child: const Text('Select'),
+              child: Text(translate("Select")),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -175,7 +175,7 @@ class _ClaimFormState extends State<ClaimForm> {
           imageUrls.add(downloadUrl);
         } catch (e) {
           ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Failed to upload images')));
+              SnackBar(content: Text(translate("ImageProb"))));
           return;
         }
       }
@@ -206,14 +206,14 @@ class _ClaimFormState extends State<ClaimForm> {
       _clearForm();
       if (mounted) Navigator.of(context).pop();
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Submitted successfully'),
+         SnackBar(
+          content: Text(translate("GoodSubmit2")),
         ),
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Failed to submit claim: $e'),
+          content: Text("${translate("BadSubmit2")} $e"),
         ),
       );
     }
@@ -272,13 +272,13 @@ class _ClaimFormState extends State<ClaimForm> {
                           const SizedBox(height: 16),
                           CustomTextFormField(
                             controller: _descriptionController,
-                            labelText: 'Description',
-                            hintText: 'describe what have you lost',
+                            labelText: translate("Description"),
+                            hintText: translate("DescriptionHint"),
                             prefixIcon: Icons.description_outlined,
                             isUser: true,
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return 'Please enter a description';
+                                return translate("DescriptionHint");
                               }
                               return null;
                             },
@@ -287,7 +287,7 @@ class _ClaimFormState extends State<ClaimForm> {
                           ElevatedButton(
                             onPressed: () => _pickColor(context),
                             child: _selectedColor == null
-                                ? const Text('Pick a Color')
+                                ? Text(translate("PickCol"))
                                 : Icon(
                                     Symbols.colors,
                                     color: _selectedColor,
@@ -495,7 +495,7 @@ class _ClaimFormState extends State<ClaimForm> {
                                         onPressed: _selectImages,
                                         icon: const Icon(Icons.photo),
                                         label:
-                                            const Text('Choose from gallery'),
+                                            Text(translate("Gallery")),
                                       ),
                               ),
                             ),
@@ -512,21 +512,21 @@ class _ClaimFormState extends State<ClaimForm> {
                                     _submitClaim();
                                   } else {
                                     ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
+                                      SnackBar(
                                         content: Text(
-                                            'Please fill the required fields'),
+                                            translate("PleaseFill")),
                                       ),
                                     );
                                   }
                                 },
                                 child: _isLoading
                                     ? const CircularProgressIndicator()
-                                    : const Text('Submit'),
+                                    :  Text(translate("Submit")),
                               ),
                               const SizedBox(width: 32),
                               ElevatedButton(
                                 onPressed: _clearForm,
-                                child: const Text('Clear'),
+                                child: Text(translate("Clear")),
                               ),
                             ],
                           ),

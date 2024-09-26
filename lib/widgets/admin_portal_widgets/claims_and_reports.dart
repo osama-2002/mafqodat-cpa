@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_translate/flutter_translate.dart';
 import 'package:mafqodat/widgets/custom_dropdown_button.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 
@@ -85,7 +86,7 @@ class _ClaimsAndReportsState extends State<ClaimsAndReports> {
                           });
                         },
                         child: Text(
-                          'Reset Filter',
+                          translate("ResetFilter"),
                           style: TextStyle(
                             color: Theme.of(context).colorScheme.secondary,
                             fontWeight: FontWeight.w600,
@@ -145,17 +146,17 @@ class _ClaimsAndReportsState extends State<ClaimsAndReports> {
                         const SizedBox(height: 270),
                         Center(
                           child: _selectedTab == 'Claims'
-                              ? const Text(
-                                  'No claims found.',
-                                  style: TextStyle(
+                              ? Text(
+                                  translate("NoClaims"),
+                                  style:const TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.w700,
                                     color: Colors.black54,
                                   ),
                                 )
-                              : const Text(
-                                  'No reports found.',
-                                  style: TextStyle(
+                              : Text(
+                                  translate("NoReports"),
+                                  style:const TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.w700,
                                     color: Colors.black54,

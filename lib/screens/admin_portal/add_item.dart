@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_translate/flutter_translate.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -46,7 +47,7 @@ class _AddItemState extends State<AddItem> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Pick a secondary color'),
+          title:  Text(translate("PickCol2")),
           content: SingleChildScrollView(
             child: BlockPicker(
               pickerColor: _selectedColor,
@@ -73,7 +74,7 @@ class _AddItemState extends State<AddItem> {
           ),
           actions: <Widget>[
             ElevatedButton(
-              child: const Text('Select'),
+              child:  Text(translate("Select")),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -125,7 +126,7 @@ class _AddItemState extends State<AddItem> {
         downloadUrl = await snapshot.ref.getDownloadURL();
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Failed to upload images')));
+            SnackBar(content: Text(translate("ImageProb"))));
         return;
       }
     }
@@ -144,14 +145,14 @@ class _AddItemState extends State<AddItem> {
       _clearForm();
       if (mounted) Navigator.of(context).pop();
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Submitted successfully'),
+        SnackBar(
+          content: Text(translate("GoodSubmit2")),
         ),
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Failed to submit report: $e'),
+          content: Text("${translate("BadSubmit")}$e"),
         ),
       );
     }
@@ -172,7 +173,7 @@ class _AddItemState extends State<AddItem> {
         onTap: _unfocusTextFields,
         child: Scaffold(
           appBar: AppBar(
-            title: const Text('Add Item'),
+            title:  Text(translate("AddItem")),
             backgroundColor: Theme.of(context).colorScheme.secondary,
             actions: [
               IconButton(
@@ -185,9 +186,9 @@ class _AddItemState extends State<AddItem> {
                     context: context,
                     builder: (context) {
                       return AlertDialog(
-                        content: const Text(
-                          "Are you sure you want to sign out?",
-                          style: TextStyle(
+                        content:  Text(
+                          translate("SignOut?"),
+                          style:const TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.w700,
                           ),
@@ -198,7 +199,7 @@ class _AddItemState extends State<AddItem> {
                               Navigator.of(context).pop();
                             },
                             child: Text(
-                              'Cancel',
+                              translate("Cancel"),
                               style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w700,
@@ -212,7 +213,7 @@ class _AddItemState extends State<AddItem> {
                               Navigator.of(context).pop();
                             },
                             child: Text(
-                              'Confirm',
+                              translate("Confirm"),
                               style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w700,
@@ -249,13 +250,13 @@ class _AddItemState extends State<AddItem> {
                         const SizedBox(height: 16),
                         CustomTextFormField(
                           controller: _descriptionController,
-                          labelText: 'Description',
-                          hintText: 'describe what have you lost',
+                          labelText: translate("Description"),
+                          hintText: translate("DescriptionHint"),
                           prefixIcon: Icons.description_outlined,
                           isUser: false,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Please enter a description';
+                              return translate("DescriptionHint");
                             }
                             return null;
                           },
@@ -265,7 +266,7 @@ class _AddItemState extends State<AddItem> {
                           onPressed: () => _pickColor(context),
                           child: _selectedColor == null
                               ? Text(
-                                  'Pick a Color',
+                                  translate("PickCol"),
                                   style: TextStyle(
                                       color: Theme.of(context)
                                           .colorScheme
@@ -307,7 +308,7 @@ class _AddItemState extends State<AddItem> {
                                               .colorScheme
                                               .secondary),
                                       label: Text(
-                                        'Take a picture',
+                                        translate("TakePic"),
                                         style: TextStyle(
                                             color: Theme.of(context)
                                                 .colorScheme
@@ -330,9 +331,9 @@ class _AddItemState extends State<AddItem> {
                                   _addItem();
                                 } else {
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
+                                     SnackBar(
                                       content: Text(
-                                          'Please fill the required fields'),
+                                          translate("PleaseFill")),
                                     ),
                                   );
                                 }
@@ -340,7 +341,7 @@ class _AddItemState extends State<AddItem> {
                               child: _isLoading
                                   ? const CircularProgressIndicator()
                                   : Text(
-                                      'Submit',
+                                      translate("Submit"),
                                       style: TextStyle(
                                           color: Theme.of(context)
                                               .colorScheme
@@ -351,7 +352,7 @@ class _AddItemState extends State<AddItem> {
                             ElevatedButton(
                               onPressed: _clearForm,
                               child: Text(
-                                'Clear',
+                                translate("Clear"),
                                 style: TextStyle(
                                     color: Theme.of(context)
                                         .colorScheme

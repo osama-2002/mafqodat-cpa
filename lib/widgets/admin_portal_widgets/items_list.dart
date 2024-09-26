@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_translate/flutter_translate.dart';
 
 import 'package:mafqodat/widgets/admin_portal_widgets/item.dart';
 import 'package:mafqodat/widgets/custom_dropdown_button.dart';
@@ -75,7 +76,7 @@ class _ItemsListState extends State<ItemsList> {
                       });
                     },
                     child: Text(
-                      'Reset Filter',
+                      translate("ResetFilter"),
                       style: TextStyle(
                         color: Theme.of(context).colorScheme.secondary,
                         fontWeight: FontWeight.w600,
@@ -85,10 +86,10 @@ class _ItemsListState extends State<ItemsList> {
                 ],
               ),
               const SizedBox(height: 280),
-              const Center(
+              Center(
                 child: Text(
-                  'No items found.',
-                  style: TextStyle(
+                  translate("NoItems"),
+                  style:const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w700,
                     color: Colors.black54,
@@ -119,7 +120,7 @@ class _ItemsListState extends State<ItemsList> {
                     });
                   },
                   child: Text(
-                    'Reset Filter',
+                    translate("ResetFilter"),
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.secondary,
                       fontWeight: FontWeight.w600,

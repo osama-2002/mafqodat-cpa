@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_translate/flutter_translate.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 
 import 'package:mafqodat/widgets/user_portal_widgets/claim.dart';
@@ -22,7 +23,7 @@ class _ClaimsAndReportsState extends State<ClaimsAndReports> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Claims & Reports'),
+        title: Text(translate("ClaimsReport")),
         backgroundColor: Theme.of(context).colorScheme.primary,
       ),
       body: SingleChildScrollView(
@@ -94,17 +95,17 @@ class _ClaimsAndReportsState extends State<ClaimsAndReports> {
                         const SizedBox(height: 320),
                         Center(
                           child: _selectedTab == 'Claims'
-                              ? const Text(
-                                  'No claims found.',
-                                  style: TextStyle(
+                              ? Text(
+                                  translate("NoClaims"),
+                                  style:const  TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.w700,
                                     color: Colors.black54,
                                   ),
                                 )
-                              : const Text(
-                                  'No reports found.',
-                                  style: TextStyle(
+                              :  Text(
+                                  translate("NoReports"),
+                                  style:const TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.w700,
                                     color: Colors.black54,

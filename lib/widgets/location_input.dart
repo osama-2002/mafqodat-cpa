@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_translate/flutter_translate.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -73,7 +74,7 @@ class LocationInputState extends State<LocationInput> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Select location'),
+          title: Text(translate("SelectLoc")),
           content: MapDialog(
             initialLatitude: latitude!,
             initialLongitude: longitude!,
@@ -92,7 +93,7 @@ class LocationInputState extends State<LocationInput> {
           ),
           actions: <Widget>[
             ElevatedButton(
-              child: const Text('Done'),
+              child: const Text("Done"),
               onPressed: () {
                 Navigator.of(context).pop();
               },

@@ -42,13 +42,13 @@ class _AdminProfileState extends State<AdminProfile> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text("Edit Info"),
+          title: Text(translate("Edit")),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text(
-                "Update the fields you want to edit. You don't need to fill out all fields.",
-                style: TextStyle(
+               Text(
+                translate("EditHint"),
+                style:const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w500,
                 ),
@@ -57,7 +57,7 @@ class _AdminProfileState extends State<AdminProfile> {
               TextField(
                 controller: _newNameController,
                 decoration: InputDecoration(
-                  labelText: " New Display Name",
+                  labelText: translate("NewName"),
                   labelStyle: TextStyle(
                     color: Theme.of(context).colorScheme.secondary,
                   ),
@@ -77,7 +77,7 @@ class _AdminProfileState extends State<AdminProfile> {
               TextField(
                 controller: _newPhoneNumberController,
                 decoration: InputDecoration(
-                  labelText: " New Phone Number",
+                  labelText: translate("NewPhoneNo"),
                   labelStyle: TextStyle(
                     color: Theme.of(context).colorScheme.secondary,
                   ),
@@ -103,7 +103,7 @@ class _AdminProfileState extends State<AdminProfile> {
                 Navigator.of(context).pop();
               },
               child: Text(
-                'Cancel',
+                translate("Cancel"),
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w700,
@@ -136,8 +136,8 @@ class _AdminProfileState extends State<AdminProfile> {
                     );
                   }
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text("Close the application and open it again"),
+                    SnackBar(
+                      content: Text(translate("CloseApp")),
                     ),
                   );
                 }
@@ -146,7 +146,7 @@ class _AdminProfileState extends State<AdminProfile> {
                 Navigator.of(context).pop();
               },
               child: Text(
-                'Confirm',
+                translate("Confirm"),
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w700,
@@ -205,9 +205,9 @@ class _AdminProfileState extends State<AdminProfile> {
                               fontSize: 24, fontWeight: FontWeight.bold),
                         ),
                         const SizedBox(height: 5),
-                        const Text(
-                          "Admin",
-                          style: TextStyle(fontSize: 16, color: Colors.grey),
+                        Text(
+                          translate("Admin"),
+                          style:const  TextStyle(fontSize: 16, color: Colors.grey),
                         ),
                       ],
                     ),
@@ -254,9 +254,9 @@ class _AdminProfileState extends State<AdminProfile> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text(
-                                  "Location",
-                                  style: TextStyle(
+                                 Text(
+                                  translate("Location"),
+                                  style:const TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold),
                                 ),
@@ -284,9 +284,9 @@ class _AdminProfileState extends State<AdminProfile> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text(
-                                  "Working Hours",
-                                  style: TextStyle(
+                                Text(
+                                  translate("WorkingHours"),
+                                  style:const  TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold),
                                 ),
@@ -314,9 +314,9 @@ class _AdminProfileState extends State<AdminProfile> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text(
-                                  "Phone",
-                                  style: TextStyle(
+                                 Text(
+                                  translate("PhoneNo"),
+                                  style:const TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold),
                                 ),
@@ -344,9 +344,9 @@ class _AdminProfileState extends State<AdminProfile> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text(
-                                  "Email",
-                                  style: TextStyle(
+                                 Text(
+                                  translate("Email"),
+                                  style:const TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold),
                                 ),

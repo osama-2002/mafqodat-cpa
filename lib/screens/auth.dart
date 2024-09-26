@@ -55,7 +55,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
         appBar: AppBar(
           backgroundColor: Theme.of(context).colorScheme.primary,
           title: Text(
-            isLogin ? 'Login Page' : 'Sign Up Page',
+            isLogin ? translate("LogPage") : translate("SignPage"),
           ),
           actions: [
             IconButton(
@@ -111,16 +111,16 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                                   ? [
                                       CustomTextFormField(
                                         controller: _emailController,
-                                        labelText: 'Email ',
+                                        labelText: "${translate("Email")} ",
                                         hintText: 'example@domain.com',
                                         isUser: true,
                                         isPassword: false,
                                         validator: (value) {
                                           if (value == null || value.isEmpty) {
-                                            return 'This field can not be empty';
+                                            return translate("NotEmpty");
                                           }
                                           if (!value.contains('@')) {
-                                            return 'Invalid Email Format';
+                                            return translate("InvalidEmail");
                                           }
                                           return null;
                                         },
@@ -129,16 +129,16 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                                       const SizedBox(height: 30),
                                       CustomTextFormField(
                                         controller: _passwordController,
-                                        labelText: 'Password ',
+                                        labelText: "${translate("Password")} ",
                                         hintText: '',
                                         prefixIcon: Icons.lock,
                                         isUser: true,
                                         validator: (value) {
                                           if (value == null || value.isEmpty) {
-                                            return 'This field can not be empty';
+                                            return translate("NotEmpty");
                                           }
                                           if (value.length < 5) {
-                                            return 'Password must contain 5 characters at least';
+                                            return translate("InvalidPass");
                                           }
                                           return null;
                                         },
@@ -158,7 +158,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                                           );
                                         },
                                         child: Text(
-                                          "Forgotten Password?",
+                                          translate("ForgottenPassword"),
                                           style: TextStyle(
                                               fontWeight: FontWeight.w600,
                                               color: Theme.of(context).colorScheme.primary),
@@ -173,7 +173,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                                           submitInput();
                                         },
                                         child: Text(
-                                          isLogin ? 'Login' : 'signUp',
+                                          isLogin ? translate("Login") : translate("Sign"),
                                           style: TextStyle(
                                             fontSize: 18,
                                             color: Theme.of(context)
@@ -191,8 +191,8 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                                           children: [
                                             Text(
                                               isLogin
-                                                  ? "don't have an account?"
-                                                  : "already has an account?",
+                                                  ? translate("NoAcc")
+                                                  : translate("Acc"),
                                               style: const TextStyle(
                                                   fontWeight: FontWeight.bold),
                                             ),
@@ -203,7 +203,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                                                 });
                                               },
                                               child: Text(
-                                                isLogin ? "signUp" : "login",
+                                                isLogin ? translate("Sign") : translate("Login"),
                                                 style: TextStyle(
                                                   fontWeight: FontWeight.bold,
                                                   color: Theme.of(context)
@@ -218,13 +218,13 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                                   : [
                                       CustomTextFormField(
                                         controller: _nameController,
-                                        labelText: 'Name ',
-                                        hintText: 'Choose you display name',
+                                        labelText: "${translate("Name")} ",
+                                        hintText: translate("DisplayName"),
                                         isUser: true,
                                         isPassword: false,
                                         validator: (value) {
                                           if (value == null || value.isEmpty) {
-                                            return 'This field can not be empty';
+                                            return translate("NotEmpty");
                                           }
                                           return null;
                                         },
@@ -233,18 +233,18 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                                       const SizedBox(height: 26),
                                       CustomTextFormField(
                                         controller: _nationalNumberController,
-                                        labelText: 'National Number ',
+                                        labelText: "${translate("NationalNo")} ",
                                         hintText:
-                                            'National number in your Id card',
+                                            translate("NationalHint"),
                                         isUser: true,
                                         isPassword: false,
                                         validator: (value) {
                                           if (value == null || value.isEmpty) {
-                                            return 'This field can not be empty';
+                                            return translate("NotEmpty");
                                           }
                                           if (!RegExp(r'^[0-9]+$')
                                               .hasMatch(value)) {
-                                            return 'National number consists of numbers only';
+                                            return translate("InvalidNational");
                                           }
                                           return null;
                                         },
@@ -288,16 +288,16 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                                       const SizedBox(height: 26),
                                       CustomTextFormField(
                                         controller: _emailController,
-                                        labelText: 'Email ',
+                                        labelText: "${translate("Email")} ",
                                         hintText: 'example@domain.com',
                                         isUser: true,
                                         isPassword: false,
                                         validator: (value) {
                                           if (value == null || value.isEmpty) {
-                                            return 'This field can not be empty';
+                                            return translate("NotEmpty");
                                           }
                                           if (!value.contains('@')) {
-                                            return 'Invalid Email Format';
+                                            return translate("InvalidEmail");
                                           }
                                           return null;
                                         },
@@ -306,17 +306,17 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                                       const SizedBox(height: 26),
                                       CustomTextFormField(
                                         controller: _phoneNumberController,
-                                        labelText: 'Phone number ',
+                                        labelText: "${translate("PhoneNo")} ",
                                         hintText: '7xxxxxxxx',
                                         isUser: true,
                                         isPassword: false,
                                         validator: (value) {
                                           if (value == null || value.isEmpty) {
-                                            return 'This field can not be empty';
+                                            return translate("NotEmpty");
                                           }
                                           if (!RegExp(r'^[0-9]+$')
                                               .hasMatch(value)) {
-                                            return 'Invalid phone number';
+                                            return translate("InvalidPhone");
                                           }
                                           return null;
                                         },
@@ -325,16 +325,16 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                                       const SizedBox(height: 26),
                                       CustomTextFormField(
                                         controller: _passwordController,
-                                        labelText: 'Password ',
-                                        hintText: 'Create a strong password',
+                                        labelText: "${translate("Password")} ",
+                                        hintText: translate("PassHint"),
                                         prefixIcon: Icons.lock,
                                         isUser: true,
                                         validator: (value) {
                                           if (value == null || value.isEmpty) {
-                                            return 'This field can not be empty';
+                                            return translate("NotEmpty");
                                           }
                                           if (value.length < 5) {
-                                            return 'Password must contain 5 characters at least';
+                                            return translate("InvalidPass");
                                           }
                                           return null;
                                         },
@@ -343,17 +343,17 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                                       const SizedBox(height: 26),
                                       CustomTextFormField(
                                         controller: _confirmPasswordController,
-                                        labelText: 'Confirm password ',
-                                        hintText: 'Enter your password again',
+                                        labelText: translate("ConfirmPass"),
+                                        hintText: translate("ReEnterPass"),
                                         prefixIcon: Icons.lock,
                                         isUser: true,
                                         validator: (value) {
                                           if (value == null || value.isEmpty) {
-                                            return 'This field can not be empty';
+                                            return translate("NotEmpty");
                                           }
                                           if (value !=
                                               _passwordController.text) {
-                                            return 'Wrong Password';
+                                            return translate("WrongPass");
                                           }
                                           return null;
                                         },
@@ -368,7 +368,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                                           submitInput();
                                         },
                                         child: Text(
-                                          isLogin ? 'Login' : 'signUp',
+                                          isLogin ? translate("Login") : translate("Sign"),
                                           style: TextStyle(
                                             fontSize: 18,
                                             color: Theme.of(context)
@@ -386,8 +386,8 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                                           children: [
                                             Text(
                                               isLogin
-                                                  ? "don't have an account?"
-                                                  : "already has an account?",
+                                                  ? translate("NoAcc")
+                                                  : translate("Acc"),
                                               style: const TextStyle(
                                                   fontWeight: FontWeight.bold),
                                             ),
@@ -398,7 +398,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                                                 });
                                               },
                                               child: Text(
-                                                isLogin ? "signUp" : "login",
+                                                isLogin ? translate("Sign") : translate("Login"),
                                                 style: TextStyle(
                                                   fontWeight: FontWeight.bold,
                                                   color: Theme.of(context)
@@ -457,11 +457,11 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
 
   void _handleAuthErrors(FirebaseAuthException e) {
     if (e.code == 'weak-password') {
-      _showSnackBar("The password provided is too weak.");
+      _showSnackBar(translate("WeakPass"));
     } else if (e.code == 'email-already-in-use') {
-      _showSnackBar("The account already exists for that email.");
+      _showSnackBar(translate("AccExist"));
     } else {
-      _showSnackBar("An error occurred while creating the account.");
+      _showSnackBar(translate("DiffError"));
     }
   }
 

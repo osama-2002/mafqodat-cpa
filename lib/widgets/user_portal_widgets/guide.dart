@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_translate/flutter_translate.dart';
 
 class GuidePage extends StatelessWidget {
   const GuidePage({super.key});
@@ -7,57 +8,57 @@ class GuidePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'Guide to Submitting an Effective Claim',
-          style: TextStyle(fontSize: 18),
+        title:  Text(
+          translate("Guide"),
+          style:const TextStyle(fontSize: 18),
         ),
         backgroundColor: Theme.of(context).colorScheme.primary,
       ),
-      body: const Padding(
-        padding: EdgeInsets.all(16.0),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: const [
+            children:  [
               Text(
-                'Follow these steps to increase the chances of finding your lost item:',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                translate("FollowSteps"),
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               _GuidePoint(
-                title: 'Provide a Detailed Description',
+                title: translate("FirstTitle"),
                 content:
-                    'Clearly describe the lost item, including any unique features or identifiers. This will help in quickly identifying the item if found.',
-              ),
-              _GuidePoint(
-                title: 'Select the Correct Category',
-                content:
-                    'Ensure that you select the appropriate category from the dropdown. This categorization helps in organizing and processing your claim more efficiently.',
+                    translate("FirstStep"),
               ),
               _GuidePoint(
-                title: 'Choose a Distinct Color',
+                title: translate("SecondTitle"),
                 content:
-                    'If the item has a distinct color, make sure to pick a color that closely matches it. This helps in distinguishing the item from others.',
+                    translate("SecondStep"),
               ),
               _GuidePoint(
-                title: 'Set the Accurate Date',
+                title: translate("ThirdTitle"),
                 content:
-                    'Select the date when the item was lost. Accurate timing can aid in narrowing down search efforts.',
+                    translate("ThirdStep"),
               ),
               _GuidePoint(
-                title: 'Pin the Correct Location',
+                title: translate("FourthTitle"),
                 content:
-                    'Use the location picker to accurately pin where you lost the item. If you are unsure, try to get as close as possible to the last known location.',
+                    translate("FourthStep"),
               ),
               _GuidePoint(
-                title: 'Upload Clear Photos',
+                title: translate("FifthTitle"),
                 content:
-                    'If you have any photos of the lost item, upload them. Clear images with good lighting can be crucial in identifying your item.',
+                    translate("FifthStep"),
               ),
               _GuidePoint(
-                title: 'Avoid Multiple Submissions',
+                title: translate("SixthTitle"),
                 content:
-                    'Submit only one claim per lost item. Multiple submissions for the same item can slow down the search and recovery process.',
+                    translate("SixthStep"),
+              ),
+              _GuidePoint(
+                title: translate("SeventhTitle"),
+                content:
+                    translate("SeventhStep"),
               ),
             ],
           ),

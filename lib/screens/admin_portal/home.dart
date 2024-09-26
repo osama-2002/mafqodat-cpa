@@ -73,9 +73,9 @@ class _HomeState extends State<Home> {
                 context: context,
                 builder: (context) {
                   return AlertDialog(
-                    content: const Text(
-                      "Are you sure you want to sign out?",
-                      style: TextStyle(
+                    content: Text(
+                      translate("SignOut?"),
+                      style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w700,
                       ),
@@ -86,7 +86,7 @@ class _HomeState extends State<Home> {
                           Navigator.of(context).pop();
                         },
                         child: Text(
-                          'Cancel',
+                          translate("Cancel"),
                           style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w700,
@@ -99,7 +99,7 @@ class _HomeState extends State<Home> {
                           Navigator.of(context).pop();
                         },
                         child: Text(
-                          'Confirm',
+                          translate("Confirm"),
                           style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w700,
@@ -124,7 +124,7 @@ class _HomeState extends State<Home> {
                 color: Theme.of(context).colorScheme.secondary,
               ),
               child: Text(
-                'Menu',
+                translate("Menu"),
                 style: TextStyle(
                   color: Theme.of(context).colorScheme.onPrimary,
                   fontSize: 24,
@@ -157,22 +157,22 @@ class _HomeState extends State<Home> {
         items: [
           SalomonBottomBarItem(
             icon: const Icon(Icons.search),
-            title: const Text("Items"),
+            title: Text(translate("Items")),
             selectedColor: Theme.of(context).colorScheme.secondary,
           ),
           SalomonBottomBarItem(
             icon: const Icon(Symbols.person_alert),
-            title: const Text("Claims"),
+            title: Text(translate("Claims")),
             selectedColor: Theme.of(context).colorScheme.secondary,
           ),
           SalomonBottomBarItem(
             icon: const Icon(Icons.library_add_check_outlined),
-            title: const Text("Matches"),
+            title: Text(translate("Matches")),
             selectedColor: Theme.of(context).colorScheme.secondary,
           ),
           SalomonBottomBarItem(
             icon: const Icon(Icons.person),
-            title: const Text("Profile"),
+            title: Text(translate("Profile")),
             selectedColor: Theme.of(context).colorScheme.secondary,
           ),
         ],

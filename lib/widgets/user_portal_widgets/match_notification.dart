@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_translate/flutter_translate.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -25,9 +26,9 @@ class MatchNotification extends StatelessWidget {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
-                content: const Text(
-                  "Are you sure you want to delete this notification?",
-                  style: TextStyle(
+                content: Text(
+                  translate("SureDeleteNoti?"),
+                  style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w700,
                   ),
@@ -38,7 +39,7 @@ class MatchNotification extends StatelessWidget {
                       Navigator.of(context).pop();
                     },
                     child: Text(
-                      'Cancel',
+                      translate("Cancel"),
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w700,
@@ -60,7 +61,7 @@ class MatchNotification extends StatelessWidget {
                       Navigator.of(context).pop();
                     },
                     child: Text(
-                      'Confirm',
+                      translate("Confirm"),
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w700,
@@ -135,7 +136,7 @@ class MatchNotification extends StatelessWidget {
                             }
                           },
                           child: Text(
-                            "Press here to check the station where the match was found",
+                            translate("StationMatch"),
                             style: TextStyle(
                               color: Theme.of(context).colorScheme.primary,
                               fontWeight: FontWeight.w700,
@@ -157,9 +158,9 @@ class MatchNotification extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          "Contact Info:",
-                          style: TextStyle(
+                        Text(
+                          translate("Contact"),
+                          style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
                           ),

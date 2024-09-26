@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_translate/flutter_translate.dart';
 import 'package:mafqodat/screens/admin_portal/match_screen.dart';
 import 'package:mafqodat/widgets/custom_dropdown_button.dart';
 import 'package:material_symbols_icons/symbols.dart';
@@ -88,7 +89,7 @@ class _MatchesState extends State<Matches> {
                             });
                           },
                           child: Text(
-                            'Reset Filter',
+                            translate("ResetFilter"),
                             style: TextStyle(
                               color: Theme.of(context).colorScheme.secondary,
                               fontWeight: FontWeight.w600,
@@ -98,10 +99,10 @@ class _MatchesState extends State<Matches> {
                       ],
                     ),
                     const SizedBox(height: 280),
-                    const Center(
+                    Center(
                       child: Text(
-                        'No matches found.',
-                        style: TextStyle(
+                        translate("NoMatch"),
+                        style:const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w700,
                           color: Colors.black54,
@@ -132,7 +133,7 @@ class _MatchesState extends State<Matches> {
                           });
                         },
                         child: Text(
-                          'Reset Filter',
+                          translate("ResetFilter"),
                           style: TextStyle(
                             color: Theme.of(context).colorScheme.secondary,
                             fontWeight: FontWeight.w600,
@@ -179,9 +180,9 @@ class _MatchesState extends State<Matches> {
                                 title: Text.rich(
                                   TextSpan(
                                     children: [
-                                      const TextSpan(
-                                          text: "Possible Match ",
-                                          style: TextStyle(
+                                      TextSpan(
+                                          text: translate("Possible"),
+                                          style: const TextStyle(
                                               fontWeight: FontWeight.bold,
                                               fontSize: 16)),
                                       TextSpan(
@@ -194,18 +195,18 @@ class _MatchesState extends State<Matches> {
                                 subtitle: Text.rich(
                                   TextSpan(
                                     children: [
-                                      const TextSpan(
-                                          text: "Claim: ",
-                                          style: TextStyle(
+                                      TextSpan(
+                                          text: translate("Claim"),
+                                          style: const TextStyle(
                                               fontWeight: FontWeight.bold)),
                                       TextSpan(
                                           text:
                                               "#${match['claimId'].substring(0, 4)}\n",
                                           style: const TextStyle(
                                               fontWeight: FontWeight.normal)),
-                                      const TextSpan(
-                                          text: "Item: ",
-                                          style: TextStyle(
+                                      TextSpan(
+                                          text: translate("Item"),
+                                          style: const TextStyle(
                                               fontWeight: FontWeight.bold)),
                                       TextSpan(
                                           text:

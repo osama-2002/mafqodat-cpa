@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
+import 'package:flutter_translate/flutter_translate.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -63,16 +64,16 @@ class _ClaimState extends State<Claim> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 const SizedBox(height: 12),
-                const Text(
-                  'Lost Item Claim',
-                  style: TextStyle(fontWeight: FontWeight.w700, fontSize: 18),
+                Text(
+                  translate("LostClaim"),
+                  style:const TextStyle(fontWeight: FontWeight.w700, fontSize: 18),
                 ),
                 const SizedBox(height: 12),
                 Row(
                   children: [
-                    const Text(
-                      "Type: ",
-                      style: TextStyle(
+                    Text(
+                      translate("Type"),
+                      style:const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w700,
                       ),
@@ -93,9 +94,9 @@ class _ClaimState extends State<Claim> {
                 const SizedBox(height: 12),
                 Row(
                   children: [
-                    const Text(
-                      "Description: ",
-                      style: TextStyle(
+                    Text(
+                      translate("Description"),
+                      style:const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w700,
                       ),
@@ -116,9 +117,9 @@ class _ClaimState extends State<Claim> {
                 const SizedBox(height: 8),
                 Row(
                   children: [
-                    const Text(
-                      'Status: ',
-                      style: TextStyle(
+                    Text(
+                      translate("Status"),
+                      style:const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w700,
                       ),
@@ -135,9 +136,9 @@ class _ClaimState extends State<Claim> {
                 const SizedBox(height: 8),
                 Row(
                   children: [
-                    const Text(
-                      'Timestamp: ',
-                      style: TextStyle(
+                    Text(
+                      translate("Timestamp"),
+                      style:const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w700,
                       ),
@@ -180,10 +181,10 @@ class _ClaimState extends State<Claim> {
                               );
                             },
                           )
-                        : const Center(
+                        :  Center(
                             child: Text(
-                            'No images uploaded',
-                            style: TextStyle(
+                            translate("NoImage"),
+                            style:const TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.w700,
                             ),
@@ -228,9 +229,9 @@ class _ClaimState extends State<Claim> {
                 const SizedBox(height: 8),
                 Row(
                   children: [
-                    const Text(
-                      'Address: ',
-                      style: TextStyle(
+                    Text(
+                      translate("Address"),
+                      style:const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w700,
                       ),
@@ -255,9 +256,9 @@ class _ClaimState extends State<Claim> {
                       context: context,
                       builder: (context) {
                         return AlertDialog(
-                          content: const Text(
-                            "The report will be deleted, and the system will notify the user to resubmit the claim with additional details and supporting evidence",
-                            style: TextStyle(
+                          content:  Text(
+                            translate("NotifyUser"),
+                            style:const TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.w700,
                             ),
@@ -268,7 +269,7 @@ class _ClaimState extends State<Claim> {
                                 Navigator.of(context).pop();
                               },
                               child: Text(
-                                'Cancel',
+                                translate("Cancel"),
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w700,
@@ -283,9 +284,9 @@ class _ClaimState extends State<Claim> {
                                   FirebaseFirestore.instance.collection('claims_notifications').add(
                                     {
                                       'userId': widget.claimData['userId'],
-                                      'title': 'Claim Resubmission Request',
+                                      'title': translate("ResubmitRequestClaim"),
                                       'message':
-                                          'Your claim has been rejected. Please resubmit the claim with additional details and supporting evidence.',
+                                          translate("ResubmitMessage"),
                                       'timestamp': Timestamp.now(),
                                       'adminContact': "${adminData['email']}\n${adminData['phoneNumber']}",
                                     },
@@ -301,7 +302,7 @@ class _ClaimState extends State<Claim> {
                                 Navigator.of(context).pop();
                               },
                               child: Text(
-                                'Confirm',
+                                translate("Confirm"),
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w700,
@@ -319,7 +320,7 @@ class _ClaimState extends State<Claim> {
                     color: Theme.of(context).colorScheme.secondary,
                   ),
                   label: Text(
-                    'Request Resubmission',
+                    translate("ResubmitRequest"),
                     style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontWeight: FontWeight.w600,),
                   ),
                 ),
@@ -330,9 +331,9 @@ class _ClaimState extends State<Claim> {
                       context: context,
                       builder: (context) {
                         return AlertDialog(
-                          content: const Text(
-                            "Are you sure you want to delete this claim?",
-                            style: TextStyle(
+                          content: Text(
+                            translate("SureDeleteClaim?"),
+                            style:const TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.w700,
                             ),
@@ -343,7 +344,7 @@ class _ClaimState extends State<Claim> {
                                 Navigator.of(context).pop();
                               },
                               child: Text(
-                                'Cancel',
+                                translate("Cancel"),
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w700,
@@ -365,7 +366,7 @@ class _ClaimState extends State<Claim> {
                                 Navigator.of(context).pop();
                               },
                               child: Text(
-                                'Confirm',
+                                translate("Confirm"),
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w700,
@@ -382,9 +383,9 @@ class _ClaimState extends State<Claim> {
                     Icons.delete_outline,
                     color: Colors.red,
                   ),
-                  label: const Text(
-                    'Delete',
-                    style: TextStyle(color: Colors.red, fontWeight: FontWeight.w600,),
+                  label: Text(
+                    translate("Delete"),
+                    style: const TextStyle(color: Colors.red, fontWeight: FontWeight.w600,),
                   ),
                 ),
               ],

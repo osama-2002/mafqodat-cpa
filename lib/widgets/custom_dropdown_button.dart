@@ -1,24 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:flutter_translate/flutter_translate.dart';
 
 final List<String> categories = [
-  'Card (Bank, ID, etc.)',
-  'Wallet',
-  'Mobile Phone',
-  'Official Document',
-  'Key',
-  'Laptop',
-  'Bag/Backpack',
-  'Watch',
-  'AirPods',
-  'Headset',
-  'Bracelet',
-  'Necklace',
-  'Clothing',
-  'Camera',
-  'Chargers/Adapters',
-  'Glasses/Sunglasses',
-  'Miscellaneous',
+  translate("Card"),
+  translate("Wallet"),
+  translate("Mobile Phone"),
+  translate("Official Document"),
+  translate("Key"),
+  translate("Laptop"),
+  translate("Bag/Backpack"),
+  translate("Watch"),
+  translate("Headphones"),
+  translate("Bracelet"),
+  translate("Necklace"),
+  translate("Clothing"),
+  translate("Camera"),
+  translate("Chargers/Adapters"),
+  translate("Glasses/Sunglasses"),
+  translate("Miscellaneous"),
 ];
 
 // ignore: must_be_immutable
@@ -151,7 +151,7 @@ class _CustomDropdownButtonState extends State<CustomDropdownButton> {
                   horizontal: 10,
                   vertical: 8,
                 ),
-                hintText: 'Search for an item...',
+                hintText: translate("Search"),
                 hintStyle: const TextStyle(fontSize: 12),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8),
