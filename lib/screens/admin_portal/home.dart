@@ -134,7 +134,7 @@ class _HomeState extends State<Home> {
             ),
             ListTile(
               leading: const Icon(Icons.translate),
-              title: Text(translate("Change Language")),
+              title: Text(translate("changeLanguage")),
               onTap: () {
                 if (LocalizedApp.of(context)
                         .delegate

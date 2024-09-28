@@ -61,7 +61,7 @@ class ReportNotification extends StatelessWidget {
                       Navigator.of(context).pop();
                     },
                     child: Text(
-                      'Confirm',
+                      translate('Confirm'),
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w700,
@@ -103,7 +103,7 @@ class ReportNotification extends StatelessWidget {
                           children: [
                             Expanded(
                               child: Text(
-                                data['message'],
+                                translate(data['message']),
                                 style: const TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 16,

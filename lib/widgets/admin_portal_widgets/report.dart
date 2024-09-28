@@ -82,7 +82,7 @@ class _ReportState extends State<Report> {
                     ),
                     Expanded(
                       child: Text(
-                        widget.reportData['type'],
+                        translate(widget.reportData['type']),
                         style: const TextStyle(
                           fontSize: 16,
                         ),
@@ -127,7 +127,7 @@ class _ReportState extends State<Report> {
                       textAlign: TextAlign.start,
                     ),
                     Text(
-                      widget.reportData['status'],
+                      translate(widget.reportData['status']),
                       style: const TextStyle(
                         fontSize: 16,
                       ),

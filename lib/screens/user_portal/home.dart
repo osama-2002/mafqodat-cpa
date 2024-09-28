@@ -5,7 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 
-import 'package:mafqodat/widgets/user_portal_widgets/guide.dart';
+import 'package:mafqodat/screens/user_portal/guide.dart';
 import 'package:mafqodat/widgets/user_portal_widgets/notifications_list.dart';
 import 'package:mafqodat/screens/user_portal/report_form.dart';
 import 'package:mafqodat/screens/user_portal/claim_form.dart';
@@ -46,7 +46,7 @@ class _HomeState extends State<Home> {
           children: userData != null
               ? [
                   Text(
-                    'Hello ${userData!['name']}\nhow can we help you today?',
+                    '${translate("hello")} ${userData!['name']}\n${translate("help")}',
                     style: const TextStyle(fontSize: 20),
                     textAlign: TextAlign.center,
                   ),
@@ -121,9 +121,9 @@ class _HomeState extends State<Home> {
                           await FirebaseAuth.instance.signOut();
                           Navigator.of(context).pop();
                         },
-                        child: const Text(
-                          'Confirm',
-                          style: TextStyle(
+                        child: Text(
+                          translate('Confirm'),
+                          style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w700,
                           ),
@@ -157,7 +157,7 @@ class _HomeState extends State<Home> {
             ),
             ListTile(
               leading: const Icon(Icons.translate),
-              title: Text(translate("Change Language")),
+              title: Text(translate("changeLanguage")),
               onTap: () {
                 if (LocalizedApp.of(context)
                         .delegate

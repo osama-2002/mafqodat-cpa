@@ -79,7 +79,7 @@ class _ClaimState extends State<Claim> {
                     ),
                     Expanded(
                       child: Text(
-                        widget.claimData['type'],
+                        translate(widget.claimData['type']),
                         style: const TextStyle(
                           fontSize: 16,
                         ),
@@ -124,7 +124,7 @@ class _ClaimState extends State<Claim> {
                       textAlign: TextAlign.start,
                     ),
                     Text(
-                      widget.claimData['status'],
+                      translate(widget.claimData['status']),
                       style: const TextStyle(
                         fontSize: 16,
                       ),

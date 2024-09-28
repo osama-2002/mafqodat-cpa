@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:intl/intl.dart';
 
-import 'package:mafqodat/widgets/user_portal_widgets/guide.dart';
+import 'package:mafqodat/screens/user_portal/guide.dart';
 
 class ClaimNotification extends StatelessWidget {
   const ClaimNotification({super.key, required this.data, required this.id});
@@ -92,7 +92,7 @@ class ClaimNotification extends StatelessWidget {
                           children: [
                             Expanded(
                               child: Text(
-                                data['message'],
+                                translate(data['message']),
                                 style: const TextStyle(
                                   fontWeight: FontWeight.w600,
                                   fontSize: 16,

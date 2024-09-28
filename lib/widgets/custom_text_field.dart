@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_translate/flutter_translate.dart';
 
 class CustomTextFormField extends StatelessWidget {
   final TextEditingController controller;
@@ -65,6 +66,11 @@ class CustomTextFormField extends StatelessWidget {
           ),
         ),
       ),
+      textDirection: LocalizedApp.of(context)
+                        .delegate
+                        .currentLocale
+                        .toString() ==
+                    'en' ? TextDirection.ltr : TextDirection.rtl,
     );
   }
 }

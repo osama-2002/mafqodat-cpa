@@ -3,22 +3,23 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 
 final List<String> categories = [
-  translate("Card"),
-  translate("Wallet"),
-  translate("Mobile Phone"),
-  translate("Official Document"),
-  translate("Key"),
-  translate("Laptop"),
-  translate("Bag/Backpack"),
-  translate("Watch"),
-  translate("Headphones"),
-  translate("Bracelet"),
-  translate("Necklace"),
-  translate("Clothing"),
-  translate("Camera"),
-  translate("Chargers/Adapters"),
-  translate("Glasses/Sunglasses"),
-  translate("Miscellaneous"),
+  'Card (Bank, ID, etc.)',
+  'Wallet',
+  'Mobile Phone',
+  'Official Document',
+  'Key',
+  'Laptop',
+  'Bag/Backpack',
+  'Watch',
+  'Earphones',
+  'Headphones',
+  'Bracelet',
+  'Necklace',
+  'Clothing',
+  'Camera',
+  'Chargers/Adapters',
+  'Glasses/Sunglasses',
+  'Miscellaneous',
 ];
 
 // ignore: must_be_immutable
@@ -58,7 +59,7 @@ class _CustomDropdownButtonState extends State<CustomDropdownButton> {
             ),
             Expanded(
               child: Text(
-                widget.isFilter ? ' Filter' : ' Category',
+                widget.isFilter ? translate('filter') : translate('category'),
                 style: const TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.bold,
@@ -73,7 +74,7 @@ class _CustomDropdownButtonState extends State<CustomDropdownButton> {
             .map((category) => DropdownMenuItem(
                   value: category,
                   child: Text(
-                    category,
+                    translate(category),
                     style: const TextStyle(
                       fontSize: 14,
                     ),

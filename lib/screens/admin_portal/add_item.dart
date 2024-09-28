@@ -47,7 +47,7 @@ class _AddItemState extends State<AddItem> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title:  Text(translate("PickCol2")),
+          title:  Text(translate("PickCol")),
           content: SingleChildScrollView(
             child: BlockPicker(
               pickerColor: _selectedColor,

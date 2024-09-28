@@ -186,7 +186,7 @@ class _ReportFormState extends State<ReportForm> {
       if (nearestStationLocation != null && nearestAdminContact != null) {
         await db.collection('reports_notifications').add({
           'userId': FirebaseAuth.instance.currentUser!.uid,
-          'message': 'Thanks for reporting and helping the community!',
+          'message': 'ReportMessage',
           'nearestStationLocation': nearestStationLocation,
           'adminContact': nearestAdminContact,
           'timestamp': Timestamp.now(),

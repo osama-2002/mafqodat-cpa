@@ -103,7 +103,7 @@ class MatchNotification extends StatelessWidget {
                           children: [
                             Expanded(
                               child: Text(
-                                data['title'],
+                                translate(data['message']),
                                 style: const TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 16,

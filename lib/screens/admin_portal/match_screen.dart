@@ -146,7 +146,7 @@ class _MatchScreenState extends State<MatchScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildSectionTitle('Location'),
+        _buildSectionTitle(translate('Location')),
         SizedBox(
           height: 200,
           child: Row(
@@ -209,15 +209,15 @@ class _MatchScreenState extends State<MatchScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildSectionTitle('Images'),
+        _buildSectionTitle(translate('Images')),
         SizedBox(
           height: 200,
           child: Row(
             children: [
               Expanded(
-                  child: _buildImageSection(claimData['imageUrls'], 'Claim')),
+                  child: _buildImageSection(claimData['imageUrls'], translate('Claim'))),
               const VerticalDivider(),
-              Expanded(child: _buildImageSection([itemData['imageUrl']], 'Item')),
+              Expanded(child: _buildImageSection([itemData['imageUrl']], translate('Item'))),
             ],
           ),
         ),
@@ -266,8 +266,7 @@ class _MatchScreenState extends State<MatchScreen> {
 
   Future<void> _generateNotification() async {
     await FirebaseFirestore.instance.collection('matches_notifications').add({
-      'title': 'Match Found!',
-      'message': 'A match has been found for your claim.',
+      'message': 'MatchFound',
       'location': widget.adminData['location'],
       'contactInfo':
           '${widget.adminData['email']}\n${widget.adminData['phoneNumber']}',
@@ -284,7 +283,7 @@ class _MatchScreenState extends State<MatchScreen> {
           .collection('claims')
           .doc(widget.claimId)
           .update({
-        'status': 'Match Found',
+        'status': 'possibleMatch',
       });
       await FirebaseFirestore.instance
           .collection('matches')

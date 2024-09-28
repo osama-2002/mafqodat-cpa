@@ -15,7 +15,7 @@ class ClaimsAndReports extends StatefulWidget {
 }
 
 class _ClaimsAndReportsState extends State<ClaimsAndReports> {
-  String _selectedTab = "Claims";
+  String _selectedTab = translate("Claims");
   int genderToggleSwitchIndex = 0;
   @override
   Widget build(BuildContext context) {
@@ -38,12 +38,12 @@ class _ClaimsAndReportsState extends State<ClaimsAndReports> {
                   ToggleSwitch(
                     minWidth: 90.0,
                     initialLabelIndex: genderToggleSwitchIndex,
-                    cornerRadius: 20.0,
+                    cornerRadius: 20.0, //!
                     activeFgColor: Colors.white,
                     inactiveBgColor: Colors.grey,
                     inactiveFgColor: Colors.white,
                     totalSwitches: 2,
-                    labels: const ['Claims', 'Reports'],
+                    labels: [translate('Claims'), translate('Reports')],
                     activeBgColors: [
                       [Theme.of(context).colorScheme.primary],
                       [Theme.of(context).colorScheme.primary],
@@ -51,10 +51,10 @@ class _ClaimsAndReportsState extends State<ClaimsAndReports> {
                     onToggle: (index) {
                       setState(() {
                         if (index == 0) {
-                          _selectedTab = 'Claims';
+                          _selectedTab = translate('Claims');
                           genderToggleSwitchIndex = 0;
                         } else {
-                          _selectedTab = 'Reports';
+                          _selectedTab = translate('Reports');
                           genderToggleSwitchIndex = 1;
                         }
                       });
@@ -64,7 +64,7 @@ class _ClaimsAndReportsState extends State<ClaimsAndReports> {
               ),
               const SizedBox(height: 12),
               StreamBuilder<QuerySnapshot>(
-                stream: _selectedTab == 'Claims'
+                stream: _selectedTab == translate('Claims')
                     ? FirebaseFirestore.instance
                         .collection('claims')
                         .where('userId', isEqualTo: userId)
@@ -94,7 +94,7 @@ class _ClaimsAndReportsState extends State<ClaimsAndReports> {
                       children: [
                         const SizedBox(height: 320),
                         Center(
-                          child: _selectedTab == 'Claims'
+                          child: _selectedTab == translate('Claims')
                               ? Text(
                                   translate("NoClaims"),
                                   style:const  TextStyle(
@@ -120,7 +120,7 @@ class _ClaimsAndReportsState extends State<ClaimsAndReports> {
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
                     itemCount: snapshot.data!.docs.length,
-                    itemBuilder: _selectedTab == "Claims"
+                    itemBuilder: _selectedTab == translate("Claims")
                         ? (context, index) {
                             QueryDocumentSnapshot claim =
                                 snapshot.data!.docs[index];
