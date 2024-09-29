@@ -6,6 +6,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:mafqodat/screens/user_portal/email_verification.dart';
 import 'firebase_options.dart';
 
 import 'package:mafqodat/screens/auth.dart';
@@ -91,7 +92,13 @@ class MyApp extends StatelessWidget {
                     );
                   } else if (snapshot.hasData) {
                     isUser = snapshot.data;
-                    if (isUser == true) return const user_portal.Home();
+                    if (isUser == true) {
+                      if (FirebaseAuth.instance.currentUser!.emailVerified) {
+                        return const user_portal.Home();
+                      } else {
+                        return const EmailVerificationScreen();
+                      }
+                    }
                     if (isUser == false) return const admin_portal.Home();
                   }
                   return Container(

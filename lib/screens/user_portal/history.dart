@@ -38,7 +38,8 @@ class _ClaimsAndReportsState extends State<ClaimsAndReports> {
                   ToggleSwitch(
                     minWidth: 90.0,
                     initialLabelIndex: genderToggleSwitchIndex,
-                    cornerRadius: 20.0, //!
+                    cornerRadius: 17,
+                    textDirectionRTL: LocalizedApp.of(context).delegate.currentLocale.toString() == 'ar',
                     activeFgColor: Colors.white,
                     inactiveBgColor: Colors.grey,
                     inactiveFgColor: Colors.white,

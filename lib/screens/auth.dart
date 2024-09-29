@@ -255,12 +255,13 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                                         minWidth: 90.0,
                                         initialLabelIndex:
                                             genderToggleSwitchIndex,
-                                        cornerRadius: 20.0,
+                                        cornerRadius: 17,
+                                        textDirectionRTL: LocalizedApp.of(context).delegate.currentLocale.toString() == 'ar',
                                         activeFgColor: Colors.white,
                                         inactiveBgColor: Colors.grey,
                                         inactiveFgColor: Colors.white,
                                         totalSwitches: 2,
-                                        labels: const ['Male', 'Female'],
+                                        labels: [translate('male'), translate('female')],
                                         icons: const [
                                           FontAwesomeIcons.mars,
                                           FontAwesomeIcons.venus
@@ -428,15 +429,16 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
       if (_formKey.currentState!.validate()) {
         if (isLogin) {
           await FirebaseAuth.instance.signInWithEmailAndPassword(
-            email: _emailController.text,
-            password: _passwordController.text,
+            email: _emailController.text.trim(),
+            password: _passwordController.text.trim(),
           );
         } else {
           final userData =
               await FirebaseAuth.instance.createUserWithEmailAndPassword(
-            email: _emailController.text,
-            password: _passwordController.text,
+            email: _emailController.text.trim(),
+            password: _passwordController.text.trim(),
           );
+          FirebaseAuth.instance.currentUser!.sendEmailVerification();
           saveUserData(userData.user!.uid);
         }
       }
@@ -447,9 +449,9 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
 
   void saveUserData(String id) {
     FirebaseFirestore.instance.collection('users').doc(id).set({
-      'name': _nameController.text,
+      'name': _nameController.text.trim(),
       'gender': _selectedGender,
-      'email': _emailController.text,
+      'email': _emailController.text.trim(),
       'nationalNumber': _nationalNumberController.text,
       'phoneNumber': _phoneNumberController.text,
     });
@@ -460,6 +462,12 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
       _showSnackBar(translate("WeakPass"));
     } else if (e.code == 'email-already-in-use') {
       _showSnackBar(translate("AccExist"));
+    } else if (e.code == 'wrong-password' || e.code == 'invalid-credential') {
+      _showSnackBar(translate("WrongPass"));
+    } else if (e.code == 'user-not-found') {
+      _showSnackBar(translate("UserNotFound"));
+    } else if(e.code == 'invalid-email') {
+      _showSnackBar(translate("InvalidEmail"));
     } else {
       _showSnackBar(translate("DiffError"));
     }
