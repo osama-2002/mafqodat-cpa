@@ -47,7 +47,7 @@ class _AddItemState extends State<AddItem> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title:  Text(translate("PickCol")),
+          title: Text(translate("PickCol")),
           content: SingleChildScrollView(
             child: BlockPicker(
               pickerColor: _selectedColor,
@@ -74,7 +74,7 @@ class _AddItemState extends State<AddItem> {
           ),
           actions: <Widget>[
             ElevatedButton(
-              child:  Text(translate("Select")),
+              child: Text(translate("Select")),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -125,8 +125,8 @@ class _AddItemState extends State<AddItem> {
 
         downloadUrl = await snapshot.ref.getDownloadURL();
       } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(translate("ImageProb"))));
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(translate("ImageProb"))));
         return;
       }
     }
@@ -146,13 +146,13 @@ class _AddItemState extends State<AddItem> {
       if (mounted) Navigator.of(context).pop();
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(translate("GoodSubmit2")),
+          content: Text(translate("GoodSubmit3")),
         ),
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text("${translate("BadSubmit")}$e"),
+          content: Text("${translate("ErrorOc")}$e"),
         ),
       );
     }
@@ -173,7 +173,7 @@ class _AddItemState extends State<AddItem> {
         onTap: _unfocusTextFields,
         child: Scaffold(
           appBar: AppBar(
-            title:  Text(translate("AddItem")),
+            title: Text(translate("AddItem")),
             backgroundColor: Theme.of(context).colorScheme.secondary,
             actions: [
               IconButton(
@@ -186,9 +186,9 @@ class _AddItemState extends State<AddItem> {
                     context: context,
                     builder: (context) {
                       return AlertDialog(
-                        content:  Text(
+                        content: Text(
                           translate("SignOut?"),
-                          style:const TextStyle(
+                          style: const TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.w700,
                           ),
@@ -331,9 +331,8 @@ class _AddItemState extends State<AddItem> {
                                   _addItem();
                                 } else {
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                     SnackBar(
-                                      content: Text(
-                                          translate("PleaseFill")),
+                                    SnackBar(
+                                      content: Text(translate("PleaseFill")),
                                     ),
                                   );
                                 }
@@ -341,7 +340,7 @@ class _AddItemState extends State<AddItem> {
                               child: _isLoading
                                   ? const CircularProgressIndicator()
                                   : Text(
-                                      translate("Submit"),
+                                      translate("Add"),
                                       style: TextStyle(
                                           color: Theme.of(context)
                                               .colorScheme

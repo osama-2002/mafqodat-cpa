@@ -75,13 +75,13 @@ class _NotificationsListState extends State<NotificationsList> {
                           reportsSnapshot.data!.docs.isEmpty;
 
                       if (hasNoMatches && hasNoClaims && hasNoReports) {
-                        return  Center(
+                        return Center(
                           child: Column(
                             children: [
                               const SizedBox(height: 320),
                               Text(
                                 translate("NoNotification"),
-                                style:const TextStyle(
+                                style: const TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.w700,
                                   color: Colors.black54,

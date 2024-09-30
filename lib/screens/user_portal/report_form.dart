@@ -64,7 +64,7 @@ class _ReportFormState extends State<ReportForm> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title:Text(translate("PickCol")),
+          title: Text(translate("PickCol")),
           content: SingleChildScrollView(
             child: BlockPicker(
               pickerColor: _selectedColor,
@@ -227,8 +227,8 @@ class _ReportFormState extends State<ReportForm> {
 
         imageUrl = await snapshot.ref.getDownloadURL();
       } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(translate("ImageProb"))));
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(translate("ImageProb"))));
         return;
       }
     }
@@ -557,8 +557,7 @@ class _ReportFormState extends State<ReportForm> {
                                   } else {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
-                                        content: Text(
-                                            translate("PleaseFill")),
+                                        content: Text(translate("PleaseFill")),
                                       ),
                                     );
                                   }
@@ -570,7 +569,7 @@ class _ReportFormState extends State<ReportForm> {
                               const SizedBox(width: 32),
                               ElevatedButton(
                                 onPressed: _clearForm,
-                                child:Text(translate("Clear")),
+                                child: Text(translate("Clear")),
                               ),
                             ],
                           ),

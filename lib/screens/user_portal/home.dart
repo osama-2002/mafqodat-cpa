@@ -6,9 +6,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 
 import 'package:mafqodat/screens/user_portal/guide.dart';
-import 'package:mafqodat/widgets/user_portal_widgets/notifications_list.dart';
 import 'package:mafqodat/screens/user_portal/report_form.dart';
 import 'package:mafqodat/screens/user_portal/claim_form.dart';
+import 'package:mafqodat/widgets/user_portal_widgets/notifications_list.dart';
 import 'package:mafqodat/widgets/user_portal_widgets/user_profile.dart';
 
 class Home extends StatefulWidget {
@@ -57,7 +57,7 @@ class _HomeState extends State<Home> {
                           builder: (context) => const ClaimForm()));
                     },
                     label: Text(translate("LostButton"),
-                        style:const TextStyle(fontSize: 20)),
+                        style: const TextStyle(fontSize: 20)),
                     icon: const Icon(Symbols.person_raised_hand),
                   ),
                   const SizedBox(height: 30),
@@ -67,7 +67,7 @@ class _HomeState extends State<Home> {
                           builder: (context) => const ReportForm()));
                     },
                     label: Text(translate("FoundButton"),
-                        style:const TextStyle(fontSize: 20)),
+                        style: const TextStyle(fontSize: 20)),
                     icon: const Icon(Symbols.approval_delegation),
                   ),
                 ]
@@ -98,7 +98,7 @@ class _HomeState extends State<Home> {
                   return AlertDialog(
                     content: Text(
                       translate("SignOut?"),
-                      style:const  TextStyle(
+                      style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w700,
                       ),
@@ -108,9 +108,9 @@ class _HomeState extends State<Home> {
                         onPressed: () {
                           Navigator.of(context).pop();
                         },
-                        child:  Text(
+                        child: Text(
                           translate("Cancel"),
-                          style:const TextStyle(
+                          style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w700,
                           ),
@@ -173,7 +173,7 @@ class _HomeState extends State<Home> {
             ),
             ListTile(
               leading: const Icon(Icons.help),
-              title:  Text(translate("GUide")),
+              title: Text(translate("GUide")),
               onTap: () {
                 Navigator.of(context).push(
                     MaterialPageRoute(builder: (context) => const GuidePage()));

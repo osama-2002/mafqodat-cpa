@@ -64,7 +64,8 @@ class _ClaimState extends State<Claim> {
                 const SizedBox(height: 12),
                 Text(
                   translate("LostClaim"),
-                  style:const TextStyle(fontWeight: FontWeight.w700, fontSize: 18),
+                  style: const TextStyle(
+                      fontWeight: FontWeight.w700, fontSize: 18),
                 ),
                 const SizedBox(height: 12),
                 Row(
@@ -94,7 +95,7 @@ class _ClaimState extends State<Claim> {
                   children: [
                     Text(
                       translate("Description"),
-                      style:const TextStyle(
+                      style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w700,
                       ),
@@ -117,7 +118,7 @@ class _ClaimState extends State<Claim> {
                   children: [
                     Text(
                       translate("Status"),
-                      style:const TextStyle(
+                      style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w700,
                       ),
@@ -182,7 +183,7 @@ class _ClaimState extends State<Claim> {
                         : Center(
                             child: Text(
                             translate("NoImage"),
-                            style:const TextStyle(
+                            style: const TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.w700,
                             ),
@@ -229,7 +230,7 @@ class _ClaimState extends State<Claim> {
                   children: [
                     Text(
                       translate("Address"),
-                      style:const TextStyle(
+                      style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w700,
                       ),
@@ -266,9 +267,9 @@ class _ClaimState extends State<Claim> {
                               onPressed: () {
                                 Navigator.of(context).pop();
                               },
-                              child:Text(
+                              child: Text(
                                 translate("Cancel"),
-                                style:const TextStyle(
+                                style: const TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w700,
                                 ),
@@ -277,6 +278,7 @@ class _ClaimState extends State<Claim> {
                             TextButton(
                               onPressed: () {
                                 try {
+                                  //! services.deleteClaim
                                   FirebaseFirestore.instance
                                       .collection('claims')
                                       .doc(widget.id)
@@ -287,9 +289,9 @@ class _ClaimState extends State<Claim> {
                                 }
                                 Navigator.of(context).pop();
                               },
-                              child:Text(
+                              child: Text(
                                 translate("Confirm"),
-                                style:const TextStyle(
+                                style: const TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w700,
                                 ),
@@ -306,7 +308,7 @@ class _ClaimState extends State<Claim> {
                   ),
                   label: Text(
                     translate("Delete"),
-                    style:const TextStyle(
+                    style: const TextStyle(
                       color: Colors.red,
                       fontWeight: FontWeight.w600,
                     ),

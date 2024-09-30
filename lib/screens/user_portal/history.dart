@@ -39,7 +39,11 @@ class _ClaimsAndReportsState extends State<ClaimsAndReports> {
                     minWidth: 90.0,
                     initialLabelIndex: genderToggleSwitchIndex,
                     cornerRadius: 17,
-                    textDirectionRTL: LocalizedApp.of(context).delegate.currentLocale.toString() == 'ar',
+                    textDirectionRTL: LocalizedApp.of(context)
+                            .delegate
+                            .currentLocale
+                            .toString() ==
+                        'ar',
                     activeFgColor: Colors.white,
                     inactiveBgColor: Colors.grey,
                     inactiveFgColor: Colors.white,
@@ -98,15 +102,15 @@ class _ClaimsAndReportsState extends State<ClaimsAndReports> {
                           child: _selectedTab == translate('Claims')
                               ? Text(
                                   translate("NoClaims"),
-                                  style:const  TextStyle(
+                                  style: const TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.w700,
                                     color: Colors.black54,
                                   ),
                                 )
-                              :  Text(
+                              : Text(
                                   translate("NoReports"),
-                                  style:const TextStyle(
+                                  style: const TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.w700,
                                     color: Colors.black54,

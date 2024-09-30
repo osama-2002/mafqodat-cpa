@@ -129,9 +129,7 @@ class ClaimNotification extends StatelessWidget {
                                                       const GuidePage()),
                                             ),
                                     ),
-                                    TextSpan(
-                                        text:
-                                            translate("ToSubmit")),
+                                    TextSpan(text: translate("ToSubmit")),
                                   ],
                                 ),
                               ),
@@ -154,7 +152,7 @@ class ClaimNotification extends StatelessWidget {
                       children: [
                         Text(
                           translate("Contact"),
-                          style:const TextStyle(
+                          style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
                           ),

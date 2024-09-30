@@ -65,14 +65,15 @@ class _ReportState extends State<Report> {
                 const SizedBox(height: 12),
                 Text(
                   translate("FoundReport"),
-                  style:const TextStyle(fontWeight: FontWeight.w700, fontSize: 18),
+                  style: const TextStyle(
+                      fontWeight: FontWeight.w700, fontSize: 18),
                 ),
                 const SizedBox(height: 12),
                 Row(
                   children: [
                     Text(
                       translate("Type"),
-                      style:const TextStyle(
+                      style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w700,
                       ),
@@ -95,7 +96,7 @@ class _ReportState extends State<Report> {
                   children: [
                     Text(
                       translate("Description"),
-                      style:const TextStyle(
+                      style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w700,
                       ),
@@ -118,7 +119,7 @@ class _ReportState extends State<Report> {
                   children: [
                     Text(
                       translate("Status"),
-                      style:const TextStyle(
+                      style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w700,
                       ),
@@ -137,7 +138,7 @@ class _ReportState extends State<Report> {
                   children: [
                     Text(
                       translate("Timestamp"),
-                      style:const TextStyle(
+                      style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w700,
                       ),
@@ -252,7 +253,7 @@ class _ReportState extends State<Report> {
                         return AlertDialog(
                           content: Text(
                             translate("SureDeleteRep?"),
-                            style:const TextStyle(
+                            style: const TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.w700,
                             ),
@@ -264,7 +265,7 @@ class _ReportState extends State<Report> {
                               },
                               child: Text(
                                 translate("Cancel"),
-                                style:const TextStyle(
+                                style: const TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w700,
                                 ),
@@ -272,6 +273,7 @@ class _ReportState extends State<Report> {
                             ),
                             TextButton(
                               onPressed: () {
+                                //! services.deleteReport
                                 try {
                                   FirebaseFirestore.instance
                                       .collection('reports')

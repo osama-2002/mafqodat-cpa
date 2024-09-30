@@ -8,6 +8,61 @@ class Item extends StatelessWidget {
   final String id;
   final Map<String, dynamic> data;
 
+  void _handleHandOver(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          content: Text(
+            translate("SureDeleteItem?"),
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text(
+                translate("Cancel"),
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
+                  color: Theme.of(context).colorScheme.secondary,
+                ),
+              ),
+            ),
+            TextButton(
+              onPressed: () {
+                try {
+                  //! services.deleteItem(id)
+                  FirebaseFirestore.instance
+                      .collection('items')
+                      .doc(id)
+                      .delete();
+                } catch (e) {
+                  ScaffoldMessenger.of(context)
+                      .showSnackBar(SnackBar(content: Text("$e")));
+                }
+                Navigator.of(context).pop();
+              },
+              child: Text(
+                translate("Confirm"),
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
+                  color: Theme.of(context).colorScheme.secondary,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -19,57 +74,7 @@ class Item extends StatelessWidget {
           children: [
             SlidableAction(
               onPressed: (context) {
-                showDialog(
-                  context: context,
-                  builder: (context) {
-                    return AlertDialog(
-                      content: Text(
-                        translate("SureDeleteItem?"),
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      actions: [
-                        TextButton(
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                          child: Text(
-                            translate("Cancel"),
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w700,
-                              color: Theme.of(context).colorScheme.secondary,
-                            ),
-                          ),
-                        ),
-                        TextButton(
-                          onPressed: () {
-                            try {
-                              FirebaseFirestore.instance
-                                  .collection('items')
-                                  .doc(id)
-                                  .delete();
-                            } catch (e) {
-                              ScaffoldMessenger.of(context)
-                                  .showSnackBar(SnackBar(content: Text("$e")));
-                            }
-                            Navigator.of(context).pop();
-                          },
-                          child: Text(
-                            translate("Confirm"),
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w700,
-                              color: Theme.of(context).colorScheme.secondary,
-                            ),
-                          ),
-                        ),
-                      ],
-                    );
-                  },
-                );
+                _handleHandOver;
               },
               backgroundColor: Theme.of(context).colorScheme.secondary,
               foregroundColor: Colors.white,
@@ -83,57 +88,7 @@ class Item extends StatelessWidget {
           children: [
             SlidableAction(
               onPressed: (context) {
-                showDialog(
-                  context: context,
-                  builder: (context) {
-                    return AlertDialog(
-                      content: Text(
-                        translate("SureDeleteItem?"),
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      actions: [
-                        TextButton(
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                          child: Text(
-                            translate("Cancel"),
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w700,
-                              color: Theme.of(context).colorScheme.secondary,
-                            ),
-                          ),
-                        ),
-                        TextButton(
-                          onPressed: () {
-                            try {
-                              FirebaseFirestore.instance
-                                  .collection('items')
-                                  .doc(id)
-                                  .delete();
-                            } catch (e) {
-                              ScaffoldMessenger.of(context)
-                                  .showSnackBar(SnackBar(content: Text("$e")));
-                            }
-                            Navigator.of(context).pop();
-                          },
-                          child: Text(
-                            translate("Confirm"),
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w700,
-                              color: Theme.of(context).colorScheme.secondary,
-                            ),
-                          ),
-                        ),
-                      ],
-                    );
-                  },
-                );
+                _handleHandOver;
               },
               backgroundColor: Theme.of(context).colorScheme.secondary,
               foregroundColor: Colors.white,

@@ -1,9 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_translate/flutter_translate.dart';
+import 'package:material_symbols_icons/symbols.dart';
+
 import 'package:mafqodat/screens/admin_portal/match_screen.dart';
 import 'package:mafqodat/widgets/custom_dropdown_button.dart';
-import 'package:material_symbols_icons/symbols.dart';
 
 class Matches extends StatefulWidget {
   const Matches({super.key, required this.adminData});
@@ -102,7 +103,7 @@ class _MatchesState extends State<Matches> {
                     Center(
                       child: Text(
                         translate("NoMatch"),
-                        style:const TextStyle(
+                        style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w700,
                           color: Colors.black54,

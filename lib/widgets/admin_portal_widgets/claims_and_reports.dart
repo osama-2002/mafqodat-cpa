@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_translate/flutter_translate.dart';
-import 'package:mafqodat/widgets/custom_dropdown_button.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 
+import 'package:mafqodat/widgets/custom_dropdown_button.dart';
 import 'package:mafqodat/widgets/admin_portal_widgets/claim.dart';
 import 'package:mafqodat/widgets/admin_portal_widgets/report.dart';
 
@@ -46,7 +46,11 @@ class _ClaimsAndReportsState extends State<ClaimsAndReports> {
                         minWidth: 90.0,
                         initialLabelIndex: tabToggleSwitchIndex,
                         cornerRadius: 17,
-                        textDirectionRTL: LocalizedApp.of(context).delegate.currentLocale.toString() == 'ar',
+                        textDirectionRTL: LocalizedApp.of(context)
+                                .delegate
+                                .currentLocale
+                                .toString() ==
+                            'ar',
                         activeFgColor: Colors.white,
                         inactiveBgColor: Colors.grey,
                         inactiveFgColor: Colors.white,
@@ -149,7 +153,7 @@ class _ClaimsAndReportsState extends State<ClaimsAndReports> {
                           child: _selectedTab == translate('Claims')
                               ? Text(
                                   translate("NoClaims"),
-                                  style:const TextStyle(
+                                  style: const TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.w700,
                                     color: Colors.black54,
@@ -157,7 +161,7 @@ class _ClaimsAndReportsState extends State<ClaimsAndReports> {
                                 )
                               : Text(
                                   translate("NoReports"),
-                                  style:const TextStyle(
+                                  style: const TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.w700,
                                     color: Colors.black54,

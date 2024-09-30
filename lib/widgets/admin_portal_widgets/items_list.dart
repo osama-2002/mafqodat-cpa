@@ -3,8 +3,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 
-import 'package:mafqodat/widgets/admin_portal_widgets/item.dart';
 import 'package:mafqodat/widgets/custom_dropdown_button.dart';
+import 'package:mafqodat/widgets/admin_portal_widgets/item.dart';
 
 class ItemsList extends StatefulWidget {
   const ItemsList({super.key});
@@ -89,7 +89,7 @@ class _ItemsListState extends State<ItemsList> {
               Center(
                 child: Text(
                   translate("NoItems"),
-                  style:const TextStyle(
+                  style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w700,
                     color: Colors.black54,

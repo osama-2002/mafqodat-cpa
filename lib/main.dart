@@ -6,10 +6,10 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:mafqodat/screens/user_portal/email_verification.dart';
 import 'firebase_options.dart';
 
 import 'package:mafqodat/screens/auth.dart';
+import 'package:mafqodat/screens/user_portal/email_verification.dart';
 import 'package:mafqodat/screens/user_portal/home.dart' as user_portal;
 import 'package:mafqodat/screens/admin_portal/home.dart' as admin_portal;
 import 'package:mafqodat/theme.dart' as custom_theme;

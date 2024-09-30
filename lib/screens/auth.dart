@@ -3,10 +3,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:mafqodat/screens/forgotten_password.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 
+import 'package:mafqodat/screens/forgotten_password.dart';
 import 'package:mafqodat/widgets/custom_text_field.dart';
 
 class AuthenticationPage extends StatefulWidget {
@@ -161,19 +161,25 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                                           translate("ForgottenPassword"),
                                           style: TextStyle(
                                               fontWeight: FontWeight.w600,
-                                              color: Theme.of(context).colorScheme.primary),
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .primary),
                                         ),
                                       ),
                                       const SizedBox(height: 16),
                                       ElevatedButton(
                                         style: ElevatedButton.styleFrom(
-                                          backgroundColor: Theme.of(context).colorScheme.primary,
+                                          backgroundColor: Theme.of(context)
+                                              .colorScheme
+                                              .primary,
                                         ),
                                         onPressed: () {
                                           submitInput();
                                         },
                                         child: Text(
-                                          isLogin ? translate("Login") : translate("Sign"),
+                                          isLogin
+                                              ? translate("Login")
+                                              : translate("Sign"),
                                           style: TextStyle(
                                             fontSize: 18,
                                             color: Theme.of(context)
@@ -183,37 +189,38 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                                           ),
                                         ),
                                       ),
-                                       const SizedBox(height: 15),
-                                      
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Text(
+                                      const SizedBox(height: 15),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Text(
+                                            isLogin
+                                                ? translate("NoAcc")
+                                                : translate("Acc"),
+                                            style: const TextStyle(
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                          TextButton(
+                                            onPressed: () {
+                                              setState(() {
+                                                isLogin = !isLogin;
+                                              });
+                                            },
+                                            child: Text(
                                               isLogin
-                                                  ? translate("NoAcc")
-                                                  : translate("Acc"),
-                                              style: const TextStyle(
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                            TextButton(
-                                              onPressed: () {
-                                                setState(() {
-                                                  isLogin = !isLogin;
-                                                });
-                                              },
-                                              child: Text(
-                                                isLogin ? translate("Sign") : translate("Login"),
-                                                style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Theme.of(context)
-                                                      .colorScheme
-                                                      .primary,
-                                                ),
+                                                  ? translate("Sign")
+                                                  : translate("Login"),
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .primary,
                                               ),
                                             ),
-                                          ],
-                                        )
+                                          ),
+                                        ],
+                                      )
                                     ]
                                   : [
                                       CustomTextFormField(
@@ -233,9 +240,9 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                                       const SizedBox(height: 26),
                                       CustomTextFormField(
                                         controller: _nationalNumberController,
-                                        labelText: "${translate("NationalNo")} ",
-                                        hintText:
-                                            translate("NationalHint"),
+                                        labelText:
+                                            "${translate("NationalNo")} ",
+                                        hintText: translate("NationalHint"),
                                         isUser: true,
                                         isPassword: false,
                                         validator: (value) {
@@ -256,12 +263,20 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                                         initialLabelIndex:
                                             genderToggleSwitchIndex,
                                         cornerRadius: 17,
-                                        textDirectionRTL: LocalizedApp.of(context).delegate.currentLocale.toString() == 'ar',
+                                        textDirectionRTL:
+                                            LocalizedApp.of(context)
+                                                    .delegate
+                                                    .currentLocale
+                                                    .toString() ==
+                                                'ar',
                                         activeFgColor: Colors.white,
                                         inactiveBgColor: Colors.grey,
                                         inactiveFgColor: Colors.white,
                                         totalSwitches: 2,
-                                        labels: [translate('male'), translate('female')],
+                                        labels: [
+                                          translate('male'),
+                                          translate('female')
+                                        ],
                                         icons: const [
                                           FontAwesomeIcons.mars,
                                           FontAwesomeIcons.venus
@@ -363,13 +378,17 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                                       const SizedBox(height: 20),
                                       ElevatedButton(
                                         style: ElevatedButton.styleFrom(
-                                          backgroundColor: Theme.of(context).colorScheme.primary,
+                                          backgroundColor: Theme.of(context)
+                                              .colorScheme
+                                              .primary,
                                         ),
                                         onPressed: () {
                                           submitInput();
                                         },
                                         child: Text(
-                                          isLogin ? translate("Login") : translate("Sign"),
+                                          isLogin
+                                              ? translate("Login")
+                                              : translate("Sign"),
                                           style: TextStyle(
                                             fontSize: 18,
                                             color: Theme.of(context)
@@ -379,37 +398,38 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                                           ),
                                         ),
                                       ),
-                                       const SizedBox(height: 12),
-                                      
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Text(
+                                      const SizedBox(height: 12),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Text(
+                                            isLogin
+                                                ? translate("NoAcc")
+                                                : translate("Acc"),
+                                            style: const TextStyle(
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                          TextButton(
+                                            onPressed: () {
+                                              setState(() {
+                                                isLogin = !isLogin;
+                                              });
+                                            },
+                                            child: Text(
                                               isLogin
-                                                  ? translate("NoAcc")
-                                                  : translate("Acc"),
-                                              style: const TextStyle(
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                            TextButton(
-                                              onPressed: () {
-                                                setState(() {
-                                                  isLogin = !isLogin;
-                                                });
-                                              },
-                                              child: Text(
-                                                isLogin ? translate("Sign") : translate("Login"),
-                                                style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Theme.of(context)
-                                                      .colorScheme
-                                                      .primary,
-                                                ),
+                                                  ? translate("Sign")
+                                                  : translate("Login"),
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .primary,
                                               ),
                                             ),
-                                          ],
-                                        )
+                                          ),
+                                        ],
+                                      )
                                     ]),
                         ),
                       ),
@@ -466,7 +486,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
       _showSnackBar(translate("WrongPass"));
     } else if (e.code == 'user-not-found') {
       _showSnackBar(translate("UserNotFound"));
-    } else if(e.code == 'invalid-email') {
+    } else if (e.code == 'invalid-email') {
       _showSnackBar(translate("InvalidEmail"));
     } else {
       _showSnackBar(translate("DiffError"));

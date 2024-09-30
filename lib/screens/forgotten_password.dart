@@ -51,9 +51,10 @@ class _ForgottenPasswordState extends State<ForgottenPassword> {
                   children: [
                     Image.asset('assets/images/email_icon.png'),
                     const SizedBox(height: 28),
-                     Text(
+                    Text(
                       translate("AnEmailSent"),
-                      style:const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold, fontSize: 18),
                       textAlign: TextAlign.center,
                     ),
                   ],
@@ -63,9 +64,9 @@ class _ForgottenPasswordState extends State<ForgottenPassword> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                       Text(
+                      Text(
                         translate("EnterEmail"),
-                        style:const TextStyle(fontWeight: FontWeight.bold),
+                        style: const TextStyle(fontWeight: FontWeight.bold),
                         textAlign: TextAlign.center,
                       ),
                       const SizedBox(height: 8),

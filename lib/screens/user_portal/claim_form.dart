@@ -64,8 +64,8 @@ class _ClaimFormState extends State<ClaimForm> {
         _selectedImages = selectedImages;
       });
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(translate("ErrorOc"))));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(translate("ErrorOc"))));
     }
   }
 
@@ -74,7 +74,7 @@ class _ClaimFormState extends State<ClaimForm> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title:  Text(translate("PickCol")),
+          title: Text(translate("PickCol")),
           content: SingleChildScrollView(
             child: BlockPicker(
               pickerColor: _selectedColor,
@@ -174,8 +174,8 @@ class _ClaimFormState extends State<ClaimForm> {
           String downloadUrl = await snapshot.ref.getDownloadURL();
           imageUrls.add(downloadUrl);
         } catch (e) {
-          ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(translate("ImageProb"))));
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text(translate("ImageProb"))));
           return;
         }
       }
@@ -206,7 +206,7 @@ class _ClaimFormState extends State<ClaimForm> {
       _clearForm();
       if (mounted) Navigator.of(context).pop();
       ScaffoldMessenger.of(context).showSnackBar(
-         SnackBar(
+        SnackBar(
           content: Text(translate("GoodSubmit2")),
         ),
       );
@@ -494,8 +494,7 @@ class _ClaimFormState extends State<ClaimForm> {
                                     : ElevatedButton.icon(
                                         onPressed: _selectImages,
                                         icon: const Icon(Icons.photo),
-                                        label:
-                                            Text(translate("Gallery")),
+                                        label: Text(translate("Gallery")),
                                       ),
                               ),
                             ),
@@ -513,15 +512,14 @@ class _ClaimFormState extends State<ClaimForm> {
                                   } else {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
-                                        content: Text(
-                                            translate("PleaseFill")),
+                                        content: Text(translate("PleaseFill")),
                                       ),
                                     );
                                   }
                                 },
                                 child: _isLoading
                                     ? const CircularProgressIndicator()
-                                    :  Text(translate("Submit")),
+                                    : Text(translate("Submit")),
                               ),
                               const SizedBox(width: 32),
                               ElevatedButton(

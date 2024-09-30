@@ -26,6 +26,7 @@ class _MatchScreenState extends State<MatchScreen> {
   Map<String, dynamic> itemData = {};
   Map<String, dynamic> claimData = {};
   bool _isLoading = true;
+  bool _userNotified = false;
 
   void _fetchData() async {
     final itemDoc = await FirebaseFirestore.instance
@@ -92,23 +93,68 @@ class _MatchScreenState extends State<MatchScreen> {
                           onPressed: () => _handleDecision(context, true),
                           style: ElevatedButton.styleFrom(
                             backgroundColor:
+                                Theme.of(context).colorScheme.secondary,
+                          ),
+                          child: Text(
+                            translate("handedOver"),
+                            style: const TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        ElevatedButton(
+                          onPressed: !_userNotified
+                              ? () async {
+                                  try {
+                                    //! services.generateMatchNotification
+                                    await _generateNotification();
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content:
+                                            Text(translate('UserNotified')),
+                                      ),
+                                    );
+                                    await FirebaseFirestore.instance
+                                        .collection('claims')
+                                        .doc(widget.claimId)
+                                        .update({
+                                      'status': 'possibleMatch',
+                                    });
+                                  } catch (e) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(
+                                            content:
+                                                Text(translate('ErrorOc'))));
+                                  }
+                                  setState(() {
+                                    _userNotified = true;
+                                  });
+                                }
+                              : null,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor:
                                 Theme.of(context).colorScheme.primary,
                           ),
                           child: Text(
-                            translate("Accept"),
-                            style: const TextStyle(color: Colors.black),
+                            translate("NotifyUserButton"),
+                            style: const TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold),
                           ),
                         ),
-                        const SizedBox(width: 32),
+                        const SizedBox(width: 16),
                         ElevatedButton(
                           onPressed: () => _handleDecision(context, false),
                           style: ElevatedButton.styleFrom(
                             backgroundColor:
-                                Theme.of(context).colorScheme.secondary,
+                                Theme.of(context).colorScheme.error,
                           ),
-                          child:  Text(
+                          child: Text(
                             translate("Reject"),
-                            style:const TextStyle(color: Colors.black),
+                            style: const TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold),
                           ),
                         ),
                       ],
@@ -215,9 +261,12 @@ class _MatchScreenState extends State<MatchScreen> {
           child: Row(
             children: [
               Expanded(
-                  child: _buildImageSection(claimData['imageUrls'], translate('Claim'))),
+                  child: _buildImageSection(
+                      claimData['imageUrls'], translate('Claim'))),
               const VerticalDivider(),
-              Expanded(child: _buildImageSection([itemData['imageUrl']], translate('Item'))),
+              Expanded(
+                  child: _buildImageSection(
+                      [itemData['imageUrl']], translate('Item'))),
             ],
           ),
         ),
@@ -278,18 +327,16 @@ class _MatchScreenState extends State<MatchScreen> {
 
   void _handleDecision(BuildContext context, bool isAccepted) async {
     if (isAccepted) {
-      await _generateNotification();
-      await FirebaseFirestore.instance
-          .collection('claims')
-          .doc(widget.claimId)
-          .update({
-        'status': 'possibleMatch',
-      });
+      //! services.deleteMatch
+      //! services.deleteClaim
+      //! services.deleteItem
+      //! services.deleteMatch
       await FirebaseFirestore.instance
           .collection('matches')
           .doc(widget.matchId)
           .delete();
     } else {
+      //! handle match rejection
       FirebaseFirestore.instance
           .collection('matches')
           .doc(widget.matchId)

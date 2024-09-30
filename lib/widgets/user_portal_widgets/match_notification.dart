@@ -115,8 +115,7 @@ class MatchNotification extends StatelessWidget {
                         const SizedBox(height: 8),
                         InkWell(
                           onTap: () async {
-                            final geoPoint =
-                                data['location'] as GeoPoint;
+                            final geoPoint = data['location'] as GeoPoint;
                             final latitude = geoPoint.latitude;
                             final longitude = geoPoint.longitude;
                             final url = Uri(

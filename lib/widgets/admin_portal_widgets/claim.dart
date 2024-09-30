@@ -66,14 +66,15 @@ class _ClaimState extends State<Claim> {
                 const SizedBox(height: 12),
                 Text(
                   translate("LostClaim"),
-                  style:const TextStyle(fontWeight: FontWeight.w700, fontSize: 18),
+                  style: const TextStyle(
+                      fontWeight: FontWeight.w700, fontSize: 18),
                 ),
                 const SizedBox(height: 12),
                 Row(
                   children: [
                     Text(
                       translate("Type"),
-                      style:const TextStyle(
+                      style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w700,
                       ),
@@ -96,7 +97,7 @@ class _ClaimState extends State<Claim> {
                   children: [
                     Text(
                       translate("Description"),
-                      style:const TextStyle(
+                      style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w700,
                       ),
@@ -119,7 +120,7 @@ class _ClaimState extends State<Claim> {
                   children: [
                     Text(
                       translate("Status"),
-                      style:const TextStyle(
+                      style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w700,
                       ),
@@ -138,7 +139,7 @@ class _ClaimState extends State<Claim> {
                   children: [
                     Text(
                       translate("Timestamp"),
-                      style:const TextStyle(
+                      style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w700,
                       ),
@@ -181,10 +182,10 @@ class _ClaimState extends State<Claim> {
                               );
                             },
                           )
-                        :  Center(
+                        : Center(
                             child: Text(
                             translate("NoImage"),
-                            style:const TextStyle(
+                            style: const TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.w700,
                             ),
@@ -231,7 +232,7 @@ class _ClaimState extends State<Claim> {
                   children: [
                     Text(
                       translate("Address"),
-                      style:const TextStyle(
+                      style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w700,
                       ),
@@ -256,9 +257,9 @@ class _ClaimState extends State<Claim> {
                       context: context,
                       builder: (context) {
                         return AlertDialog(
-                          content:  Text(
+                          content: Text(
                             translate("NotifyUser"),
-                            style:const TextStyle(
+                            style: const TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.w700,
                             ),
@@ -273,23 +274,33 @@ class _ClaimState extends State<Claim> {
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w700,
-                                  color: Theme.of(context).colorScheme.secondary,
+                                  color:
+                                      Theme.of(context).colorScheme.secondary,
                                 ),
                               ),
                             ),
                             TextButton(
                               onPressed: () async {
-                                DocumentSnapshot<Map<String, dynamic>> adminData = await FirebaseFirestore.instance.collection('admins').doc(FirebaseAuth.instance.currentUser!.uid).get();
+                                DocumentSnapshot<Map<String, dynamic>>
+                                    adminData = await FirebaseFirestore.instance
+                                        .collection('admins')
+                                        .doc(FirebaseAuth
+                                            .instance.currentUser!.uid)
+                                        .get();
                                 try {
-                                  FirebaseFirestore.instance.collection('claims_notifications').add(
+                                  //! services.generateClaimNotification
+                                  FirebaseFirestore.instance
+                                      .collection('claims_notifications')
+                                      .add(
                                     {
                                       'userId': widget.claimData['userId'],
-                                      'message':
-                                          "ResubmitMessage",
+                                      'message': "ResubmitMessage",
                                       'timestamp': Timestamp.now(),
-                                      'adminContact': "${adminData['email']}\n${adminData['phoneNumber']}",
+                                      'adminContact':
+                                          "${adminData['email']}\n${adminData['phoneNumber']}",
                                     },
                                   );
+                                  //! services.deleteClaim
                                   FirebaseFirestore.instance
                                       .collection('claims')
                                       .doc(widget.id)
@@ -305,7 +316,8 @@ class _ClaimState extends State<Claim> {
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w700,
-                                  color: Theme.of(context).colorScheme.secondary,
+                                  color:
+                                      Theme.of(context).colorScheme.secondary,
                                 ),
                               ),
                             ),
@@ -320,7 +332,10 @@ class _ClaimState extends State<Claim> {
                   ),
                   label: Text(
                     translate("ResubmitRequest"),
-                    style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontWeight: FontWeight.w600,),
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.secondary,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 14),
@@ -332,7 +347,7 @@ class _ClaimState extends State<Claim> {
                         return AlertDialog(
                           content: Text(
                             translate("SureDeleteClaim?"),
-                            style:const TextStyle(
+                            style: const TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.w700,
                             ),
@@ -347,13 +362,15 @@ class _ClaimState extends State<Claim> {
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w700,
-                                  color: Theme.of(context).colorScheme.secondary,
+                                  color:
+                                      Theme.of(context).colorScheme.secondary,
                                 ),
                               ),
                             ),
                             TextButton(
                               onPressed: () {
                                 try {
+                                  //! services.deleteClaim
                                   FirebaseFirestore.instance
                                       .collection('claims')
                                       .doc(widget.id)
@@ -369,7 +386,8 @@ class _ClaimState extends State<Claim> {
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w700,
-                                  color: Theme.of(context).colorScheme.secondary,
+                                  color:
+                                      Theme.of(context).colorScheme.secondary,
                                 ),
                               ),
                             ),
@@ -384,7 +402,10 @@ class _ClaimState extends State<Claim> {
                   ),
                   label: Text(
                     translate("Delete"),
-                    style: const TextStyle(color: Colors.red, fontWeight: FontWeight.w600,),
+                    style: const TextStyle(
+                      color: Colors.red,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
               ],

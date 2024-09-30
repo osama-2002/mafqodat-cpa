@@ -46,9 +46,9 @@ class _AdminProfileState extends State<AdminProfile> {
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-               Text(
+              Text(
                 translate("EditHint"),
-                style:const TextStyle(
+                style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w500,
                 ),
@@ -207,7 +207,8 @@ class _AdminProfileState extends State<AdminProfile> {
                         const SizedBox(height: 5),
                         Text(
                           translate("Admin"),
-                          style:const  TextStyle(fontSize: 16, color: Colors.grey),
+                          style:
+                              const TextStyle(fontSize: 16, color: Colors.grey),
                         ),
                       ],
                     ),
@@ -254,9 +255,9 @@ class _AdminProfileState extends State<AdminProfile> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                 Text(
+                                Text(
                                   translate("Location"),
-                                  style:const TextStyle(
+                                  style: const TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold),
                                 ),
@@ -286,7 +287,7 @@ class _AdminProfileState extends State<AdminProfile> {
                               children: [
                                 Text(
                                   translate("WorkingHours"),
-                                  style:const  TextStyle(
+                                  style: const TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold),
                                 ),
@@ -314,9 +315,9 @@ class _AdminProfileState extends State<AdminProfile> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                 Text(
+                                Text(
                                   translate("PhoneNo"),
-                                  style:const TextStyle(
+                                  style: const TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold),
                                 ),
@@ -344,9 +345,9 @@ class _AdminProfileState extends State<AdminProfile> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                 Text(
+                                Text(
                                   translate("Email"),
-                                  style:const TextStyle(
+                                  style: const TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold),
                                 ),

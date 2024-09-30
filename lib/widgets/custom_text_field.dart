@@ -66,11 +66,10 @@ class CustomTextFormField extends StatelessWidget {
           ),
         ),
       ),
-      textDirection: LocalizedApp.of(context)
-                        .delegate
-                        .currentLocale
-                        .toString() ==
-                    'en' ? TextDirection.ltr : TextDirection.rtl,
+      textDirection:
+          LocalizedApp.of(context).delegate.currentLocale.toString() == 'en'
+              ? TextDirection.ltr
+              : TextDirection.rtl,
     );
   }
 }

@@ -29,6 +29,7 @@ class Report extends StatefulWidget {
 class _ReportState extends State<Report> {
   final geocoder = FlGeocoder(googleMapsApiKey);
   String? formattedAddress = '';
+  String? contactInfo = '';
 
   Future<void> _getFormattedAddress() async {
     final coordinates = Location(
@@ -45,10 +46,16 @@ class _ReportState extends State<Report> {
     });
   }
 
+  Future<void> _getUserContactInfo() async {
+    var userInfo = await FirebaseFirestore.instance.collection('users').doc(widget.reportData['userId']).get();
+    contactInfo = "${userInfo['email']}\n${userInfo['phoneNumber']}";
+  }
+
   @override
   void initState() {
     super.initState();
     _getFormattedAddress();
+    _getUserContactInfo();
   }
 
   @override
@@ -67,7 +74,8 @@ class _ReportState extends State<Report> {
                 const SizedBox(height: 12),
                 Text(
                   translate("FoundReport"),
-                  style:const TextStyle(fontWeight: FontWeight.w700, fontSize: 18),
+                  style: const TextStyle(
+                      fontWeight: FontWeight.w700, fontSize: 18),
                 ),
                 const SizedBox(height: 12),
                 Row(
@@ -120,7 +128,7 @@ class _ReportState extends State<Report> {
                   children: [
                     Text(
                       translate("Status"),
-                      style:const TextStyle(
+                      style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w700,
                       ),
@@ -227,7 +235,7 @@ class _ReportState extends State<Report> {
                   children: [
                     Text(
                       translate("Address"),
-                      style:const TextStyle(
+                      style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w700,
                       ),
@@ -245,9 +253,34 @@ class _ReportState extends State<Report> {
                     ),
                   ],
                 ),
+                const SizedBox(height: 8),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      translate("userContact"),
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                      ),
+                      textAlign: TextAlign.start,
+                    ),
+                    Expanded(
+                      child: Text(
+                        "$contactInfo",
+                        style: const TextStyle(
+                          fontSize: 16,
+                        ),
+                        softWrap: true,
+                        overflow: TextOverflow.visible,
+                      ),
+                    ),
+                  ],
+                ),
                 const SizedBox(height: 14),
                 ElevatedButton.icon(
                   onPressed: () async {
+                    //! services.addItem
                     final adminId = FirebaseAuth.instance.currentUser!.uid;
                     final DocumentSnapshot<Map<String, dynamic>> adminData =
                         await FirebaseFirestore.instance
@@ -263,6 +296,7 @@ class _ReportState extends State<Report> {
                       'type': widget.reportData['type'],
                       'imageUrl': widget.reportData['imageUrl'],
                     });
+                    //! services.deleteReport
                     await FirebaseFirestore.instance
                         .collection('reports')
                         .doc(widget.id)
@@ -289,9 +323,9 @@ class _ReportState extends State<Report> {
                       context: context,
                       builder: (context) {
                         return AlertDialog(
-                          content:Text(
+                          content: Text(
                             translate("SureDeleteRep?"),
-                            style:const TextStyle(
+                            style: const TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.w700,
                             ),
@@ -313,6 +347,7 @@ class _ReportState extends State<Report> {
                             ),
                             TextButton(
                               onPressed: () {
+                                //! services.deleteReport
                                 try {
                                   FirebaseFirestore.instance
                                       .collection('reports')
@@ -345,7 +380,7 @@ class _ReportState extends State<Report> {
                   ),
                   label: Text(
                     translate("Delete"),
-                    style:const TextStyle(
+                    style: const TextStyle(
                       color: Colors.red,
                       fontWeight: FontWeight.w600,
                     ),

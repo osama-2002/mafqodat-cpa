@@ -29,7 +29,7 @@ class _UserProfileState extends State<UserProfile> {
             children: [
               Text(
                 translate("EditHint"),
-                style:const TextStyle(
+                style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w500,
                 ),
@@ -182,7 +182,8 @@ class _UserProfileState extends State<UserProfile> {
                         const SizedBox(height: 5),
                         Text(
                           translate("User"),
-                          style:const TextStyle(fontSize: 16, color: Colors.grey),
+                          style:
+                              const TextStyle(fontSize: 16, color: Colors.grey),
                         ),
                       ],
                     ),
@@ -231,7 +232,7 @@ class _UserProfileState extends State<UserProfile> {
                               children: [
                                 Text(
                                   translate("NationalNo"),
-                                  style:const TextStyle(
+                                  style: const TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold),
                                 ),
@@ -261,7 +262,7 @@ class _UserProfileState extends State<UserProfile> {
                               children: [
                                 Text(
                                   translate("PhoneNo"),
-                                  style:const TextStyle(
+                                  style: const TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold),
                                 ),
@@ -291,7 +292,7 @@ class _UserProfileState extends State<UserProfile> {
                               children: [
                                 Text(
                                   translate("Email"),
-                                  style:const TextStyle(
+                                  style: const TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold),
                                 ),
@@ -341,7 +342,7 @@ class _UserProfileState extends State<UserProfile> {
                           children: [
                             Text(
                               translate("History"),
-                              style:const TextStyle(
+                              style: const TextStyle(
                                   fontSize: 16, fontWeight: FontWeight.bold),
                             ),
                             const SizedBox(height: 5),

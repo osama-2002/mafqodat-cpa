@@ -8,9 +8,9 @@ class GuidePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title:  Text(
+        title: Text(
           translate("Guide"),
-          style:const TextStyle(fontSize: 18),
+          style: const TextStyle(fontSize: 18),
         ),
         backgroundColor: Theme.of(context).colorScheme.primary,
       ),
@@ -19,46 +19,40 @@ class GuidePage extends StatelessWidget {
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children:  [
+            children: [
               Text(
                 translate("FollowSteps"),
-                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                style:
+                    const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 16),
               _GuidePoint(
                 title: translate("FirstTitle"),
-                content:
-                    translate("FirstStep"),
+                content: translate("FirstStep"),
               ),
               _GuidePoint(
                 title: translate("SecondTitle"),
-                content:
-                    translate("SecondStep"),
+                content: translate("SecondStep"),
               ),
               _GuidePoint(
                 title: translate("ThirdTitle"),
-                content:
-                    translate("ThirdStep"),
+                content: translate("ThirdStep"),
               ),
               _GuidePoint(
                 title: translate("FourthTitle"),
-                content:
-                    translate("FourthStep"),
+                content: translate("FourthStep"),
               ),
               _GuidePoint(
                 title: translate("FifthTitle"),
-                content:
-                    translate("FifthStep"),
+                content: translate("FifthStep"),
               ),
               _GuidePoint(
                 title: translate("SixthTitle"),
-                content:
-                    translate("SixthStep"),
+                content: translate("SixthStep"),
               ),
               _GuidePoint(
                 title: translate("SeventhTitle"),
-                content:
-                    translate("SeventhStep"),
+                content: translate("SeventhStep"),
               ),
             ],
           ),
