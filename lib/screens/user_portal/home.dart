@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/material_symbols_icons.dart';
 import 'package:flutter_translate/flutter_translate.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 
+import 'package:mafqodat/services/auth_services.dart' as auth_services;
 import 'package:mafqodat/screens/user_portal/guide.dart';
 import 'package:mafqodat/screens/user_portal/report_form.dart';
 import 'package:mafqodat/screens/user_portal/claim_form.dart';
@@ -20,13 +20,10 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   int _currentIndex = 0;
-  DocumentSnapshot? userData;
+  DocumentSnapshot<Map<String, dynamic>>? userData;
 
   void _getUserData() async {
-    DocumentSnapshot data = await FirebaseFirestore.instance
-        .collection('users')
-        .doc(FirebaseAuth.instance.currentUser!.uid)
-        .get();
+    DocumentSnapshot<Map<String, dynamic>> data = await auth_services.userData;
     setState(() {
       userData = data;
     });
@@ -118,7 +115,7 @@ class _HomeState extends State<Home> {
                       ),
                       TextButton(
                         onPressed: () async {
-                          await FirebaseAuth.instance.signOut();
+                          await auth_services.signOut();
                           Navigator.of(context).pop();
                         },
                         child: Text(

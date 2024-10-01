@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/material_symbols_icons.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import 'package:mafqodat/services/auth_services.dart' as auth_services;
 import 'package:mafqodat/screens/user_portal/history.dart';
 
 class UserProfile extends StatefulWidget {
@@ -16,7 +16,8 @@ class UserProfile extends StatefulWidget {
 
 class _UserProfileState extends State<UserProfile> {
   final TextEditingController _newNameController = TextEditingController();
-  final TextEditingController _newPhoneNumberController = TextEditingController();
+  final TextEditingController _newPhoneNumberController =
+      TextEditingController();
 
   void _showEditInfoDialog() {
     showDialog(
@@ -97,23 +98,15 @@ class _UserProfileState extends State<UserProfile> {
                 if (_newNameController.text.isNotEmpty ||
                     _newPhoneNumberController.text.isNotEmpty) {
                   if (_newNameController.text.isNotEmpty) {
-                    await FirebaseFirestore.instance
-                        .collection('users')
-                        .doc(FirebaseAuth.instance.currentUser!.uid)
-                        .update(
-                      {
-                        'name': _newNameController.text,
-                      },
+                    await auth_services.updateDisplayName(
+                      name: _newNameController.text.trim(),
+                      isUser: true,
                     );
                   }
                   if (_newPhoneNumberController.text.isNotEmpty) {
-                    await FirebaseFirestore.instance
-                        .collection('users')
-                        .doc(FirebaseAuth.instance.currentUser!.uid)
-                        .update(
-                      {
-                        'phoneNumber': _newPhoneNumberController.text,
-                      },
+                    await auth_services.updatePhoneNumber(
+                      phoneNumber: _newPhoneNumberController.text.trim(),
+                      isUser: true,
                     );
                   }
                   ScaffoldMessenger.of(context).showSnackBar(

@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 
+import 'package:mafqodat/services/auth_services.dart' as auth_services;
 import 'package:mafqodat/screens/forgotten_password.dart';
 import 'package:mafqodat/widgets/custom_text_field.dart';
 
@@ -445,60 +444,27 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
   }
 
   void submitInput() async {
-    try {
-      if (_formKey.currentState!.validate()) {
-        if (isLogin) {
-          await FirebaseAuth.instance.signInWithEmailAndPassword(
-            email: _emailController.text.trim(),
-            password: _passwordController.text.trim(),
-          );
-        } else {
-          final userData =
-              await FirebaseAuth.instance.createUserWithEmailAndPassword(
-            email: _emailController.text.trim(),
-            password: _passwordController.text.trim(),
-          );
-          FirebaseAuth.instance.currentUser!.sendEmailVerification();
-          saveUserData(userData.user!.uid);
-        }
+    if (_formKey.currentState!.validate()) {
+      if (isLogin) {
+        await auth_services.signIn(
+          email: _emailController.text.trim(),
+          password: _passwordController.text.trim(),
+          context: context,
+        );
+      } else {
+        await auth_services.signUp(
+          email: _emailController.text.trim(),
+          password: _passwordController.text.trim(),
+          context: context,
+          data: {
+            'name': _nameController.text.trim(),
+            'gender': _selectedGender,
+            'email': _emailController.text.trim(),
+            'nationalNumber': _nationalNumberController.text,
+            'phoneNumber': _phoneNumberController.text,
+          },
+        );
       }
-    } on FirebaseAuthException catch (e) {
-      _handleAuthErrors(e);
-    }
-  }
-
-  void saveUserData(String id) {
-    FirebaseFirestore.instance.collection('users').doc(id).set({
-      'name': _nameController.text.trim(),
-      'gender': _selectedGender,
-      'email': _emailController.text.trim(),
-      'nationalNumber': _nationalNumberController.text,
-      'phoneNumber': _phoneNumberController.text,
-    });
-  }
-
-  void _handleAuthErrors(FirebaseAuthException e) {
-    if (e.code == 'weak-password') {
-      _showSnackBar(translate("WeakPass"));
-    } else if (e.code == 'email-already-in-use') {
-      _showSnackBar(translate("AccExist"));
-    } else if (e.code == 'wrong-password' || e.code == 'invalid-credential') {
-      _showSnackBar(translate("WrongPass"));
-    } else if (e.code == 'user-not-found') {
-      _showSnackBar(translate("UserNotFound"));
-    } else if (e.code == 'invalid-email') {
-      _showSnackBar(translate("InvalidEmail"));
-    } else {
-      _showSnackBar(translate("DiffError"));
-    }
-  }
-
-  void _showSnackBar(String message) {
-    if (context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(message),
-        duration: const Duration(seconds: 5),
-      ));
     }
   }
 }

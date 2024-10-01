@@ -1,9 +1,10 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fl_geocoder/fl_geocoder.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+
+import 'package:mafqodat/services/auth_services.dart' as auth_services;
 
 String googleMapsApiKey = dotenv.env['GOOGLE_MAPS_API_KEY']!;
 
@@ -116,23 +117,15 @@ class _AdminProfileState extends State<AdminProfile> {
                 if (_newNameController.text.isNotEmpty ||
                     _newPhoneNumberController.text.isNotEmpty) {
                   if (_newNameController.text.isNotEmpty) {
-                    await FirebaseFirestore.instance
-                        .collection('admins')
-                        .doc(FirebaseAuth.instance.currentUser!.uid)
-                        .update(
-                      {
-                        'name': _newNameController.text,
-                      },
+                    await auth_services.updateDisplayName(
+                      name: _newNameController.text.trim(),
+                      isUser: false,
                     );
                   }
                   if (_newPhoneNumberController.text.isNotEmpty) {
-                    await FirebaseFirestore.instance
-                        .collection('admins')
-                        .doc(FirebaseAuth.instance.currentUser!.uid)
-                        .update(
-                      {
-                        'phoneNumber': _newPhoneNumberController.text,
-                      },
+                    await auth_services.updatePhoneNumber(
+                      phoneNumber: _newPhoneNumberController.text.trim(),
+                      isUser: false,
                     );
                   }
                   ScaffoldMessenger.of(context).showSnackBar(

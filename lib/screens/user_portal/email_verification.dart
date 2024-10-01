@@ -1,6 +1,6 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_translate/flutter_translate.dart';
+import 'package:mafqodat/services/auth_services.dart' as auth_services;
 
 class EmailVerificationScreen extends StatefulWidget {
   const EmailVerificationScreen({super.key});
@@ -11,29 +11,6 @@ class EmailVerificationScreen extends StatefulWidget {
 }
 
 class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
-  Future<void> checkEmailVerification() async {
-    await FirebaseAuth.instance.currentUser!.reload();
-    if (FirebaseAuth.instance.currentUser!.emailVerified) {
-      await FirebaseAuth.instance.signOut();
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(translate('notVerified'))),
-      );
-    }
-  }
-
-  Future<void> resendVerificationEmail() async {
-    try {
-      await FirebaseAuth.instance.currentUser!.sendEmailVerification();
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(translate('vEmailSent'))),
-      );
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(translate('vEmailFailed'))),
-      );
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -73,22 +50,22 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
             ),
             SizedBox(height: 10),
             ElevatedButton(
-              onPressed: () {
-                resendVerificationEmail();
+              onPressed: () async {
+                await auth_services.resendVerificationEmail(context);
               },
               child: Text(translate('resendVerification')),
             ),
             SizedBox(height: 10),
             ElevatedButton(
-              onPressed: () {
-                checkEmailVerification();
+              onPressed: () async {
+                await auth_services.checkEmailVerification(context);
               },
               child: Text(translate('verificationDone')),
             ),
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: () async {
-                await FirebaseAuth.instance.signOut();
+                await auth_services.signOut();
               },
               child: Text(translate('backToLogin')),
             ),

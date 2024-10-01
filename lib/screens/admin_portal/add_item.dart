@@ -4,11 +4,11 @@ import 'package:flutter_translate/flutter_translate.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:uuid/uuid.dart';
 
+import 'package:mafqodat/services/auth_services.dart' as auth_services;
 import 'package:mafqodat/widgets/custom_dropdown_button.dart';
 import 'package:mafqodat/widgets/custom_text_field.dart';
 
@@ -133,7 +133,7 @@ class _AddItemState extends State<AddItem> {
     try {
       await db.collection('items').doc(itemId).set(
         {
-          'adminId': FirebaseAuth.instance.currentUser!.uid,
+          'adminId': auth_services.currentUid,
           'description': _descriptionController.text,
           'color': _selectedColor!.value,
           'date': DateTime.now(),
@@ -209,7 +209,7 @@ class _AddItemState extends State<AddItem> {
                           ),
                           TextButton(
                             onPressed: () async {
-                              await FirebaseAuth.instance.signOut();
+                              await auth_services.signOut();
                               Navigator.of(context).pop();
                             },
                             child: Text(

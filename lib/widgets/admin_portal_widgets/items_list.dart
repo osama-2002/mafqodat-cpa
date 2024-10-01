@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 
+import 'package:mafqodat/services/auth_services.dart' as auth_services;
 import 'package:mafqodat/widgets/custom_dropdown_button.dart';
 import 'package:mafqodat/widgets/admin_portal_widgets/item.dart';
 
@@ -30,12 +30,12 @@ class _ItemsListState extends State<ItemsList> {
           ? FirebaseFirestore.instance
               .collection('items')
               .where('adminId',
-                  isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+                  isEqualTo: auth_services.currentUid)
               .snapshots()
           : FirebaseFirestore.instance
               .collection('items')
               .where('adminId',
-                  isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+                  isEqualTo: auth_services.currentUid)
               .where('type', isEqualTo: filter)
               .snapshots(),
       builder: (context, snapshot) {

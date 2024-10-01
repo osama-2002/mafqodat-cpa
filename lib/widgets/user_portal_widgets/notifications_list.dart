@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 
+import 'package:mafqodat/services/auth_services.dart' as auth_services;
 import 'package:mafqodat/widgets/user_portal_widgets/claim_notification.dart';
 import 'package:mafqodat/widgets/user_portal_widgets/match_notification.dart';
 import 'package:mafqodat/widgets/user_portal_widgets/report_notification.dart';
@@ -26,21 +26,21 @@ class _NotificationsListState extends State<NotificationsList> {
             stream: FirebaseFirestore.instance
                 .collection('matches_notifications')
                 .where('userId',
-                    isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+                    isEqualTo: auth_services.currentUid)
                 .snapshots(),
             builder: (context, matchesSnapshot) {
               return StreamBuilder(
                 stream: FirebaseFirestore.instance
                     .collection('claims_notifications')
                     .where('userId',
-                        isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+                        isEqualTo: auth_services.currentUid)
                     .snapshots(),
                 builder: (context, claimsSnapshot) {
                   return StreamBuilder(
                     stream: FirebaseFirestore.instance
                         .collection('reports_notifications')
                         .where('userId',
-                            isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+                            isEqualTo: auth_services.currentUid)
                         .snapshots(),
                     builder: (context, reportsSnapshot) {
                       if (matchesSnapshot.connectionState ==

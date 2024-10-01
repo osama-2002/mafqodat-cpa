@@ -5,7 +5,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:flutter_translate/flutter_translate.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:time_picker_spinner_pop_up/time_picker_spinner_pop_up.dart';
@@ -13,6 +12,7 @@ import 'package:uuid/uuid.dart';
 import 'package:fl_geocoder/fl_geocoder.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
+import 'package:mafqodat/services/auth_services.dart' as auth_services;
 import 'package:mafqodat/widgets/custom_dropdown_button.dart';
 import 'package:mafqodat/widgets/custom_text_field.dart';
 import 'package:mafqodat/widgets/location_input.dart';
@@ -192,7 +192,7 @@ class _ClaimFormState extends State<ClaimForm> {
     try {
       await db.collection('claims').doc(claimId).set(
         {
-          'userId': FirebaseAuth.instance.currentUser!.uid,
+          'userId': auth_services.currentUid,
           'description': _descriptionController.text,
           'color': _selectedColor!.value,
           'date': _selectedDate,
@@ -242,7 +242,7 @@ class _ClaimFormState extends State<ClaimForm> {
                 color: Theme.of(context).colorScheme.onSurface,
               ),
               onPressed: () async {
-                await FirebaseAuth.instance.signOut();
+                await auth_services.signOut();
               },
             ),
           ],
