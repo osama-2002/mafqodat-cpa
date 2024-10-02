@@ -12,6 +12,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'package:mafqodat/services/auth_services.dart' as auth_services;
 import 'package:mafqodat/services/user_interaction_services.dart' as ui_services;
+import 'package:mafqodat/services/location_services.dart' as location_services;
 import 'package:mafqodat/widgets/custom_dropdown_button.dart';
 import 'package:mafqodat/widgets/custom_text_field.dart';
 import 'package:mafqodat/widgets/location_input.dart';
@@ -70,18 +71,6 @@ class _ClaimFormState extends State<ClaimForm> {
     });
   }
 
-  Future<void> _getFormattedAddress() async {
-    final coordinates = Location(latitude!, longitude!);
-    final results = await geocoder.findAddressesFromLocationCoordinates(
-      location: coordinates,
-      useDefaultResultTypeFilter: true,
-    );
-
-    setState(() {
-      formattedAddress = results[0].formattedAddress!;
-    });
-  }
-
   void _clearForm() {
     _locationInputKey.currentState?.refreshLocation();
     setState(() {
@@ -110,7 +99,7 @@ class _ClaimFormState extends State<ClaimForm> {
         context: context,
       );
     }
-    await _getFormattedAddress();
+    formattedAddress = await location_services.getFormattedAddress(latitude!, longitude!);
     String region;
     if (formattedAddress.toLowerCase().contains("amman")) {
       region = "amman";

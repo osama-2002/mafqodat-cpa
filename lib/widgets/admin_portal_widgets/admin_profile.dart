@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:fl_geocoder/fl_geocoder.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'package:mafqodat/services/auth_services.dart' as auth_services;
-
-String googleMapsApiKey = dotenv.env['GOOGLE_MAPS_API_KEY']!;
+import 'package:mafqodat/services/location_services.dart' as location_services;
 
 class AdminProfile extends StatefulWidget {
   const AdminProfile({super.key, required this.adminData});
@@ -17,26 +14,10 @@ class AdminProfile extends StatefulWidget {
 }
 
 class _AdminProfileState extends State<AdminProfile> {
-  final geocoder = FlGeocoder(googleMapsApiKey);
   String? formattedAddress = '';
   final TextEditingController _newNameController = TextEditingController();
   final TextEditingController _newPhoneNumberController =
       TextEditingController();
-
-  Future<void> _getFormattedAddress() async {
-    final coordinates = Location(
-      widget.adminData['location'].latitude,
-      widget.adminData['location'].longitude,
-    );
-    final results = await geocoder.findAddressesFromLocationCoordinates(
-      location: coordinates,
-      useDefaultResultTypeFilter: true,
-    );
-
-    setState(() {
-      formattedAddress = results[0].formattedAddress;
-    });
-  }
 
   void _showEditInfoDialog() {
     showDialog(
@@ -156,7 +137,16 @@ class _AdminProfileState extends State<AdminProfile> {
   @override
   void initState() {
     super.initState();
-    _getFormattedAddress();
+    location_services
+        .getFormattedAddress(
+      widget.adminData['location'].latitude,
+      widget.adminData['location'].longitude,
+    )
+        .then((value) {
+      setState(() {
+        formattedAddress = value;
+      });
+    });
   }
 
   @override

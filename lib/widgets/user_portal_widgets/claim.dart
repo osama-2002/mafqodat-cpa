@@ -4,11 +4,9 @@ import 'package:flutter/gestures.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:fl_geocoder/fl_geocoder.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:intl/intl.dart';
 
-String googleMapsApiKey = dotenv.env['GOOGLE_MAPS_API_KEY']!;
+import 'package:mafqodat/services/location_services.dart' as location_services;
 
 class Claim extends StatefulWidget {
   const Claim(
@@ -25,28 +23,20 @@ class Claim extends StatefulWidget {
 }
 
 class _ClaimState extends State<Claim> {
-  final geocoder = FlGeocoder(googleMapsApiKey);
   String? formattedAddress = '';
-
-  Future<void> _getFormattedAddress() async {
-    final coordinates = Location(
-      widget.claimData['location'].latitude,
-      widget.claimData['location'].longitude,
-    );
-    final results = await geocoder.findAddressesFromLocationCoordinates(
-      location: coordinates,
-      useDefaultResultTypeFilter: true,
-    );
-
-    setState(() {
-      formattedAddress = results[0].formattedAddress;
-    });
-  }
 
   @override
   void initState() {
     super.initState();
-    _getFormattedAddress();
+    location_services.getFormattedAddress(
+      widget.claimData['location'].latitude,
+      widget.claimData['location'].longitude,
+    ).then((value) {
+      setState(() {
+        formattedAddress = value;
+      });
+    }
+    );
   }
 
   @override

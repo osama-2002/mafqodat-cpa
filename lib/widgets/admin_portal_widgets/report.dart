@@ -5,13 +5,10 @@ import 'package:flutter_translate/flutter_translate.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:fl_geocoder/fl_geocoder.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:intl/intl.dart';
 
 import 'package:mafqodat/services/auth_services.dart' as auth_services;
-
-String googleMapsApiKey = dotenv.env['GOOGLE_MAPS_API_KEY']!;
+import 'package:mafqodat/services/location_services.dart' as location_services;
 
 class Report extends StatefulWidget {
   const Report(
@@ -28,34 +25,30 @@ class Report extends StatefulWidget {
 }
 
 class _ReportState extends State<Report> {
-  final geocoder = FlGeocoder(googleMapsApiKey);
   String? formattedAddress = '';
   String? contactInfo = '';
 
-  Future<void> _getFormattedAddress() async {
-    final coordinates = Location(
-      widget.reportData['location'].latitude,
-      widget.reportData['location'].longitude,
-    );
-    final results = await geocoder.findAddressesFromLocationCoordinates(
-      location: coordinates,
-      useDefaultResultTypeFilter: true,
-    );
-
-    setState(() {
-      formattedAddress = results[0].formattedAddress;
-    });
-  }
-
   Future<void> _getUserContactInfo() async {
-    var userInfo = await FirebaseFirestore.instance.collection('users').doc(widget.reportData['userId']).get();
+    var userInfo = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(widget.reportData['userId'])
+        .get();
     contactInfo = "${userInfo['email']}\n${userInfo['phoneNumber']}";
   }
 
   @override
   void initState() {
     super.initState();
-    _getFormattedAddress();
+    location_services
+        .getFormattedAddress(
+      widget.reportData['location'].latitude,
+      widget.reportData['location'].longitude,
+    )
+        .then((value) {
+      setState(() {
+        formattedAddress = value;
+      });
+    });
     _getUserContactInfo();
   }
 
@@ -282,7 +275,8 @@ class _ReportState extends State<Report> {
                 ElevatedButton.icon(
                   onPressed: () async {
                     //! services.addItem
-                    final DocumentSnapshot<Map<String, dynamic>> adminData = await auth_services.adminData;
+                    final DocumentSnapshot<Map<String, dynamic>> adminData =
+                        await auth_services.adminData;
                     await FirebaseFirestore.instance.collection('items').add({
                       'adminId': auth_services.currentUid,
                       'description': widget.reportData['description'],

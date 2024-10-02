@@ -12,6 +12,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'package:mafqodat/services/auth_services.dart' as auth_services;
 import 'package:mafqodat/services/user_interaction_services.dart' as ui_services;
+import 'package:mafqodat/services/location_services.dart' as location_services;
 import 'package:mafqodat/widgets/custom_dropdown_button.dart';
 import 'package:mafqodat/widgets/custom_text_field.dart';
 import 'package:mafqodat/widgets/location_input.dart';
@@ -70,18 +71,6 @@ class _ReportFormState extends State<ReportForm> {
     });
   }
 
-  Future<void> _getFormattedAddress() async {
-    final coordinates = Location(latitude!, longitude!);
-    final results = await geocoder.findAddressesFromLocationCoordinates(
-      location: coordinates,
-      useDefaultResultTypeFilter: true,
-    );
-
-    setState(() {
-      _formattedAddress = results[0].formattedAddress!;
-    });
-  }
-
   void _clearForm() {
     _locationInputKey.currentState?.refreshLocation();
     setState(() {
@@ -111,7 +100,7 @@ class _ReportFormState extends State<ReportForm> {
         final adminEmail = station['email'] as String;
         final adminPhoneNumber = station['phoneNumber'] as String;
 
-        final double distance = _calculateDistance(
+        final double distance = location_services.calculateDistance(
           latitude!,
           longitude!,
           stationLocation.latitude,
@@ -142,15 +131,6 @@ class _ReportFormState extends State<ReportForm> {
     }
   }
 
-  double _calculateDistance(
-      double lat1, double lon1, double lat2, double lon2) {
-    const double p = 0.017453292519943295;
-    double a = 0.5 -
-        cos((lat2 - lat1) * p) / 2 +
-        cos(lat1 * p) * cos(lat2 * p) * (1 - cos((lon2 - lon1) * p)) / 2;
-    return 12742 * asin(sqrt(a));
-  }
-
   void _submitReport() async {
     setState(() {
       _isLoading = true;
@@ -166,7 +146,7 @@ class _ReportFormState extends State<ReportForm> {
         context: context,
       );
     }
-    await _getFormattedAddress();
+    _formattedAddress = await location_services.getFormattedAddress(latitude!, longitude!);
     String region;
     if (_formattedAddress.toLowerCase().contains("amman")) {
       region = "amman";
