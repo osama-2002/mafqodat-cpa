@@ -1,11 +1,9 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:flutter_translate/flutter_translate.dart';
-import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:time_picker_spinner_pop_up/time_picker_spinner_pop_up.dart';
 import 'package:uuid/uuid.dart';
@@ -13,6 +11,7 @@ import 'package:fl_geocoder/fl_geocoder.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'package:mafqodat/services/auth_services.dart' as auth_services;
+import 'package:mafqodat/services/user_interaction_services.dart' as ui_services;
 import 'package:mafqodat/widgets/custom_dropdown_button.dart';
 import 'package:mafqodat/widgets/custom_text_field.dart';
 import 'package:mafqodat/widgets/location_input.dart';
@@ -33,19 +32,18 @@ class _ClaimFormState extends State<ClaimForm> {
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _searchController = TextEditingController();
   DateTime _selectedDate = DateTime.now();
-  final ImagePicker _picker = ImagePicker();
   Color? _selectedColor;
   List<XFile>? _selectedImages;
   double? latitude;
   double? longitude;
   double? currentLatitude;
   double? currentLongitude;
-  final GlobalKey<LocationInputState> _locationInputKey =
-      GlobalKey<LocationInputState>();
+  final GlobalKey<LocationInputState> _locationInputKey = GlobalKey<LocationInputState>();
   final geocoder = FlGeocoder(googleMapsApiKey);
   String formattedAddress = '';
   Uuid uuid = const Uuid();
   bool _isLoading = false;
+  List<String> imageUrls = [];
 
   void _unfocusTextFields() {
     _focusScopeNode.unfocus();
@@ -55,61 +53,6 @@ class _ClaimFormState extends State<ClaimForm> {
     setState(() {
       _selectedDropDownValue = newValue;
     });
-  }
-
-  Future<void> _selectImages() async {
-    try {
-      final List<XFile> selectedImages = await _picker.pickMultiImage();
-      setState(() {
-        _selectedImages = selectedImages;
-      });
-    } catch (e) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(translate("ErrorOc"))));
-    }
-  }
-
-  void _pickColor(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(translate("PickCol")),
-          content: SingleChildScrollView(
-            child: BlockPicker(
-              pickerColor: _selectedColor,
-              availableColors: const [
-                Colors.red,
-                Colors.green,
-                Colors.blue,
-                Colors.yellow,
-                Colors.black,
-                Colors.white,
-                Colors.purple,
-                Colors.orange,
-                Colors.pink,
-                Colors.teal,
-                Colors.brown,
-                Colors.grey,
-              ],
-              onColorChanged: (Color color) {
-                setState(() {
-                  _selectedColor = color;
-                });
-              },
-            ),
-          ),
-          actions: <Widget>[
-            ElevatedButton(
-              child: Text(translate("Select")),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
   }
 
   void _onCurrentLocationLoaded(
@@ -158,27 +101,14 @@ class _ClaimFormState extends State<ClaimForm> {
       _isLoading = true;
     });
     final db = FirebaseFirestore.instance;
-    final storage = FirebaseStorage.instance;
     String claimId = uuid.v4();
 
-    List<String> imageUrls = [];
     if (_selectedImages != null) {
-      for (XFile image in _selectedImages!) {
-        String fileName =
-            '${claimId}_${DateTime.now().millisecondsSinceEpoch}.jpg';
-        try {
-          Reference ref = storage.ref().child('claims/$claimId/$fileName');
-          UploadTask uploadTask = ref.putFile(File(image.path));
-          TaskSnapshot snapshot = await uploadTask;
-
-          String downloadUrl = await snapshot.ref.getDownloadURL();
-          imageUrls.add(downloadUrl);
-        } catch (e) {
-          ScaffoldMessenger.of(context)
-              .showSnackBar(SnackBar(content: Text(translate("ImageProb"))));
-          return;
-        }
-      }
+      imageUrls = await ui_services.getImagesDownloadUrls(
+        selectedImages: _selectedImages!,
+        id: claimId,
+        context: context,
+      );
     }
     await _getFormattedAddress();
     String region;
@@ -285,7 +215,13 @@ class _ClaimFormState extends State<ClaimForm> {
                           ),
                           const SizedBox(height: 16),
                           ElevatedButton(
-                            onPressed: () => _pickColor(context),
+                            onPressed: () async {
+                              _selectedColor =
+                                  await ui_services.pickColor(context);
+                              if (_selectedColor != null) {
+                                setState(() {});
+                              }
+                            },
                             child: _selectedColor == null
                                 ? Text(translate("PickCol"))
                                 : Icon(
@@ -492,7 +428,14 @@ class _ClaimFormState extends State<ClaimForm> {
                                         },
                                       )
                                     : ElevatedButton.icon(
-                                        onPressed: _selectImages,
+                                        onPressed: () async {
+                                          _selectedImages = await ui_services
+                                              .selectPictures();
+                                          if (_selectedImages != null &&
+                                              _selectedImages != []) {
+                                            setState(() {});
+                                          }
+                                        },
                                         icon: const Icon(Icons.photo),
                                         label: Text(translate("Gallery")),
                                       ),

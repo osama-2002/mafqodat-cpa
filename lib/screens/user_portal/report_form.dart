@@ -4,16 +4,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_translate/flutter_translate.dart';
-import 'package:flutter_colorpicker/flutter_colorpicker.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:time_picker_spinner_pop_up/time_picker_spinner_pop_up.dart';
 import 'package:uuid/uuid.dart';
 import 'package:fl_geocoder/fl_geocoder.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'package:mafqodat/services/auth_services.dart' as auth_services;
+import 'package:mafqodat/services/user_interaction_services.dart' as ui_services;
 import 'package:mafqodat/widgets/custom_dropdown_button.dart';
 import 'package:mafqodat/widgets/custom_text_field.dart';
 import 'package:mafqodat/widgets/location_input.dart';
@@ -33,7 +31,6 @@ class _ReportFormState extends State<ReportForm> {
   String? _selectedDropDownValue;
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _searchController = TextEditingController();
-  final ImagePicker _picker = ImagePicker();
   Color? _selectedColor;
   DateTime _selectedDate = DateTime.now();
   File? _selectedImage;
@@ -42,8 +39,7 @@ class _ReportFormState extends State<ReportForm> {
   double? longitude;
   double? currentLatitude;
   double? currentLongitude;
-  final GlobalKey<LocationInputState> _locationInputKey =
-      GlobalKey<LocationInputState>();
+  final GlobalKey<LocationInputState> _locationInputKey = GlobalKey<LocationInputState>();
   final geocoder = FlGeocoder(googleMapsApiKey);
   String _formattedAddress = '';
   Uuid uuid = const Uuid();
@@ -56,60 +52,6 @@ class _ReportFormState extends State<ReportForm> {
   void _onDropdownValueChanged(String? newValue) {
     setState(() {
       _selectedDropDownValue = newValue;
-    });
-  }
-
-  void _pickColor(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(translate("PickCol")),
-          content: SingleChildScrollView(
-            child: BlockPicker(
-              pickerColor: _selectedColor,
-              availableColors: const [
-                Colors.red,
-                Colors.green,
-                Colors.blue,
-                Colors.yellow,
-                Colors.black,
-                Colors.white,
-                Colors.purple,
-                Colors.orange,
-                Colors.pink,
-                Colors.teal,
-                Colors.brown,
-                Colors.grey,
-              ],
-              onColorChanged: (Color color) {
-                setState(() {
-                  _selectedColor = color;
-                });
-              },
-            ),
-          ),
-          actions: <Widget>[
-            ElevatedButton(
-              child: Text(translate("Select")),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  void _takePicture() async {
-    final pickedImage =
-        await _picker.pickImage(source: ImageSource.camera, maxWidth: 600);
-    if (pickedImage == null) {
-      return;
-    }
-    setState(() {
-      _selectedImage = File(pickedImage.path);
     });
   }
 
@@ -214,23 +156,15 @@ class _ReportFormState extends State<ReportForm> {
       _isLoading = true;
     });
     final db = FirebaseFirestore.instance;
-    final storage = FirebaseStorage.instance;
     String reportId = uuid.v4();
 
     if (_selectedImage != null) {
-      String fileName =
-          '${reportId}_${DateTime.now().millisecondsSinceEpoch}.jpg';
-      try {
-        Reference ref = storage.ref().child('reports/$reportId/$fileName');
-        UploadTask uploadTask = ref.putFile(File(_selectedImage!.path));
-        TaskSnapshot snapshot = await uploadTask;
-
-        imageUrl = await snapshot.ref.getDownloadURL();
-      } catch (e) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text(translate("ImageProb"))));
-        return;
-      }
+      imageUrl = await ui_services.getImageDownloadUrl(
+        selectedImage: _selectedImage!,
+        id: reportId,
+        isReport: true,
+        context: context,
+      );
     }
     await _getFormattedAddress();
     String region;
@@ -338,7 +272,13 @@ class _ReportFormState extends State<ReportForm> {
                           ),
                           const SizedBox(height: 16),
                           ElevatedButton(
-                            onPressed: () => _pickColor(context),
+                            onPressed: () async {
+                              _selectedColor =
+                                  await ui_services.pickColor(context);
+                              if (_selectedColor != null) {
+                                setState(() {});
+                              }
+                            },
                             child: _selectedColor == null
                                 ? Text(translate("PickCol"))
                                 : Icon(
@@ -528,14 +468,18 @@ class _ReportFormState extends State<ReportForm> {
                               child: Center(
                                 child: _selectedImage != null
                                     ? Image.file(
-                                        File(_selectedImage!.path),
+                                        _selectedImage!,
                                         fit: BoxFit.cover,
                                         width: double.infinity,
                                         height: 300,
                                       )
                                     : ElevatedButton.icon(
-                                        onPressed: () {
-                                          _takePicture();
+                                        onPressed: () async {
+                                          _selectedImage =
+                                              await ui_services.takePicture();
+                                          if (_selectedImage != null) {
+                                            setState(() {});
+                                          }
                                         },
                                         icon: const Icon(Icons.camera),
                                         label: Text(translate("TakePic")),

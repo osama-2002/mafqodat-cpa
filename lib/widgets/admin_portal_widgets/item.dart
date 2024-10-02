@@ -74,7 +74,7 @@ class Item extends StatelessWidget {
           children: [
             SlidableAction(
               onPressed: (context) {
-                _handleHandOver;
+                _handleHandOver(context);
               },
               backgroundColor: Theme.of(context).colorScheme.secondary,
               foregroundColor: Colors.white,
@@ -88,7 +88,7 @@ class Item extends StatelessWidget {
           children: [
             SlidableAction(
               onPressed: (context) {
-                _handleHandOver;
+                _handleHandOver(context);
               },
               backgroundColor: Theme.of(context).colorScheme.secondary,
               foregroundColor: Colors.white,

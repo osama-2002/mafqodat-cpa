@@ -3,12 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter_colorpicker/flutter_colorpicker.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:uuid/uuid.dart';
 
 import 'package:mafqodat/services/auth_services.dart' as auth_services;
+import 'package:mafqodat/services/user_interaction_services.dart' as ui_services;
 import 'package:mafqodat/widgets/custom_dropdown_button.dart';
 import 'package:mafqodat/widgets/custom_text_field.dart';
 
@@ -26,9 +24,9 @@ class _AddItemState extends State<AddItem> {
   String? _selectedDropDownValue;
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _searchController = TextEditingController();
-  final ImagePicker _picker = ImagePicker();
   Color? _selectedColor;
   File? _selectedImage;
+  String imageUrl = "";
   Uuid uuid = const Uuid();
   bool _isLoading = false;
 
@@ -39,60 +37,6 @@ class _AddItemState extends State<AddItem> {
   void _onDropdownValueChanged(String? newValue) {
     setState(() {
       _selectedDropDownValue = newValue;
-    });
-  }
-
-  void _pickColor(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(translate("PickCol")),
-          content: SingleChildScrollView(
-            child: BlockPicker(
-              pickerColor: _selectedColor,
-              availableColors: const [
-                Colors.red,
-                Colors.green,
-                Colors.blue,
-                Colors.yellow,
-                Colors.black,
-                Colors.white,
-                Colors.purple,
-                Colors.orange,
-                Colors.pink,
-                Colors.teal,
-                Colors.brown,
-                Colors.grey,
-              ],
-              onColorChanged: (Color color) {
-                setState(() {
-                  _selectedColor = color;
-                });
-              },
-            ),
-          ),
-          actions: <Widget>[
-            ElevatedButton(
-              child: Text(translate("Select")),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  void _takePicture() async {
-    final pickedImage =
-        await _picker.pickImage(source: ImageSource.camera, maxWidth: 600);
-    if (pickedImage == null) {
-      return;
-    }
-    setState(() {
-      _selectedImage = File(pickedImage.path);
     });
   }
 
@@ -111,24 +55,15 @@ class _AddItemState extends State<AddItem> {
       _isLoading = true;
     });
     final db = FirebaseFirestore.instance;
-    final storage = FirebaseStorage.instance;
     String itemId = uuid.v4();
-    String downloadUrl = "";
 
     if (_selectedImage != null) {
-      String fileName =
-          '${itemId}_${DateTime.now().millisecondsSinceEpoch}.jpg';
-      try {
-        Reference ref = storage.ref().child('items/$itemId/$fileName');
-        UploadTask uploadTask = ref.putFile(File(_selectedImage!.path));
-        TaskSnapshot snapshot = await uploadTask;
-
-        downloadUrl = await snapshot.ref.getDownloadURL();
-      } catch (e) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text(translate("ImageProb"))));
-        return;
-      }
+      imageUrl = await ui_services.getImageDownloadUrl(
+        selectedImage: _selectedImage!,
+        id: itemId,
+        isReport: false,
+        context: context,
+      );
     }
     try {
       await db.collection('items').doc(itemId).set(
@@ -139,7 +74,7 @@ class _AddItemState extends State<AddItem> {
           'date': DateTime.now(),
           'location': widget.adminData['location'],
           'type': _selectedDropDownValue,
-          'imageUrl': downloadUrl,
+          'imageUrl': imageUrl,
         },
       );
       _clearForm();
@@ -263,7 +198,13 @@ class _AddItemState extends State<AddItem> {
                         ),
                         const SizedBox(height: 16),
                         ElevatedButton(
-                          onPressed: () => _pickColor(context),
+                          onPressed: () async {
+                            _selectedColor =
+                                await ui_services.pickColor(context);
+                            if (_selectedColor != null) {
+                              setState(() {});
+                            }
+                          },
                           child: _selectedColor == null
                               ? Text(
                                   translate("PickCol"),
@@ -294,14 +235,18 @@ class _AddItemState extends State<AddItem> {
                             child: Center(
                               child: _selectedImage != null
                                   ? Image.file(
-                                      File(_selectedImage!.path),
+                                      _selectedImage!,
                                       fit: BoxFit.cover,
                                       width: double.infinity,
                                       height: 300,
                                     )
                                   : ElevatedButton.icon(
-                                      onPressed: () {
-                                        _takePicture();
+                                      onPressed: () async {
+                                        _selectedImage =
+                                            await ui_services.takePicture();
+                                        if (_selectedImage != null) {
+                                          setState(() {});
+                                        }
                                       },
                                       icon: Icon(Icons.camera,
                                           color: Theme.of(context)
