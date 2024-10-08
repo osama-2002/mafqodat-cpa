@@ -1,18 +1,15 @@
 import 'dart:io';
-import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:time_picker_spinner_pop_up/time_picker_spinner_pop_up.dart';
 import 'package:uuid/uuid.dart';
-import 'package:fl_geocoder/fl_geocoder.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'package:mafqodat/services/auth_services.dart' as auth_services;
 import 'package:mafqodat/services/user_interaction_services.dart' as ui_services;
-import 'package:mafqodat/services/location_services.dart' as location_services;
+import 'package:mafqodat/services/entity_management_services.dart' as entity_services;
 import 'package:mafqodat/widgets/custom_dropdown_button.dart';
 import 'package:mafqodat/widgets/custom_text_field.dart';
 import 'package:mafqodat/widgets/location_input.dart';
@@ -41,8 +38,6 @@ class _ReportFormState extends State<ReportForm> {
   double? currentLatitude;
   double? currentLongitude;
   final GlobalKey<LocationInputState> _locationInputKey = GlobalKey<LocationInputState>();
-  final geocoder = FlGeocoder(googleMapsApiKey);
-  String _formattedAddress = '';
   Uuid uuid = const Uuid();
   bool _isLoading = false;
 
@@ -85,102 +80,29 @@ class _ReportFormState extends State<ReportForm> {
     });
   }
 
-  Future<void> _generateNotification() async {
-    final db = FirebaseFirestore.instance;
-
-    try {
-      final stations = await db.collection('admins').get();
-      GeoPoint? nearestStationLocation;
-      String? nearestAdminContact;
-      double shortestDistance = double.infinity;
-
-      for (QueryDocumentSnapshot<Map<String, dynamic>> station
-          in stations.docs) {
-        final stationLocation = station['location'] as GeoPoint;
-        final adminEmail = station['email'] as String;
-        final adminPhoneNumber = station['phoneNumber'] as String;
-
-        final double distance = location_services.calculateDistance(
-          latitude!,
-          longitude!,
-          stationLocation.latitude,
-          stationLocation.longitude,
-        );
-
-        if (distance < shortestDistance) {
-          shortestDistance = distance;
-          nearestStationLocation = stationLocation;
-          nearestAdminContact = "$adminEmail\n$adminPhoneNumber";
-        }
-      }
-
-      if (nearestStationLocation != null && nearestAdminContact != null) {
-        await db.collection('reports_notifications').add({
-          'userId': auth_services.currentUid,
-          'message': 'ReportMessage',
-          'nearestStationLocation': nearestStationLocation,
-          'adminContact': nearestAdminContact,
-          'timestamp': Timestamp.now(),
-          'imageUrl': imageUrl,
-        });
-      }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("${translate("NotiProb")} $e")),
+  Future<void> _submit() async {
+    if (_formKey.currentState!.validate() &&
+        _selectedDropDownValue != null &&
+        _selectedColor != null &&
+        _selectedImage != null) {
+      setState(() {
+        _isLoading = true;
+      });
+      entity_services.submitReport(
+        _selectedDropDownValue!,
+        _descriptionController.text,
+        _selectedImage!,
+        _selectedColor!.value,
+        latitude!,
+        longitude!,
+        _selectedDate,
+        _clearForm,
+        context,
       );
-    }
-  }
-
-  void _submitReport() async {
-    setState(() {
-      _isLoading = true;
-    });
-    final db = FirebaseFirestore.instance;
-    String reportId = uuid.v4();
-
-    if (_selectedImage != null) {
-      imageUrl = await ui_services.getImageDownloadUrl(
-        selectedImage: _selectedImage!,
-        id: reportId,
-        isReport: true,
-        context: context,
-      );
-    }
-    _formattedAddress = await location_services.getFormattedAddress(latitude!, longitude!);
-    String region;
-    if (_formattedAddress.toLowerCase().contains("amman")) {
-      region = "amman";
-    } else if (_formattedAddress.toLowerCase().contains("zarqa")) {
-      region = "zarqa";
     } else {
-      region = "other";
-    }
-    try {
-      await db.collection('reports').doc(reportId).set(
-        {
-          'userId': auth_services.currentUid,
-          'description': _descriptionController.text,
-          'color': _selectedColor!.value,
-          'date': _selectedDate,
-          'location': GeoPoint(latitude!, longitude!),
-          'status': 'pending',
-          'type': _selectedDropDownValue,
-          'imageUrl': imageUrl,
-          'region': region,
-        },
-      );
-      await _generateNotification();
-      _clearForm();
-      if (mounted) Navigator.of(context).pop();
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(translate("GoodSubmit")),
-        ),
-      );
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text("${translate("BadSubmit")} $e"),
+          content: Text(translate("PleaseFill")),
         ),
       );
     }
@@ -472,19 +394,8 @@ class _ReportFormState extends State<ReportForm> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               ElevatedButton(
-                                onPressed: () {
-                                  if (_formKey.currentState!.validate() &&
-                                      _selectedDropDownValue != null &&
-                                      _selectedColor != null &&
-                                      _selectedImage != null) {
-                                    _submitReport();
-                                  } else {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text(translate("PleaseFill")),
-                                      ),
-                                    );
-                                  }
+                                onPressed: () async {
+                                  await _submit();
                                 },
                                 child: _isLoading
                                     ? const CircularProgressIndicator()

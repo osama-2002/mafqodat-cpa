@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 
 import 'package:mafqodat/services/auth_services.dart' as auth_services;
+import 'package:mafqodat/services/entity_management_services.dart' as entity_services;
 import 'package:mafqodat/widgets/user_portal_widgets/claim_notification.dart';
 import 'package:mafqodat/widgets/user_portal_widgets/match_notification.dart';
 import 'package:mafqodat/widgets/user_portal_widgets/report_notification.dart';
@@ -23,21 +24,21 @@ class _NotificationsListState extends State<NotificationsList> {
         children: [
           const SizedBox(height: 12),
           StreamBuilder(
-            stream: FirebaseFirestore.instance
+            stream: entity_services.firestore
                 .collection('matches_notifications')
                 .where('userId',
                     isEqualTo: auth_services.currentUid)
                 .snapshots(),
             builder: (context, matchesSnapshot) {
               return StreamBuilder(
-                stream: FirebaseFirestore.instance
+                stream: entity_services.firestore
                     .collection('claims_notifications')
                     .where('userId',
                         isEqualTo: auth_services.currentUid)
                     .snapshots(),
                 builder: (context, claimsSnapshot) {
                   return StreamBuilder(
-                    stream: FirebaseFirestore.instance
+                    stream: entity_services.firestore
                         .collection('reports_notifications')
                         .where('userId',
                             isEqualTo: auth_services.currentUid)

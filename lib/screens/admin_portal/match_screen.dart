@@ -4,6 +4,9 @@ import 'package:flutter_translate/flutter_translate.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
 
+import 'package:mafqodat/services/entity_management_services.dart'
+    as entity_services;
+
 class MatchScreen extends StatefulWidget {
   final DocumentSnapshot<Map<String, dynamic>> adminData;
   final String matchId;
@@ -96,7 +99,7 @@ class _MatchScreenState extends State<MatchScreen> {
                                 Theme.of(context).colorScheme.secondary,
                           ),
                           child: Text(
-                            translate("handedOver"),
+                            translate("CloseCase"),
                             style: const TextStyle(
                                 color: Colors.black,
                                 fontWeight: FontWeight.bold),
@@ -107,8 +110,13 @@ class _MatchScreenState extends State<MatchScreen> {
                           onPressed: !_userNotified
                               ? () async {
                                   try {
-                                    //! services.generateMatchNotification
-                                    await _generateNotification();
+                                    await entity_services
+                                        .generateMatchNotification(
+                                      widget.adminData['location'],
+                                      '${widget.adminData['email']}\n${widget.adminData['phoneNumber']}',
+                                      claimData['userId'],
+                                      itemData['imageUrl'],
+                                    );
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
                                         content:
@@ -313,40 +321,12 @@ class _MatchScreenState extends State<MatchScreen> {
     );
   }
 
-  Future<void> _generateNotification() async {
-    await FirebaseFirestore.instance.collection('matches_notifications').add({
-      'message': 'MatchFound',
-      'location': widget.adminData['location'],
-      'contactInfo':
-          '${widget.adminData['email']}\n${widget.adminData['phoneNumber']}',
-      'userId': claimData['userId'],
-      'timestamp': Timestamp.now(),
-      'imageUrl': itemData['imageUrl'],
-    });
-  }
-
   void _handleDecision(BuildContext context, bool isAccepted) async {
     if (isAccepted) {
-      //! services.deleteMatch
-      //! services.deleteClaim
-      //! services.deleteItem
-      //! services.deleteMatch
-      await FirebaseFirestore.instance
-          .collection('matches')
-          .doc(widget.matchId)
-          .delete();
+      await entity_services.closeCase(widget.matchId, context);
     } else {
-      //! handle match rejection
-      FirebaseFirestore.instance
-          .collection('matches')
-          .doc(widget.matchId)
-          .update(
-        {
-          'isRejected': true,
-        },
-      );
+      await entity_services.rejectMatch(widget.matchId);
+      Navigator.of(context).pop();
     }
-
-    Navigator.of(context).pop();
   }
 }

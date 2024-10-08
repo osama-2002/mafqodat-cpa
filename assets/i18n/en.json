@@ -171,5 +171,8 @@
     "changeLanguage" : "Change Language",
     "NotifyUserButton" : "Notify User",
     "UserNotified" : "User Notified Successfully",
-    "handedOver" : "Handed Over"
+    "handedOver" : "Handed Over",
+    "CloseCase" : "Close Case",
+    "AttentionPlease" : "Attention Please",
+    "AttentionMessage" : "Closing this case means the item has been handed over to the rightful owner.\nEnsure the item is indeed handed over before proceeding.\nOnce you confirm, all records associated with this case—including the item, claim, match, and related data—will be permanently deleted from the system."
 }

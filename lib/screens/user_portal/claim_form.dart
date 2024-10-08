@@ -7,7 +7,6 @@ import 'package:flutter_translate/flutter_translate.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:time_picker_spinner_pop_up/time_picker_spinner_pop_up.dart';
 import 'package:uuid/uuid.dart';
-import 'package:fl_geocoder/fl_geocoder.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'package:mafqodat/services/auth_services.dart' as auth_services;
@@ -40,7 +39,6 @@ class _ClaimFormState extends State<ClaimForm> {
   double? currentLatitude;
   double? currentLongitude;
   final GlobalKey<LocationInputState> _locationInputKey = GlobalKey<LocationInputState>();
-  final geocoder = FlGeocoder(googleMapsApiKey);
   String formattedAddress = '';
   Uuid uuid = const Uuid();
   bool _isLoading = false;

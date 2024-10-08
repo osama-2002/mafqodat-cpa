@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -6,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:http/http.dart' as http;
 
 final ImagePicker _picker = ImagePicker();
 var fireStore = FirebaseFirestore.instance;
@@ -80,6 +82,20 @@ Future<String> getImageDownloadUrl({
         .showSnackBar(SnackBar(content: Text(translate("ImageProb"))));
     return "";
   }
+}
+
+Future<String> getNewDownloadUrl(String imageUrl, String id) async {
+  String fileName = '${id}_${DateTime.now().millisecondsSinceEpoch}.jpg';
+  final http.Response response = await http.get(Uri.parse(imageUrl));
+  if (response.statusCode == 200) {
+    Uint8List imageData = response.bodyBytes;
+    Reference ref = storage.ref().child('items/$id/$fileName');
+    UploadTask uploadTask = ref.putData(imageData);
+    TaskSnapshot snapshot = await uploadTask;
+
+    return await snapshot.ref.getDownloadURL();
+  }
+  return '';
 }
 
 Future<List<XFile>> selectPictures() async {

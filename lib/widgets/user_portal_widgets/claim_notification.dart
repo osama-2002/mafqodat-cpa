@@ -1,9 +1,9 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:intl/intl.dart';
 
+import 'package:mafqodat/services/entity_management_services.dart' as entity_services;
 import 'package:mafqodat/screens/user_portal/guide.dart';
 
 class ClaimNotification extends StatelessWidget {
@@ -52,10 +52,7 @@ class ClaimNotification extends StatelessWidget {
                   TextButton(
                     onPressed: () async {
                       try {
-                        await FirebaseFirestore.instance
-                            .collection('claims_notifications')
-                            .doc(id)
-                            .delete();
+                        await entity_services.deleteNotification(id, 'claims_notifications');
                       } catch (e) {
                         ScaffoldMessenger.of(context)
                             .showSnackBar(SnackBar(content: Text("$e")));

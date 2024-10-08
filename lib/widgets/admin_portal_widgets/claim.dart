@@ -9,6 +9,8 @@ import 'package:intl/intl.dart';
 
 import 'package:mafqodat/services/auth_services.dart' as auth_services;
 import 'package:mafqodat/services/location_services.dart' as location_services;
+import 'package:mafqodat/services/entity_management_services.dart'
+    as entity_services;
 
 class Claim extends StatefulWidget {
   const Claim(
@@ -272,25 +274,18 @@ class _ClaimState extends State<Claim> {
                             ),
                             TextButton(
                               onPressed: () async {
-                                final DocumentSnapshot<Map<String, dynamic>> adminData = await auth_services.adminData;
+                                final DocumentSnapshot<Map<String, dynamic>>
+                                    adminData = await auth_services.adminData;
                                 try {
-                                  //! services.generateClaimNotification
-                                  FirebaseFirestore.instance
-                                      .collection('claims_notifications')
-                                      .add(
-                                    {
-                                      'userId': widget.claimData['userId'],
-                                      'message': "ResubmitMessage",
-                                      'timestamp': Timestamp.now(),
-                                      'adminContact':
-                                          "${adminData['email']}\n${adminData['phoneNumber']}",
-                                    },
+                                  await entity_services
+                                      .generateClaimNotification(
+                                    widget.claimData['userId'],
+                                    "ResubmitMessage",
+                                    "${adminData['email']}\n${adminData['phoneNumber']}",
                                   );
-                                  //! services.deleteClaim
-                                  FirebaseFirestore.instance
-                                      .collection('claims')
-                                      .doc(widget.id)
-                                      .delete();
+                                  await entity_services.deleteClaim(
+                                    widget.id,
+                                  );
                                 } catch (e) {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(content: Text("$e")));
@@ -354,13 +349,10 @@ class _ClaimState extends State<Claim> {
                               ),
                             ),
                             TextButton(
-                              onPressed: () {
+                              onPressed: () async {
                                 try {
-                                  //! services.deleteClaim
-                                  FirebaseFirestore.instance
-                                      .collection('claims')
-                                      .doc(widget.id)
-                                      .delete();
+                                  await entity_services.deleteClaim(
+                                      widget.id);
                                 } catch (e) {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(content: Text("$e")));

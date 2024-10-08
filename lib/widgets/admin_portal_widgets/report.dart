@@ -7,8 +7,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
 
-import 'package:mafqodat/services/auth_services.dart' as auth_services;
 import 'package:mafqodat/services/location_services.dart' as location_services;
+import 'package:mafqodat/services/entity_management_services.dart' as entity_services;
 
 class Report extends StatefulWidget {
   const Report(
@@ -274,25 +274,21 @@ class _ReportState extends State<Report> {
                 const SizedBox(height: 14),
                 ElevatedButton.icon(
                   onPressed: () async {
-                    //! services.addItem
-                    final DocumentSnapshot<Map<String, dynamic>> adminData =
-                        await auth_services.adminData;
-                    await FirebaseFirestore.instance.collection('items').add({
-                      'adminId': auth_services.currentUid,
-                      'description': widget.reportData['description'],
-                      'color': widget.reportData['color'],
-                      'date': DateTime.now(),
-                      'location': adminData['location'],
-                      'type': widget.reportData['type'],
-                      'imageUrl': widget.reportData['imageUrl'],
-                    });
-                    //! services.deleteReport
-                    await FirebaseFirestore.instance
-                        .collection('reports')
-                        .doc(widget.id)
-                        .delete();
-                    ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Added to items list')));
+                    try {
+                      await entity_services.reportHandOver(
+                        widget.reportData,
+                        widget.id,
+                        context,
+                      );
+                      ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Added to items list')));
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text("${translate("BadSubmit")} $e"),
+                        ),
+                      );
+                    }
                   },
                   icon: Icon(
                     Symbols.task_alt,
@@ -336,13 +332,9 @@ class _ReportState extends State<Report> {
                               ),
                             ),
                             TextButton(
-                              onPressed: () {
-                                //! services.deleteReport
+                              onPressed: () async {
                                 try {
-                                  FirebaseFirestore.instance
-                                      .collection('reports')
-                                      .doc(widget.id)
-                                      .delete();
+                                  await entity_services.deleteReport(widget.id);
                                 } catch (e) {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(content: Text("$e")));

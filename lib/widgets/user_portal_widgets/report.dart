@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
 
 import 'package:mafqodat/services/location_services.dart' as location_services;
+import 'package:mafqodat/services/entity_management_services.dart' as entity_services;
 
 class Report extends StatefulWidget {
   const Report(
@@ -263,13 +263,9 @@ class _ReportState extends State<Report> {
                               ),
                             ),
                             TextButton(
-                              onPressed: () {
-                                //! services.deleteReport
+                              onPressed: () async {
                                 try {
-                                  FirebaseFirestore.instance
-                                      .collection('reports')
-                                      .doc(widget.id)
-                                      .delete();
+                                  await entity_services.deleteReport(widget.id);
                                 } catch (e) {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(content: Text("$e")));

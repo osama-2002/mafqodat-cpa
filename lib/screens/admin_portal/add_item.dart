@@ -7,6 +7,7 @@ import 'package:uuid/uuid.dart';
 
 import 'package:mafqodat/services/auth_services.dart' as auth_services;
 import 'package:mafqodat/services/user_interaction_services.dart' as ui_services;
+import 'package:mafqodat/services/entity_management_services.dart' as entity_services;
 import 'package:mafqodat/widgets/custom_dropdown_button.dart';
 import 'package:mafqodat/widgets/custom_text_field.dart';
 
@@ -50,44 +51,27 @@ class _AddItemState extends State<AddItem> {
     });
   }
 
-  void _addItem() async {
-    setState(() {
-      _isLoading = true;
-    });
-    final db = FirebaseFirestore.instance;
-    String itemId = uuid.v4();
-
-    if (_selectedImage != null) {
-      imageUrl = await ui_services.getImageDownloadUrl(
-        selectedImage: _selectedImage!,
-        id: itemId,
-        isReport: false,
-        context: context,
+  Future<void> _submit() async {
+    if (_formKey.currentState!.validate() &&
+        _selectedDropDownValue != null &&
+        _selectedColor != null &&
+        _selectedImage != null) {
+      setState(() {
+        _isLoading = true;
+      });
+      await entity_services.addItem(
+        _selectedDropDownValue!,
+        _descriptionController.text,
+        _selectedImage!,
+        _selectedColor!.value,
+        widget.adminData['location'],
+        _clearForm,
+        context,
       );
-    }
-    try {
-      await db.collection('items').doc(itemId).set(
-        {
-          'adminId': auth_services.currentUid,
-          'description': _descriptionController.text,
-          'color': _selectedColor!.value,
-          'date': DateTime.now(),
-          'location': widget.adminData['location'],
-          'type': _selectedDropDownValue,
-          'imageUrl': imageUrl,
-        },
-      );
-      _clearForm();
-      if (mounted) Navigator.of(context).pop();
+    } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(translate("GoodSubmit3")),
-        ),
-      );
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text("${translate("ErrorOc")}$e"),
+          content: Text(translate("PleaseFill")),
         ),
       );
     }
@@ -268,19 +252,8 @@ class _AddItemState extends State<AddItem> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             ElevatedButton(
-                              onPressed: () {
-                                if (_formKey.currentState!.validate() &&
-                                    _selectedDropDownValue != null &&
-                                    _selectedColor != null &&
-                                    _selectedImage != null) {
-                                  _addItem();
-                                } else {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text(translate("PleaseFill")),
-                                    ),
-                                  );
-                                }
+                              onPressed: () async {
+                                await _submit();
                               },
                               child: _isLoading
                                   ? const CircularProgressIndicator()
