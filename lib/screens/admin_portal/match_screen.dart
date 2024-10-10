@@ -4,8 +4,7 @@ import 'package:flutter_translate/flutter_translate.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
 
-import 'package:mafqodat/services/entity_management_services.dart'
-    as entity_services;
+import 'package:mafqodat/services/entity_management_services.dart' as entity_services;
 
 class MatchScreen extends StatefulWidget {
   final DocumentSnapshot<Map<String, dynamic>> adminData;
@@ -30,6 +29,7 @@ class _MatchScreenState extends State<MatchScreen> {
   Map<String, dynamic> claimData = {};
   bool _isLoading = true;
   bool _userNotified = false;
+  bool _isClosingCase = false;
 
   void _fetchData() async {
     final itemDoc = await FirebaseFirestore.instance
@@ -90,7 +90,7 @@ class _MatchScreenState extends State<MatchScreen> {
                     _buildImageComparisonSection(),
                     const SizedBox(height: 30),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
                         ElevatedButton(
                           onPressed: () => _handleDecision(context, true),
@@ -98,14 +98,15 @@ class _MatchScreenState extends State<MatchScreen> {
                             backgroundColor:
                                 Theme.of(context).colorScheme.secondary,
                           ),
-                          child: Text(
-                            translate("CloseCase"),
-                            style: const TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold),
-                          ),
+                          child: _isClosingCase
+                              ? CircularProgressIndicator()
+                              : Text(
+                                  translate("CloseCase"),
+                                  style: const TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold),
+                                ),
                         ),
-                        const SizedBox(width: 16),
                         ElevatedButton(
                           onPressed: !_userNotified
                               ? () async {
@@ -151,7 +152,6 @@ class _MatchScreenState extends State<MatchScreen> {
                                 fontWeight: FontWeight.bold),
                           ),
                         ),
-                        const SizedBox(width: 16),
                         ElevatedButton(
                           onPressed: () => _handleDecision(context, false),
                           style: ElevatedButton.styleFrom(
@@ -323,7 +323,13 @@ class _MatchScreenState extends State<MatchScreen> {
 
   void _handleDecision(BuildContext context, bool isAccepted) async {
     if (isAccepted) {
-      await entity_services.closeCase(widget.matchId, context);
+      await entity_services.closeCase(widget.matchId, context, () {
+        setState(() {
+          _isClosingCase = true;
+        });
+      }, () {
+        Navigator.of(context).pop();
+      });
     } else {
       await entity_services.rejectMatch(widget.matchId);
       Navigator.of(context).pop();

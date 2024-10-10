@@ -16,8 +16,7 @@ class UserProfile extends StatefulWidget {
 
 class _UserProfileState extends State<UserProfile> {
   final TextEditingController _newNameController = TextEditingController();
-  final TextEditingController _newPhoneNumberController =
-      TextEditingController();
+  final TextEditingController _newPhoneNumberController = TextEditingController();
 
   void _showEditInfoDialog() {
     showDialog(

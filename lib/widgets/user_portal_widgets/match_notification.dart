@@ -52,7 +52,10 @@ class MatchNotification extends StatelessWidget {
                   TextButton(
                     onPressed: () async {
                       try {
-                        await entity_services.deleteNotification(id, 'matches_notifications');
+                        await entity_services.deleteNotification(
+                          id,
+                          'matches_notifications',
+                        );
                       } catch (e) {
                         ScaffoldMessenger.of(context)
                             .showSnackBar(SnackBar(content: Text("$e")));

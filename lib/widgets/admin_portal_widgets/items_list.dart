@@ -29,13 +29,11 @@ class _ItemsListState extends State<ItemsList> {
       stream: filter == null
           ? FirebaseFirestore.instance
               .collection('items')
-              .where('adminId',
-                  isEqualTo: auth_services.currentUid)
+              .where('adminId', isEqualTo: auth_services.currentUid)
               .snapshots()
           : FirebaseFirestore.instance
               .collection('items')
-              .where('adminId',
-                  isEqualTo: auth_services.currentUid)
+              .where('adminId', isEqualTo: auth_services.currentUid)
               .where('type', isEqualTo: filter)
               .snapshots(),
       builder: (context, snapshot) {

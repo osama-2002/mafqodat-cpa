@@ -19,7 +19,6 @@ class _ClaimsAndReportsState extends State<ClaimsAndReports> {
   int genderToggleSwitchIndex = 0;
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: AppBar(
         title: Text(translate("ClaimsReport")),

@@ -11,7 +11,6 @@ class EmailVerificationScreen extends StatefulWidget {
 }
 
 class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

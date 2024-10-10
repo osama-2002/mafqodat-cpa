@@ -20,11 +20,9 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
   final FocusScopeNode _focusScopeNode = FocusScopeNode();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController =
-      TextEditingController();
+  final TextEditingController _confirmPasswordController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _nationalNumberController =
-      TextEditingController();
+  final TextEditingController _nationalNumberController = TextEditingController();
   final TextEditingController _phoneNumberController = TextEditingController();
   String _selectedGender = "Male";
   int genderToggleSwitchIndex = 0;

@@ -38,12 +38,29 @@ Future<void> deleteClaim(String id) async {
 }
 
 Future<void> deleteReport(String id) async {
+  var reportData = await firestore.collection('reports').doc(id).get();
+  QuerySnapshot<Map<String, dynamic>> notifications =
+      await firestore.collection('reports_notifications').get();
+  for (QueryDocumentSnapshot notification in notifications.docs) {
+    if (notification['userId'] == reportData['userId']) {
+      await firestore
+          .collection('reports_notifications')
+          .doc(notification.id)
+          .delete();
+      break;
+    }
+  }
   var reportFolderContent = await storage.ref('reports/$id').listAll();
   reportFolderContent.items.first.delete();
   await firestore.collection('reports').doc(id).delete();
 }
 
-Future<void> closeCase(String id, context) async {
+Future<void> closeCase(
+  String id,
+  BuildContext context,
+  VoidCallback onConfirmed,
+  VoidCallback onFinished,
+) async {
   await showDialog(
     context: context,
     builder: (context) {
@@ -65,17 +82,29 @@ Future<void> closeCase(String id, context) async {
           ),
           TextButton(
             onPressed: () async {
+              Navigator.of(context).pop();
+              onConfirmed();
               var matchData =
                   await firestore.collection('matches').doc(id).get();
               String claimId = matchData['claimId'];
               String itemId = matchData['itemId'];
+              QuerySnapshot<Map<String, dynamic>> notifications =
+                  await firestore.collection('matches_notifications').get();
+              for (QueryDocumentSnapshot notification in notifications.docs) {
+                if (notification['userId'] == matchData['userId']) {
+                  await firestore
+                      .collection('matches_notifications')
+                      .doc(notification.id)
+                      .delete();
+                  break;
+                }
+              }
               await firestore.collection('matches').doc(id).delete();
               await deleteMatchesWithId(claimId, false);
               await deleteMatchesWithId(itemId, true);
               await deleteItem(itemId);
               await deleteClaim(claimId);
-              Navigator.of(context).pop();
-              Navigator.of(context).pop();
+              onFinished();
             },
             child: Text(
               translate("Confirm"),

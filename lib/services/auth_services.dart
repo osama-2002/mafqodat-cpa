@@ -98,17 +98,11 @@ Future<void> signOut() async {
 }
 
 Future<DocumentSnapshot<Map<String, dynamic>>> get adminData async {
-  return await fireStore
-      .collection('admins')
-      .doc(currentUid)
-      .get();
+  return await fireStore.collection('admins').doc(currentUid).get();
 }
 
 Future<DocumentSnapshot<Map<String, dynamic>>> get userData async {
-  return await fireStore
-      .collection('users')
-      .doc(currentUid)
-      .get();
+  return await fireStore.collection('users').doc(currentUid).get();
 }
 
 Future<void> resetPassword({required String email}) async {
@@ -120,19 +114,13 @@ Future<void> updateDisplayName({
   required bool isUser,
 }) async {
   if (isUser) {
-    await fireStore
-        .collection('users')
-        .doc(currentUid)
-        .update(
+    await fireStore.collection('users').doc(currentUid).update(
       {
         'name': name,
       },
     );
   } else {
-    await fireStore
-        .collection('admins')
-        .doc(currentUid)
-        .update(
+    await fireStore.collection('admins').doc(currentUid).update(
       {
         'name': name,
       },
@@ -145,19 +133,13 @@ Future<void> updatePhoneNumber({
   required bool isUser,
 }) async {
   if (isUser) {
-    await fireStore
-        .collection('users')
-        .doc(currentUid)
-        .update(
+    await fireStore.collection('users').doc(currentUid).update(
       {
         'phoneNumber': phoneNumber,
       },
     );
   } else {
-    await fireStore
-        .collection('admins')
-        .doc(currentUid)
-        .update(
+    await fireStore.collection('admins').doc(currentUid).update(
       {
         'phoneNumber': phoneNumber,
       },

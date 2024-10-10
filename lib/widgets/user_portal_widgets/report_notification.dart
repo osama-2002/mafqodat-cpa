@@ -52,7 +52,10 @@ class ReportNotification extends StatelessWidget {
                   TextButton(
                     onPressed: () async {
                       try {
-                        await entity_services.deleteNotification(id, 'reports_notifications');
+                        await entity_services.deleteNotification(
+                          id,
+                          'reports_notifications',
+                        );
                       } catch (e) {
                         ScaffoldMessenger.of(context)
                             .showSnackBar(SnackBar(content: Text("$e")));

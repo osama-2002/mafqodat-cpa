@@ -1,14 +1,15 @@
+import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-
-String googleMapsApiKey = dotenv.env['GOOGLE_MAPS_API_KEY']!;
 
 class LocationInput extends StatefulWidget {
-  const LocationInput(
-      {super.key, required this.onChanged, required this.onLoaded});
+  const LocationInput({
+    super.key,
+    required this.onChanged,
+    required this.onLoaded,
+  });
 
   final void Function(double latitude, double longitude) onChanged;
   final void Function(double latitude, double longitude) onLoaded;
@@ -21,6 +22,7 @@ class LocationInputState extends State<LocationInput> {
   double? latitude;
   double? longitude;
   Marker? _activeMarker;
+  String googleMapsApiKey = '';
 
   @override
   void initState() {
@@ -29,6 +31,13 @@ class LocationInputState extends State<LocationInput> {
   }
 
   Future<void> _getCurrentLocation() async {
+    final remoteConfig = FirebaseRemoteConfig.instance;
+    await remoteConfig.setConfigSettings(RemoteConfigSettings(
+      fetchTimeout: Duration(seconds: 60),
+      minimumFetchInterval: Duration(hours: 1),
+    ));
+    await remoteConfig.fetchAndActivate();
+    googleMapsApiKey = remoteConfig.getString('maps_api_key');
     Location location = Location();
 
     bool serviceEnabled;

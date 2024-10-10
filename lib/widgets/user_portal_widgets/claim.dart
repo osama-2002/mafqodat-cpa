@@ -28,15 +28,16 @@ class _ClaimState extends State<Claim> {
   @override
   void initState() {
     super.initState();
-    location_services.getFormattedAddress(
+    location_services
+        .getFormattedAddress(
       widget.claimData['location'].latitude,
       widget.claimData['location'].longitude,
-    ).then((value) {
+    )
+        .then((value) {
       setState(() {
         formattedAddress = value;
       });
-    }
-    );
+    });
   }
 
   @override

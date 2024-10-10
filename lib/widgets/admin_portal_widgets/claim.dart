@@ -9,8 +9,7 @@ import 'package:intl/intl.dart';
 
 import 'package:mafqodat/services/auth_services.dart' as auth_services;
 import 'package:mafqodat/services/location_services.dart' as location_services;
-import 'package:mafqodat/services/entity_management_services.dart'
-    as entity_services;
+import 'package:mafqodat/services/entity_management_services.dart' as entity_services;
 
 class Claim extends StatefulWidget {
   const Claim(
@@ -351,8 +350,7 @@ class _ClaimState extends State<Claim> {
                             TextButton(
                               onPressed: () async {
                                 try {
-                                  await entity_services.deleteClaim(
-                                      widget.id);
+                                  await entity_services.deleteClaim(widget.id);
                                 } catch (e) {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(content: Text("$e")));

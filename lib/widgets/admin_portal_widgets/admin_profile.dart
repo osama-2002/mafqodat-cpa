@@ -16,8 +16,7 @@ class AdminProfile extends StatefulWidget {
 class _AdminProfileState extends State<AdminProfile> {
   String? formattedAddress = '';
   final TextEditingController _newNameController = TextEditingController();
-  final TextEditingController _newPhoneNumberController =
-      TextEditingController();
+  final TextEditingController _newPhoneNumberController = TextEditingController();
 
   void _showEditInfoDialog() {
     showDialog(

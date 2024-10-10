@@ -5,7 +5,6 @@ import 'package:material_symbols_icons/symbols.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:time_picker_spinner_pop_up/time_picker_spinner_pop_up.dart';
 import 'package:uuid/uuid.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'package:mafqodat/services/auth_services.dart' as auth_services;
 import 'package:mafqodat/services/user_interaction_services.dart' as ui_services;
@@ -13,8 +12,6 @@ import 'package:mafqodat/services/entity_management_services.dart' as entity_ser
 import 'package:mafqodat/widgets/custom_dropdown_button.dart';
 import 'package:mafqodat/widgets/custom_text_field.dart';
 import 'package:mafqodat/widgets/location_input.dart';
-
-String googleMapsApiKey = dotenv.env['GOOGLE_MAPS_API_KEY']!;
 
 class ReportForm extends StatefulWidget {
   const ReportForm({super.key});

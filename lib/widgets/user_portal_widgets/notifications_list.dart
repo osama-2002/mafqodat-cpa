@@ -26,22 +26,19 @@ class _NotificationsListState extends State<NotificationsList> {
           StreamBuilder(
             stream: entity_services.firestore
                 .collection('matches_notifications')
-                .where('userId',
-                    isEqualTo: auth_services.currentUid)
+                .where('userId', isEqualTo: auth_services.currentUid)
                 .snapshots(),
             builder: (context, matchesSnapshot) {
               return StreamBuilder(
                 stream: entity_services.firestore
                     .collection('claims_notifications')
-                    .where('userId',
-                        isEqualTo: auth_services.currentUid)
+                    .where('userId', isEqualTo: auth_services.currentUid)
                     .snapshots(),
                 builder: (context, claimsSnapshot) {
                   return StreamBuilder(
                     stream: entity_services.firestore
                         .collection('reports_notifications')
-                        .where('userId',
-                            isEqualTo: auth_services.currentUid)
+                        .where('userId', isEqualTo: auth_services.currentUid)
                         .snapshots(),
                     builder: (context, reportsSnapshot) {
                       if (matchesSnapshot.connectionState ==
