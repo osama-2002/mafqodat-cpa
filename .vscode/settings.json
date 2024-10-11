@@ -5,6 +5,7 @@
         "Cupertino",
         "dotenv",
         "geocoder",
+        "googleapis",
         "removebg",
         "roboto",
         "webp"

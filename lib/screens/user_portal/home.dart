@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 
 import 'package:mafqodat/services/auth_services.dart' as auth_services;
+import 'package:mafqodat/services/notification_services.dart' as notification_services;
 import 'package:mafqodat/screens/user_portal/guide.dart';
 import 'package:mafqodat/screens/user_portal/report_form.dart';
 import 'package:mafqodat/screens/user_portal/claim_form.dart';
@@ -33,6 +34,7 @@ class _HomeState extends State<Home> {
   void initState() {
     super.initState();
     _getUserData();
+    notification_services.checkNotificationPermission(context);
   }
 
   @override

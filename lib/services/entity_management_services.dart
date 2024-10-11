@@ -12,6 +12,7 @@ import 'package:uuid/uuid.dart';
 import 'package:mafqodat/services/auth_services.dart' as auth_services;
 import 'package:mafqodat/services/location_services.dart' as location_services;
 import 'package:mafqodat/services/user_interaction_services.dart' as ui_services;
+import 'package:mafqodat/services/notification_services.dart' as notification_services;
 
 FirebaseFirestore firestore = FirebaseFirestore.instance;
 FirebaseStorage storage = FirebaseStorage.instance;
@@ -148,7 +149,7 @@ Future<void> generateClaimNotification(
   String message,
   String contact,
 ) async {
-  firestore.collection('claims_notifications').add(
+  await firestore.collection('claims_notifications').add(
     {
       'userId': id,
       'message': message,
@@ -156,6 +157,7 @@ Future<void> generateClaimNotification(
       'adminContact': contact,
     },
   );
+  notification_services.sendNotification(id, translate('notificationTitle'), translate('notificationBody'));
 }
 
 Future<void> generateReportNotification(
@@ -220,6 +222,7 @@ Future<void> generateMatchNotification(
     'timestamp': Timestamp.now(),
     'imageUrl': url,
   });
+  notification_services.sendNotification(id, translate('notificationTitle'), translate('notificationBody'));
 }
 
 Future<void> addItem(

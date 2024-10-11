@@ -3,6 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 
+import 'package:mafqodat/services/notification_services.dart' as notification_services;
+
 var auth = FirebaseAuth.instance;
 var fireStore = FirebaseFirestore.instance;
 
@@ -16,7 +18,9 @@ Future<void> signIn({
   required BuildContext context,
 }) async {
   try {
-    await auth.signInWithEmailAndPassword(email: email, password: password);
+    UserCredential userData =
+        await auth.signInWithEmailAndPassword(email: email, password: password);
+    notification_services.checkUserToken(userData.user!.uid);
   } on FirebaseAuthException catch (e) {
     _handleAuthErrors(e, context);
   }
@@ -40,8 +44,9 @@ Future<void> signUp({
   }
 }
 
-void saveUserData(String id, Map<String, dynamic> data) {
-  fireStore.collection('users').doc(id).set(data);
+void saveUserData(String id, Map<String, dynamic> data) async {
+  await fireStore.collection('users').doc(id).set(data);
+  await notification_services.saveUserToken(id);
 }
 
 void _handleAuthErrors(FirebaseAuthException e, BuildContext context) {
