@@ -27,6 +27,7 @@ class Report extends StatefulWidget {
 class _ReportState extends State<Report> {
   String? formattedAddress = '';
   String? contactInfo = '';
+  bool _isLoading = false;
 
   Future<void> _getUserContactInfo() async {
     var userInfo = await FirebaseFirestore.instance
@@ -272,36 +273,47 @@ class _ReportState extends State<Report> {
                   ],
                 ),
                 const SizedBox(height: 14),
-                ElevatedButton.icon(
-                  onPressed: () async {
-                    try {
-                      await entity_services.reportHandOver(
-                        widget.reportData,
-                        widget.id,
-                        context,
-                      );
-                      ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Added to items list')));
-                    } catch (e) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text("${translate("BadSubmit")} $e"),
+                _isLoading
+                    ? ElevatedButton(
+                        onPressed: () {},
+                        child: CircularProgressIndicator(
+                          color: Theme.of(context).colorScheme.secondary,
                         ),
-                      );
-                    }
-                  },
-                  icon: Icon(
-                    Symbols.task_alt,
-                    color: Theme.of(context).colorScheme.secondary,
-                  ),
-                  label: Text(
-                    translate("Handed"),
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.secondary,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
+                      )
+                    : ElevatedButton.icon(
+                        onPressed: () async {
+                          setState(() {
+                            _isLoading = true;
+                          });
+                          try {
+                            await entity_services.reportHandOver(
+                              widget.reportData,
+                              widget.id,
+                              context,
+                            );
+                            ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content: Text('Added to items list')));
+                          } catch (e) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text("${translate("BadSubmit")} $e"),
+                              ),
+                            );
+                          }
+                        },
+                        icon: Icon(
+                          Symbols.task_alt,
+                          color: Theme.of(context).colorScheme.secondary,
+                        ),
+                        label: Text(
+                          translate("Handed"),
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.secondary,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
                 const SizedBox(height: 14),
                 ElevatedButton.icon(
                   onPressed: () {

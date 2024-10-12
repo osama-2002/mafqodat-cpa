@@ -6,7 +6,6 @@ import 'package:flutter_translate/flutter_translate.dart';
 import 'package:time_picker_spinner_pop_up/time_picker_spinner_pop_up.dart';
 import 'package:uuid/uuid.dart';
 
-import 'package:mafqodat/services/auth_services.dart' as auth_services;
 import 'package:mafqodat/services/user_interaction_services.dart' as ui_services;
 import 'package:mafqodat/services/entity_management_services.dart' as entity_services;
 import 'package:mafqodat/widgets/custom_dropdown_button.dart';
@@ -121,17 +120,6 @@ class _ReportFormState extends State<ReportForm> {
         appBar: AppBar(
           title: Text(translate("appName")),
           backgroundColor: Theme.of(context).colorScheme.primary,
-          actions: [
-            IconButton(
-              icon: Icon(
-                Icons.exit_to_app,
-                color: Theme.of(context).colorScheme.onSurface,
-              ),
-              onPressed: () async {
-                await auth_services.signOut();
-              },
-            ),
-          ],
         ),
         body: FocusScope(
           node: _focusScopeNode,

@@ -149,17 +149,6 @@ class _ClaimFormState extends State<ClaimForm> {
         appBar: AppBar(
           title: Text(translate("appName")),
           backgroundColor: Theme.of(context).colorScheme.primary,
-          actions: [
-            IconButton(
-              icon: Icon(
-                Icons.exit_to_app,
-                color: Theme.of(context).colorScheme.onSurface,
-              ),
-              onPressed: () async {
-                await auth_services.signOut();
-              },
-            ),
-          ],
         ),
         body: FocusScope(
           node: _focusScopeNode,

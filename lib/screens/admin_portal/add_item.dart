@@ -5,7 +5,6 @@ import 'package:material_symbols_icons/symbols.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:uuid/uuid.dart';
 
-import 'package:mafqodat/services/auth_services.dart' as auth_services;
 import 'package:mafqodat/services/user_interaction_services.dart' as ui_services;
 import 'package:mafqodat/services/entity_management_services.dart' as entity_services;
 import 'package:mafqodat/widgets/custom_dropdown_button.dart';
@@ -94,59 +93,6 @@ class _AddItemState extends State<AddItem> {
           appBar: AppBar(
             title: Text(translate("AddItem")),
             backgroundColor: Theme.of(context).colorScheme.secondary,
-            actions: [
-              IconButton(
-                icon: Icon(
-                  Icons.exit_to_app,
-                  color: Theme.of(context).colorScheme.onSurface,
-                ),
-                onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (context) {
-                      return AlertDialog(
-                        content: Text(
-                          translate("SignOut?"),
-                          style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        actions: [
-                          TextButton(
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                            child: Text(
-                              translate("Cancel"),
-                              style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w700,
-                                  color:
-                                      Theme.of(context).colorScheme.secondary),
-                            ),
-                          ),
-                          TextButton(
-                            onPressed: () async {
-                              await auth_services.signOut();
-                              Navigator.of(context).pop();
-                            },
-                            child: Text(
-                              translate("Confirm"),
-                              style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w700,
-                                  color:
-                                      Theme.of(context).colorScheme.secondary),
-                            ),
-                          ),
-                        ],
-                      );
-                    },
-                  );
-                },
-              ),
-            ],
           ),
           body: FocusScope(
             node: _focusScopeNode,
@@ -256,7 +202,11 @@ class _AddItemState extends State<AddItem> {
                                 await _submit();
                               },
                               child: _isLoading
-                                  ? const CircularProgressIndicator()
+                                  ? CircularProgressIndicator(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .secondary,
+                                    )
                                   : Text(
                                       translate("Add"),
                                       style: TextStyle(

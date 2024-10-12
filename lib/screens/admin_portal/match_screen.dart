@@ -62,7 +62,11 @@ class _MatchScreenState extends State<MatchScreen> {
         backgroundColor: Theme.of(context).colorScheme.secondary,
       ),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? Center(
+              child: CircularProgressIndicator(
+                color: Theme.of(context).colorScheme.secondary,
+              ),
+            )
           : Padding(
               padding: const EdgeInsets.all(16.0),
               child: SingleChildScrollView(
@@ -99,7 +103,10 @@ class _MatchScreenState extends State<MatchScreen> {
                                 Theme.of(context).colorScheme.secondary,
                           ),
                           child: _isClosingCase
-                              ? CircularProgressIndicator()
+                              ? CircularProgressIndicator(
+                                  color:
+                                      Colors.black,
+                                )
                               : Text(
                                   translate("CloseCase"),
                                   style: const TextStyle(

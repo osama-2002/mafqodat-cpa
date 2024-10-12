@@ -89,22 +89,23 @@ Future<void> closeCase(
                   await firestore.collection('matches').doc(id).get();
               String claimId = matchData['claimId'];
               String itemId = matchData['itemId'];
-              QuerySnapshot<Map<String, dynamic>> notifications =
-                  await firestore.collection('matches_notifications').get();
-              for (QueryDocumentSnapshot notification in notifications.docs) {
-                if (notification['userId'] == matchData['userId']) {
-                  await firestore
-                      .collection('matches_notifications')
-                      .doc(notification.id)
-                      .delete();
-                  break;
-                }
-              }
               await firestore.collection('matches').doc(id).delete();
               await deleteMatchesWithId(claimId, false);
               await deleteMatchesWithId(itemId, true);
               await deleteItem(itemId);
+              var claimData = await firestore.collection('claims').doc(claimId).get();
               await deleteClaim(claimId);
+              QuerySnapshot<Map<String, dynamic>> notifications =
+                  await firestore
+                      .collection('matches_notifications')
+                      .where('userId', isEqualTo: claimData['userId'])
+                      .get();
+              for (QueryDocumentSnapshot notification in notifications.docs) {
+                firestore
+                    .collection('matches_notifications')
+                    .doc(notification.id)
+                    .delete();
+              }
               onFinished();
             },
             child: Text(
@@ -157,7 +158,8 @@ Future<void> generateClaimNotification(
       'adminContact': contact,
     },
   );
-  notification_services.sendNotification(id, translate('notificationTitle'), translate('notificationBody'));
+  notification_services.sendNotification(
+      id, translate('notificationTitle'), translate('notificationBody'));
 }
 
 Future<void> generateReportNotification(
@@ -222,7 +224,8 @@ Future<void> generateMatchNotification(
     'timestamp': Timestamp.now(),
     'imageUrl': url,
   });
-  notification_services.sendNotification(id, translate('notificationTitle'), translate('notificationBody'));
+  notification_services.sendNotification(
+      id, translate('notificationTitle'), translate('notificationBody'));
 }
 
 Future<void> addItem(
@@ -413,17 +416,16 @@ Future<void> reportHandOver(
     'type': reportData['type'],
     'imageUrl': imageUrl,
   });
-  await deleteReport(reportId);
-  QuerySnapshot<Map<String, dynamic>> notifications =
-      await firestore.collection('reports_notifications').get();
-  for (QueryDocumentSnapshot notification in notifications.docs) {
-    if (notification['userId'] == reportData['userId']) {
-      await firestore
-          .collection('reports_notifications')
-          .doc(notification.id)
-          .delete();
-      break;
-    }
+  deleteReport(reportId);
+  QuerySnapshot<Map<String, dynamic>> notification = await firestore
+      .collection('reports_notifications')
+      .where('userId', isEqualTo: reportData['userId'])
+      .get();
+  if (notification.docs.length == 1) {
+    firestore
+        .collection('reports_notifications')
+        .doc(notification.docs.first.id)
+        .delete();
   }
   ScaffoldMessenger.of(context)
       .showSnackBar(const SnackBar(content: Text('Added to items list')));
