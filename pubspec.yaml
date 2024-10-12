@@ -64,6 +64,12 @@ dependencies:
   url_launcher: ^6.3.0
   time_picker_spinner_pop_up: ^2.0.0
   flutter_slidable: ^3.1.1
+  http: ^1.2.2
+  firebase_remote_config: ^5.1.0
+  firebase_messaging: ^15.1.0
+  app_settings: ^5.1.1
+  googleapis: ^13.2.0
+  googleapis_auth: ^1.6.0
 
 dev_dependencies:
   flutter_test:
@@ -100,7 +106,6 @@ flutter:
     - assets/images/
     - assets/i18n/en.json
     - assets/i18n/ar.json
-    - .env
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

@@ -1,23 +1,19 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:flutter_translate/flutter_translate.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:time_picker_spinner_pop_up/time_picker_spinner_pop_up.dart';
 import 'package:uuid/uuid.dart';
-import 'package:fl_geocoder/fl_geocoder.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 
+import 'package:mafqodat/services/auth_services.dart' as auth_services;
+import 'package:mafqodat/services/user_interaction_services.dart' as ui_services;
+import 'package:mafqodat/services/location_services.dart' as location_services;
 import 'package:mafqodat/widgets/custom_dropdown_button.dart';
 import 'package:mafqodat/widgets/custom_text_field.dart';
 import 'package:mafqodat/widgets/location_input.dart';
-
-String googleMapsApiKey = dotenv.env['GOOGLE_MAPS_API_KEY']!;
 
 class ClaimForm extends StatefulWidget {
   const ClaimForm({super.key});
@@ -33,19 +29,17 @@ class _ClaimFormState extends State<ClaimForm> {
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _searchController = TextEditingController();
   DateTime _selectedDate = DateTime.now();
-  final ImagePicker _picker = ImagePicker();
   Color? _selectedColor;
   List<XFile>? _selectedImages;
   double? latitude;
   double? longitude;
   double? currentLatitude;
   double? currentLongitude;
-  final GlobalKey<LocationInputState> _locationInputKey =
-      GlobalKey<LocationInputState>();
-  final geocoder = FlGeocoder(googleMapsApiKey);
+  final GlobalKey<LocationInputState> _locationInputKey = GlobalKey<LocationInputState>();
   String formattedAddress = '';
   Uuid uuid = const Uuid();
   bool _isLoading = false;
+  List<String> imageUrls = [];
 
   void _unfocusTextFields() {
     _focusScopeNode.unfocus();
@@ -55,61 +49,6 @@ class _ClaimFormState extends State<ClaimForm> {
     setState(() {
       _selectedDropDownValue = newValue;
     });
-  }
-
-  Future<void> _selectImages() async {
-    try {
-      final List<XFile> selectedImages = await _picker.pickMultiImage();
-      setState(() {
-        _selectedImages = selectedImages;
-      });
-    } catch (e) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(translate("ErrorOc"))));
-    }
-  }
-
-  void _pickColor(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(translate("PickCol")),
-          content: SingleChildScrollView(
-            child: BlockPicker(
-              pickerColor: _selectedColor,
-              availableColors: const [
-                Colors.red,
-                Colors.green,
-                Colors.blue,
-                Colors.yellow,
-                Colors.black,
-                Colors.white,
-                Colors.purple,
-                Colors.orange,
-                Colors.pink,
-                Colors.teal,
-                Colors.brown,
-                Colors.grey,
-              ],
-              onColorChanged: (Color color) {
-                setState(() {
-                  _selectedColor = color;
-                });
-              },
-            ),
-          ),
-          actions: <Widget>[
-            ElevatedButton(
-              child: Text(translate("Select")),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
   }
 
   void _onCurrentLocationLoaded(
@@ -124,18 +63,6 @@ class _ClaimFormState extends State<ClaimForm> {
     setState(() {
       this.latitude = latitude;
       this.longitude = longitude;
-    });
-  }
-
-  Future<void> _getFormattedAddress() async {
-    final coordinates = Location(latitude!, longitude!);
-    final results = await geocoder.findAddressesFromLocationCoordinates(
-      location: coordinates,
-      useDefaultResultTypeFilter: true,
-    );
-
-    setState(() {
-      formattedAddress = results[0].formattedAddress!;
     });
   }
 
@@ -158,29 +85,16 @@ class _ClaimFormState extends State<ClaimForm> {
       _isLoading = true;
     });
     final db = FirebaseFirestore.instance;
-    final storage = FirebaseStorage.instance;
     String claimId = uuid.v4();
 
-    List<String> imageUrls = [];
     if (_selectedImages != null) {
-      for (XFile image in _selectedImages!) {
-        String fileName =
-            '${claimId}_${DateTime.now().millisecondsSinceEpoch}.jpg';
-        try {
-          Reference ref = storage.ref().child('claims/$claimId/$fileName');
-          UploadTask uploadTask = ref.putFile(File(image.path));
-          TaskSnapshot snapshot = await uploadTask;
-
-          String downloadUrl = await snapshot.ref.getDownloadURL();
-          imageUrls.add(downloadUrl);
-        } catch (e) {
-          ScaffoldMessenger.of(context)
-              .showSnackBar(SnackBar(content: Text(translate("ImageProb"))));
-          return;
-        }
-      }
+      imageUrls = await ui_services.getImagesDownloadUrls(
+        selectedImages: _selectedImages!,
+        id: claimId,
+        context: context,
+      );
     }
-    await _getFormattedAddress();
+    formattedAddress = await location_services.getFormattedAddress(latitude!, longitude!);
     String region;
     if (formattedAddress.toLowerCase().contains("amman")) {
       region = "amman";
@@ -192,7 +106,7 @@ class _ClaimFormState extends State<ClaimForm> {
     try {
       await db.collection('claims').doc(claimId).set(
         {
-          'userId': FirebaseAuth.instance.currentUser!.uid,
+          'userId': auth_services.currentUid,
           'description': _descriptionController.text,
           'color': _selectedColor!.value,
           'date': _selectedDate,
@@ -235,17 +149,6 @@ class _ClaimFormState extends State<ClaimForm> {
         appBar: AppBar(
           title: Text(translate("appName")),
           backgroundColor: Theme.of(context).colorScheme.primary,
-          actions: [
-            IconButton(
-              icon: Icon(
-                Icons.exit_to_app,
-                color: Theme.of(context).colorScheme.onSurface,
-              ),
-              onPressed: () async {
-                await FirebaseAuth.instance.signOut();
-              },
-            ),
-          ],
         ),
         body: FocusScope(
           node: _focusScopeNode,
@@ -285,7 +188,13 @@ class _ClaimFormState extends State<ClaimForm> {
                           ),
                           const SizedBox(height: 16),
                           ElevatedButton(
-                            onPressed: () => _pickColor(context),
+                            onPressed: () async {
+                              _selectedColor =
+                                  await ui_services.pickColor(context);
+                              if (_selectedColor != null) {
+                                setState(() {});
+                              }
+                            },
                             child: _selectedColor == null
                                 ? Text(translate("PickCol"))
                                 : Icon(
@@ -492,7 +401,14 @@ class _ClaimFormState extends State<ClaimForm> {
                                         },
                                       )
                                     : ElevatedButton.icon(
-                                        onPressed: _selectImages,
+                                        onPressed: () async {
+                                          _selectedImages = await ui_services
+                                              .selectPictures();
+                                          if (_selectedImages != null &&
+                                              _selectedImages != []) {
+                                            setState(() {});
+                                          }
+                                        },
                                         icon: const Icon(Icons.photo),
                                         label: Text(translate("Gallery")),
                                       ),

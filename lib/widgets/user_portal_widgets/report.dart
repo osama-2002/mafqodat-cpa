@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:fl_geocoder/fl_geocoder.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:intl/intl.dart';
 
-String googleMapsApiKey = dotenv.env['GOOGLE_MAPS_API_KEY']!;
+import 'package:mafqodat/services/location_services.dart' as location_services;
+import 'package:mafqodat/services/entity_management_services.dart' as entity_services;
 
 class Report extends StatefulWidget {
   const Report(
@@ -25,28 +23,21 @@ class Report extends StatefulWidget {
 }
 
 class _ReportState extends State<Report> {
-  final geocoder = FlGeocoder(googleMapsApiKey);
   String? formattedAddress = '';
-
-  Future<void> _getFormattedAddress() async {
-    final coordinates = Location(
-      widget.reportData['location'].latitude,
-      widget.reportData['location'].longitude,
-    );
-    final results = await geocoder.findAddressesFromLocationCoordinates(
-      location: coordinates,
-      useDefaultResultTypeFilter: true,
-    );
-
-    setState(() {
-      formattedAddress = results[0].formattedAddress;
-    });
-  }
 
   @override
   void initState() {
     super.initState();
-    _getFormattedAddress();
+    location_services
+        .getFormattedAddress(
+      widget.reportData['location'].latitude,
+      widget.reportData['location'].longitude,
+    )
+        .then((value) {
+      setState(() {
+        formattedAddress = value;
+      });
+    });
   }
 
   @override
@@ -272,13 +263,9 @@ class _ReportState extends State<Report> {
                               ),
                             ),
                             TextButton(
-                              onPressed: () {
-                                //! services.deleteReport
+                              onPressed: () async {
                                 try {
-                                  FirebaseFirestore.instance
-                                      .collection('reports')
-                                      .doc(widget.id)
-                                      .delete();
+                                  await entity_services.deleteReport(widget.id);
                                 } catch (e) {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(content: Text("$e")));

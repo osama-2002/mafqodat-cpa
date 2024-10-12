@@ -4,6 +4,8 @@ import 'package:flutter_translate/flutter_translate.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import 'package:mafqodat/services/entity_management_services.dart' as entity_services;
+
 class MatchNotification extends StatelessWidget {
   const MatchNotification({super.key, required this.id, required this.data});
   final String id;
@@ -50,10 +52,10 @@ class MatchNotification extends StatelessWidget {
                   TextButton(
                     onPressed: () async {
                       try {
-                        await FirebaseFirestore.instance
-                            .collection('matches_notifications')
-                            .doc(id)
-                            .delete();
+                        await entity_services.deleteNotification(
+                          id,
+                          'matches_notifications',
+                        );
                       } catch (e) {
                         ScaffoldMessenger.of(context)
                             .showSnackBar(SnackBar(content: Text("$e")));

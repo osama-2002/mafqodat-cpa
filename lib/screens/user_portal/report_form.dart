@@ -1,24 +1,16 @@
 import 'dart:io';
-import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_translate/flutter_translate.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter_colorpicker/flutter_colorpicker.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:time_picker_spinner_pop_up/time_picker_spinner_pop_up.dart';
 import 'package:uuid/uuid.dart';
-import 'package:fl_geocoder/fl_geocoder.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 
+import 'package:mafqodat/services/user_interaction_services.dart' as ui_services;
+import 'package:mafqodat/services/entity_management_services.dart' as entity_services;
 import 'package:mafqodat/widgets/custom_dropdown_button.dart';
 import 'package:mafqodat/widgets/custom_text_field.dart';
 import 'package:mafqodat/widgets/location_input.dart';
-
-String googleMapsApiKey = dotenv.env['GOOGLE_MAPS_API_KEY']!;
 
 class ReportForm extends StatefulWidget {
   const ReportForm({super.key});
@@ -33,7 +25,6 @@ class _ReportFormState extends State<ReportForm> {
   String? _selectedDropDownValue;
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _searchController = TextEditingController();
-  final ImagePicker _picker = ImagePicker();
   Color? _selectedColor;
   DateTime _selectedDate = DateTime.now();
   File? _selectedImage;
@@ -42,10 +33,7 @@ class _ReportFormState extends State<ReportForm> {
   double? longitude;
   double? currentLatitude;
   double? currentLongitude;
-  final GlobalKey<LocationInputState> _locationInputKey =
-      GlobalKey<LocationInputState>();
-  final geocoder = FlGeocoder(googleMapsApiKey);
-  String _formattedAddress = '';
+  final GlobalKey<LocationInputState> _locationInputKey = GlobalKey<LocationInputState>();
   Uuid uuid = const Uuid();
   bool _isLoading = false;
 
@@ -56,60 +44,6 @@ class _ReportFormState extends State<ReportForm> {
   void _onDropdownValueChanged(String? newValue) {
     setState(() {
       _selectedDropDownValue = newValue;
-    });
-  }
-
-  void _pickColor(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(translate("PickCol")),
-          content: SingleChildScrollView(
-            child: BlockPicker(
-              pickerColor: _selectedColor,
-              availableColors: const [
-                Colors.red,
-                Colors.green,
-                Colors.blue,
-                Colors.yellow,
-                Colors.black,
-                Colors.white,
-                Colors.purple,
-                Colors.orange,
-                Colors.pink,
-                Colors.teal,
-                Colors.brown,
-                Colors.grey,
-              ],
-              onColorChanged: (Color color) {
-                setState(() {
-                  _selectedColor = color;
-                });
-              },
-            ),
-          ),
-          actions: <Widget>[
-            ElevatedButton(
-              child: Text(translate("Select")),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  void _takePicture() async {
-    final pickedImage =
-        await _picker.pickImage(source: ImageSource.camera, maxWidth: 600);
-    if (pickedImage == null) {
-      return;
-    }
-    setState(() {
-      _selectedImage = File(pickedImage.path);
     });
   }
 
@@ -128,18 +62,6 @@ class _ReportFormState extends State<ReportForm> {
     });
   }
 
-  Future<void> _getFormattedAddress() async {
-    final coordinates = Location(latitude!, longitude!);
-    final results = await geocoder.findAddressesFromLocationCoordinates(
-      location: coordinates,
-      useDefaultResultTypeFilter: true,
-    );
-
-    setState(() {
-      _formattedAddress = results[0].formattedAddress!;
-    });
-  }
-
   void _clearForm() {
     _locationInputKey.currentState?.refreshLocation();
     setState(() {
@@ -154,119 +76,29 @@ class _ReportFormState extends State<ReportForm> {
     });
   }
 
-  Future<void> _generateNotification() async {
-    final db = FirebaseFirestore.instance;
-
-    try {
-      final stations = await db.collection('admins').get();
-      GeoPoint? nearestStationLocation;
-      String? nearestAdminContact;
-      double shortestDistance = double.infinity;
-
-      for (QueryDocumentSnapshot<Map<String, dynamic>> station
-          in stations.docs) {
-        final stationLocation = station['location'] as GeoPoint;
-        final adminEmail = station['email'] as String;
-        final adminPhoneNumber = station['phoneNumber'] as String;
-
-        final double distance = _calculateDistance(
-          latitude!,
-          longitude!,
-          stationLocation.latitude,
-          stationLocation.longitude,
-        );
-
-        if (distance < shortestDistance) {
-          shortestDistance = distance;
-          nearestStationLocation = stationLocation;
-          nearestAdminContact = "$adminEmail\n$adminPhoneNumber";
-        }
-      }
-
-      if (nearestStationLocation != null && nearestAdminContact != null) {
-        await db.collection('reports_notifications').add({
-          'userId': FirebaseAuth.instance.currentUser!.uid,
-          'message': 'ReportMessage',
-          'nearestStationLocation': nearestStationLocation,
-          'adminContact': nearestAdminContact,
-          'timestamp': Timestamp.now(),
-          'imageUrl': imageUrl,
-        });
-      }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("${translate("NotiProb")} $e")),
+  Future<void> _submit() async {
+    if (_formKey.currentState!.validate() &&
+        _selectedDropDownValue != null &&
+        _selectedColor != null &&
+        _selectedImage != null) {
+      setState(() {
+        _isLoading = true;
+      });
+      entity_services.submitReport(
+        _selectedDropDownValue!,
+        _descriptionController.text,
+        _selectedImage!,
+        _selectedColor!.value,
+        latitude!,
+        longitude!,
+        _selectedDate,
+        _clearForm,
+        context,
       );
-    }
-  }
-
-  double _calculateDistance(
-      double lat1, double lon1, double lat2, double lon2) {
-    const double p = 0.017453292519943295;
-    double a = 0.5 -
-        cos((lat2 - lat1) * p) / 2 +
-        cos(lat1 * p) * cos(lat2 * p) * (1 - cos((lon2 - lon1) * p)) / 2;
-    return 12742 * asin(sqrt(a));
-  }
-
-  void _submitReport() async {
-    setState(() {
-      _isLoading = true;
-    });
-    final db = FirebaseFirestore.instance;
-    final storage = FirebaseStorage.instance;
-    String reportId = uuid.v4();
-
-    if (_selectedImage != null) {
-      String fileName =
-          '${reportId}_${DateTime.now().millisecondsSinceEpoch}.jpg';
-      try {
-        Reference ref = storage.ref().child('reports/$reportId/$fileName');
-        UploadTask uploadTask = ref.putFile(File(_selectedImage!.path));
-        TaskSnapshot snapshot = await uploadTask;
-
-        imageUrl = await snapshot.ref.getDownloadURL();
-      } catch (e) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text(translate("ImageProb"))));
-        return;
-      }
-    }
-    await _getFormattedAddress();
-    String region;
-    if (_formattedAddress.toLowerCase().contains("amman")) {
-      region = "amman";
-    } else if (_formattedAddress.toLowerCase().contains("zarqa")) {
-      region = "zarqa";
     } else {
-      region = "other";
-    }
-    try {
-      await db.collection('reports').doc(reportId).set(
-        {
-          'userId': FirebaseAuth.instance.currentUser!.uid,
-          'description': _descriptionController.text,
-          'color': _selectedColor!.value,
-          'date': _selectedDate,
-          'location': GeoPoint(latitude!, longitude!),
-          'status': 'pending',
-          'type': _selectedDropDownValue,
-          'imageUrl': imageUrl,
-          'region': region,
-        },
-      );
-      await _generateNotification();
-      _clearForm();
-      if (mounted) Navigator.of(context).pop();
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(translate("GoodSubmit")),
-        ),
-      );
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text("${translate("BadSubmit")} $e"),
+          content: Text(translate("PleaseFill")),
         ),
       );
     }
@@ -288,17 +120,6 @@ class _ReportFormState extends State<ReportForm> {
         appBar: AppBar(
           title: Text(translate("appName")),
           backgroundColor: Theme.of(context).colorScheme.primary,
-          actions: [
-            IconButton(
-              icon: Icon(
-                Icons.exit_to_app,
-                color: Theme.of(context).colorScheme.onSurface,
-              ),
-              onPressed: () async {
-                await FirebaseAuth.instance.signOut();
-              },
-            ),
-          ],
         ),
         body: FocusScope(
           node: _focusScopeNode,
@@ -338,7 +159,13 @@ class _ReportFormState extends State<ReportForm> {
                           ),
                           const SizedBox(height: 16),
                           ElevatedButton(
-                            onPressed: () => _pickColor(context),
+                            onPressed: () async {
+                              _selectedColor =
+                                  await ui_services.pickColor(context);
+                              if (_selectedColor != null) {
+                                setState(() {});
+                              }
+                            },
                             child: _selectedColor == null
                                 ? Text(translate("PickCol"))
                                 : Icon(
@@ -528,14 +355,18 @@ class _ReportFormState extends State<ReportForm> {
                               child: Center(
                                 child: _selectedImage != null
                                     ? Image.file(
-                                        File(_selectedImage!.path),
+                                        _selectedImage!,
                                         fit: BoxFit.cover,
                                         width: double.infinity,
                                         height: 300,
                                       )
                                     : ElevatedButton.icon(
-                                        onPressed: () {
-                                          _takePicture();
+                                        onPressed: () async {
+                                          _selectedImage =
+                                              await ui_services.takePicture();
+                                          if (_selectedImage != null) {
+                                            setState(() {});
+                                          }
                                         },
                                         icon: const Icon(Icons.camera),
                                         label: Text(translate("TakePic")),
@@ -548,19 +379,8 @@ class _ReportFormState extends State<ReportForm> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               ElevatedButton(
-                                onPressed: () {
-                                  if (_formKey.currentState!.validate() &&
-                                      _selectedDropDownValue != null &&
-                                      _selectedColor != null &&
-                                      _selectedImage != null) {
-                                    _submitReport();
-                                  } else {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text(translate("PleaseFill")),
-                                      ),
-                                    );
-                                  }
+                                onPressed: () async {
+                                  await _submit();
                                 },
                                 child: _isLoading
                                     ? const CircularProgressIndicator()

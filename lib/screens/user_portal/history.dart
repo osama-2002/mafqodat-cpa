@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 
+import 'package:mafqodat/services/auth_services.dart' as auth_services;
 import 'package:mafqodat/widgets/user_portal_widgets/claim.dart';
 import 'package:mafqodat/widgets/user_portal_widgets/report.dart';
 
@@ -19,8 +19,6 @@ class _ClaimsAndReportsState extends State<ClaimsAndReports> {
   int genderToggleSwitchIndex = 0;
   @override
   Widget build(BuildContext context) {
-    final userId = FirebaseAuth.instance.currentUser!.uid;
-
     return Scaffold(
       appBar: AppBar(
         title: Text(translate("ClaimsReport")),
@@ -72,11 +70,11 @@ class _ClaimsAndReportsState extends State<ClaimsAndReports> {
                 stream: _selectedTab == translate('Claims')
                     ? FirebaseFirestore.instance
                         .collection('claims')
-                        .where('userId', isEqualTo: userId)
+                        .where('userId', isEqualTo: auth_services.currentUid)
                         .snapshots()
                     : FirebaseFirestore.instance
                         .collection('reports')
-                        .where('userId', isEqualTo: userId)
+                        .where('userId', isEqualTo: auth_services.currentUid)
                         .snapshots(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {

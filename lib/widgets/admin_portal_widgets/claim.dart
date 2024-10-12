@@ -3,14 +3,13 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:material_symbols_icons/symbols.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:fl_geocoder/fl_geocoder.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:intl/intl.dart';
 
-String googleMapsApiKey = dotenv.env['GOOGLE_MAPS_API_KEY']!;
+import 'package:mafqodat/services/auth_services.dart' as auth_services;
+import 'package:mafqodat/services/location_services.dart' as location_services;
+import 'package:mafqodat/services/entity_management_services.dart' as entity_services;
 
 class Claim extends StatefulWidget {
   const Claim(
@@ -27,28 +26,21 @@ class Claim extends StatefulWidget {
 }
 
 class _ClaimState extends State<Claim> {
-  final geocoder = FlGeocoder(googleMapsApiKey);
   String? formattedAddress = '';
-
-  Future<void> _getFormattedAddress() async {
-    final coordinates = Location(
-      widget.claimData['location'].latitude,
-      widget.claimData['location'].longitude,
-    );
-    final results = await geocoder.findAddressesFromLocationCoordinates(
-      location: coordinates,
-      useDefaultResultTypeFilter: true,
-    );
-
-    setState(() {
-      formattedAddress = results[0].formattedAddress;
-    });
-  }
 
   @override
   void initState() {
     super.initState();
-    _getFormattedAddress();
+    location_services
+        .getFormattedAddress(
+      widget.claimData['location'].latitude,
+      widget.claimData['location'].longitude,
+    )
+        .then((value) {
+      setState(() {
+        formattedAddress = value;
+      });
+    });
   }
 
   @override
@@ -281,30 +273,18 @@ class _ClaimState extends State<Claim> {
                             ),
                             TextButton(
                               onPressed: () async {
-                                DocumentSnapshot<Map<String, dynamic>>
-                                    adminData = await FirebaseFirestore.instance
-                                        .collection('admins')
-                                        .doc(FirebaseAuth
-                                            .instance.currentUser!.uid)
-                                        .get();
+                                final DocumentSnapshot<Map<String, dynamic>>
+                                    adminData = await auth_services.adminData;
                                 try {
-                                  //! services.generateClaimNotification
-                                  FirebaseFirestore.instance
-                                      .collection('claims_notifications')
-                                      .add(
-                                    {
-                                      'userId': widget.claimData['userId'],
-                                      'message': "ResubmitMessage",
-                                      'timestamp': Timestamp.now(),
-                                      'adminContact':
-                                          "${adminData['email']}\n${adminData['phoneNumber']}",
-                                    },
+                                  await entity_services
+                                      .generateClaimNotification(
+                                    widget.claimData['userId'],
+                                    "ResubmitMessage",
+                                    "${adminData['email']}\n${adminData['phoneNumber']}",
                                   );
-                                  //! services.deleteClaim
-                                  FirebaseFirestore.instance
-                                      .collection('claims')
-                                      .doc(widget.id)
-                                      .delete();
+                                  await entity_services.deleteClaim(
+                                    widget.id,
+                                  );
                                 } catch (e) {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(content: Text("$e")));
@@ -368,13 +348,9 @@ class _ClaimState extends State<Claim> {
                               ),
                             ),
                             TextButton(
-                              onPressed: () {
+                              onPressed: () async {
                                 try {
-                                  //! services.deleteClaim
-                                  FirebaseFirestore.instance
-                                      .collection('claims')
-                                      .doc(widget.id)
-                                      .delete();
+                                  await entity_services.deleteClaim(widget.id);
                                 } catch (e) {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(content: Text("$e")));

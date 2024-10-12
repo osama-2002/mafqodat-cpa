@@ -4,6 +4,8 @@ import 'package:flutter_translate/flutter_translate.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import 'package:mafqodat/services/entity_management_services.dart' as entity_services;
+
 class ReportNotification extends StatelessWidget {
   const ReportNotification({super.key, required this.data, required this.id});
   final String id;
@@ -50,10 +52,10 @@ class ReportNotification extends StatelessWidget {
                   TextButton(
                     onPressed: () async {
                       try {
-                        await FirebaseFirestore.instance
-                            .collection('reports_notifications')
-                            .doc(id)
-                            .delete();
+                        await entity_services.deleteNotification(
+                          id,
+                          'reports_notifications',
+                        );
                       } catch (e) {
                         ScaffoldMessenger.of(context)
                             .showSnackBar(SnackBar(content: Text("$e")));

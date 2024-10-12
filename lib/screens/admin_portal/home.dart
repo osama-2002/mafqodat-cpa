@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:flutter_translate/flutter_translate.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 
+import 'package:mafqodat/services/auth_services.dart' as auth_services;
 import 'package:mafqodat/screens/admin_portal/add_item.dart';
 import 'package:mafqodat/widgets/admin_portal_widgets/matches_list.dart';
 import 'package:mafqodat/widgets/admin_portal_widgets/items_list.dart';
@@ -23,11 +23,7 @@ class _HomeState extends State<Home> {
   DocumentSnapshot<Map<String, dynamic>>? adminData;
 
   void getAdminData() async {
-    DocumentSnapshot<Map<String, dynamic>> data = await FirebaseFirestore
-        .instance
-        .collection('admins')
-        .doc(FirebaseAuth.instance.currentUser!.uid)
-        .get();
+    DocumentSnapshot<Map<String, dynamic>> data = await auth_services.adminData;
     setState(() {
       adminData = data;
     });
@@ -96,7 +92,7 @@ class _HomeState extends State<Home> {
                       ),
                       TextButton(
                         onPressed: () async {
-                          await FirebaseAuth.instance.signOut();
+                          await auth_services.signOut();
                           Navigator.of(context).pop();
                         },
                         child: Text(

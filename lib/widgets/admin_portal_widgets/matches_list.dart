@@ -51,7 +51,11 @@ class _MatchesState extends State<Matches> {
                     .snapshots(),
             builder: (context, matchesSnapshot) {
               if (matchesSnapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
+                return Center(
+                  child: CircularProgressIndicator(
+                    color: Theme.of(context).colorScheme.secondary,
+                  ),
+                );
               }
 
               if (matchesSnapshot.hasError) {

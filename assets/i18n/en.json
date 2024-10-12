@@ -71,7 +71,7 @@
     "SeventhTitle" : "Avoid Multiple Submissions",
     "SeventhStep" : "Submit only one claim per lost item. Multiple submissions for the same item can slow down the search and recovery process.",
     "LostClaim" : "Lost item claim",
-    "Check" : "Check the",
+    "Check" : "Check the ",
     "GuidePage" : "Guide page",
     "ToSubmit" : "  to learn how to submit a more effective claim.",
     "Handed" : "Handed Over",
@@ -91,7 +91,7 @@
     "Admin" : "Admin",
     "Location" : "Location",
     "Images" : "Images",
-    "WorkingHours" : "WorkingHours",
+    "WorkingHours" : "Working Hours",
     "ForgottenPassword" : "Forgotten Password?",
     "AnEmailSent" : "An email has been sent to your email address.",
     "EnterEmail" : "Enter your email address below to reset your password.",
@@ -171,5 +171,13 @@
     "changeLanguage" : "Change Language",
     "NotifyUserButton" : "Notify User",
     "UserNotified" : "User Notified Successfully",
-    "handedOver" : "Handed Over"
+    "handedOver" : "Handed Over",
+    "CloseCase" : "Close Case",
+    "AttentionPlease" : "Attention Please",
+    "AttentionMessage" : "Closing this case means the item has been handed over to the rightful owner.\nEnsure the item is indeed handed over before proceeding.\nOnce you confirm, all records associated with this case—including the item, claim, match, and related data—will be permanently deleted from the system.",
+    "EnableNotifications" : "Enable Notifications",
+    "EnableNotificationsMessage" : "Please enable notifications to stay updated.",
+    "Settings" : "Settings",
+    "notificationTitle" : "You have a new notification!",
+    "notificationBody" : "Open the app and check notifications tab"
 }

@@ -2,14 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 
 import 'package:mafqodat/screens/auth.dart';
 import 'package:mafqodat/screens/user_portal/email_verification.dart';
+import 'package:mafqodat/services/auth_services.dart' as auth_services;
 import 'package:mafqodat/screens/user_portal/home.dart' as user_portal;
 import 'package:mafqodat/screens/admin_portal/home.dart' as admin_portal;
 import 'package:mafqodat/theme.dart' as custom_theme;
@@ -19,7 +18,7 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  await dotenv.load();
+
   var delegate = await LocalizationDelegate.create(
     fallbackLocale: 'ar',
     supportedLocales: ['ar', 'en'],
@@ -69,7 +68,7 @@ class MyApp extends StatelessWidget {
         theme: custom_theme.theme,
         debugShowCheckedModeBanner: false,
         home: StreamBuilder(
-          stream: FirebaseAuth.instance.authStateChanges(),
+          stream: auth_services.auth.authStateChanges(),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               String uid = snapshot.data!.uid;
@@ -93,7 +92,7 @@ class MyApp extends StatelessWidget {
                   } else if (snapshot.hasData) {
                     isUser = snapshot.data;
                     if (isUser == true) {
-                      if (FirebaseAuth.instance.currentUser!.emailVerified) {
+                      if (auth_services.auth.currentUser!.emailVerified) {
                         return const user_portal.Home();
                       } else {
                         return const EmailVerificationScreen();

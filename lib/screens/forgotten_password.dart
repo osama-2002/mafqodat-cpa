@@ -1,7 +1,7 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 
+import 'package:mafqodat/services/auth_services.dart' as auth_services;
 import 'package:mafqodat/widgets/custom_text_field.dart';
 
 class ForgottenPassword extends StatefulWidget {
@@ -19,8 +19,7 @@ class _ForgottenPasswordState extends State<ForgottenPassword> {
 
   Future<void> _sendResetEmail(String email) async {
     try {
-      await FirebaseAuth.instance
-          .sendPasswordResetEmail(email: _emailController.text);
+      await auth_services.resetPassword(email: _emailController.text.trim());
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(translate("AnEmailSent"))),
       );

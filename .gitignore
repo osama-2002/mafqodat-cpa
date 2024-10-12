@@ -44,6 +44,3 @@ app.*.map.json
 
 # Keystore properties file
 /android/key.properties
-
-# Environment variables file
-/.env

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter_translate/flutter_translate.dart';
+
+import 'package:mafqodat/services/entity_management_services.dart' as entity_services;
 
 class Item extends StatelessWidget {
   const Item({super.key, required this.data, required this.id});
@@ -35,13 +36,9 @@ class Item extends StatelessWidget {
               ),
             ),
             TextButton(
-              onPressed: () {
+              onPressed: () async {
                 try {
-                  //! services.deleteItem(id)
-                  FirebaseFirestore.instance
-                      .collection('items')
-                      .doc(id)
-                      .delete();
+                  await entity_services.deleteItem(id);
                 } catch (e) {
                   ScaffoldMessenger.of(context)
                       .showSnackBar(SnackBar(content: Text("$e")));
@@ -74,7 +71,7 @@ class Item extends StatelessWidget {
           children: [
             SlidableAction(
               onPressed: (context) {
-                _handleHandOver;
+                _handleHandOver(context);
               },
               backgroundColor: Theme.of(context).colorScheme.secondary,
               foregroundColor: Colors.white,
@@ -88,7 +85,7 @@ class Item extends StatelessWidget {
           children: [
             SlidableAction(
               onPressed: (context) {
-                _handleHandOver;
+                _handleHandOver(context);
               },
               backgroundColor: Theme.of(context).colorScheme.secondary,
               foregroundColor: Colors.white,

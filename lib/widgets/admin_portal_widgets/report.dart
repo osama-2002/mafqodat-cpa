@@ -3,14 +3,12 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:material_symbols_icons/symbols.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:fl_geocoder/fl_geocoder.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:intl/intl.dart';
 
-String googleMapsApiKey = dotenv.env['GOOGLE_MAPS_API_KEY']!;
+import 'package:mafqodat/services/location_services.dart' as location_services;
+import 'package:mafqodat/services/entity_management_services.dart' as entity_services;
 
 class Report extends StatefulWidget {
   const Report(
@@ -27,34 +25,31 @@ class Report extends StatefulWidget {
 }
 
 class _ReportState extends State<Report> {
-  final geocoder = FlGeocoder(googleMapsApiKey);
   String? formattedAddress = '';
   String? contactInfo = '';
-
-  Future<void> _getFormattedAddress() async {
-    final coordinates = Location(
-      widget.reportData['location'].latitude,
-      widget.reportData['location'].longitude,
-    );
-    final results = await geocoder.findAddressesFromLocationCoordinates(
-      location: coordinates,
-      useDefaultResultTypeFilter: true,
-    );
-
-    setState(() {
-      formattedAddress = results[0].formattedAddress;
-    });
-  }
+  bool _isLoading = false;
 
   Future<void> _getUserContactInfo() async {
-    var userInfo = await FirebaseFirestore.instance.collection('users').doc(widget.reportData['userId']).get();
+    var userInfo = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(widget.reportData['userId'])
+        .get();
     contactInfo = "${userInfo['email']}\n${userInfo['phoneNumber']}";
   }
 
   @override
   void initState() {
     super.initState();
-    _getFormattedAddress();
+    location_services
+        .getFormattedAddress(
+      widget.reportData['location'].latitude,
+      widget.reportData['location'].longitude,
+    )
+        .then((value) {
+      setState(() {
+        formattedAddress = value;
+      });
+    });
     _getUserContactInfo();
   }
 
@@ -278,44 +273,47 @@ class _ReportState extends State<Report> {
                   ],
                 ),
                 const SizedBox(height: 14),
-                ElevatedButton.icon(
-                  onPressed: () async {
-                    //! services.addItem
-                    final adminId = FirebaseAuth.instance.currentUser!.uid;
-                    final DocumentSnapshot<Map<String, dynamic>> adminData =
-                        await FirebaseFirestore.instance
-                            .collection('admins')
-                            .doc(adminId)
-                            .get();
-                    await FirebaseFirestore.instance.collection('items').add({
-                      'adminId': adminId,
-                      'description': widget.reportData['description'],
-                      'color': widget.reportData['color'],
-                      'date': DateTime.now(),
-                      'location': adminData['location'],
-                      'type': widget.reportData['type'],
-                      'imageUrl': widget.reportData['imageUrl'],
-                    });
-                    //! services.deleteReport
-                    await FirebaseFirestore.instance
-                        .collection('reports')
-                        .doc(widget.id)
-                        .delete();
-                    ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Added to items list')));
-                  },
-                  icon: Icon(
-                    Symbols.task_alt,
-                    color: Theme.of(context).colorScheme.secondary,
-                  ),
-                  label: Text(
-                    translate("Handed"),
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.secondary,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
+                _isLoading
+                    ? ElevatedButton(
+                        onPressed: () {},
+                        child: CircularProgressIndicator(
+                          color: Theme.of(context).colorScheme.secondary,
+                        ),
+                      )
+                    : ElevatedButton.icon(
+                        onPressed: () async {
+                          setState(() {
+                            _isLoading = true;
+                          });
+                          try {
+                            await entity_services.reportHandOver(
+                              widget.reportData,
+                              widget.id,
+                              context,
+                            );
+                            ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content: Text('Added to items list')));
+                          } catch (e) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text("${translate("BadSubmit")} $e"),
+                              ),
+                            );
+                          }
+                        },
+                        icon: Icon(
+                          Symbols.task_alt,
+                          color: Theme.of(context).colorScheme.secondary,
+                        ),
+                        label: Text(
+                          translate("Handed"),
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.secondary,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
                 const SizedBox(height: 14),
                 ElevatedButton.icon(
                   onPressed: () {
@@ -346,13 +344,9 @@ class _ReportState extends State<Report> {
                               ),
                             ),
                             TextButton(
-                              onPressed: () {
-                                //! services.deleteReport
+                              onPressed: () async {
                                 try {
-                                  FirebaseFirestore.instance
-                                      .collection('reports')
-                                      .doc(widget.id)
-                                      .delete();
+                                  await entity_services.deleteReport(widget.id);
                                 } catch (e) {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(content: Text("$e")));
