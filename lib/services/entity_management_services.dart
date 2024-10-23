@@ -13,6 +13,7 @@ import 'package:mafqodat/services/auth_services.dart' as auth_services;
 import 'package:mafqodat/services/location_services.dart' as location_services;
 import 'package:mafqodat/services/user_interaction_services.dart' as ui_services;
 import 'package:mafqodat/services/notification_services.dart' as notification_services;
+import 'package:mafqodat/services/ai_services.dart' as ai_services;
 
 FirebaseFirestore firestore = FirebaseFirestore.instance;
 FirebaseStorage storage = FirebaseStorage.instance;
@@ -234,7 +235,6 @@ Future<void> addItem(
   File selectedImage,
   int color,
   GeoPoint location,
-  VoidCallback clearForm,
   BuildContext context,
 ) async {
   String itemId = uuid.v4();
@@ -247,10 +247,13 @@ Future<void> addItem(
     context: context,
   );
   try {
+    String imageDescription =
+          await ai_services.getImageDescription(imageUrl);
     await firestore.collection('items').doc(itemId).set(
       {
         'adminId': auth_services.currentUid,
         'description': description,
+        'imageDescription': imageDescription,
         'color': color,
         'date': DateTime.now(),
         'location': location,
@@ -258,7 +261,6 @@ Future<void> addItem(
         'imageUrl': imageUrl,
       },
     );
-    clearForm;
     Navigator.of(context).pop();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -282,7 +284,6 @@ void submitReport(
   double latitude,
   double longitude,
   DateTime selectedDate,
-  VoidCallback clearForm,
   BuildContext context,
 ) async {
   String reportId = uuid.v4();
@@ -319,8 +320,8 @@ void submitReport(
         'region': region,
       },
     );
-    await generateReportNotification(latitude, longitude, context, imageUrl);
-    clearForm();
+    generateReportNotification(latitude, longitude, context, imageUrl);
+    //add chatGPT description
     Navigator.of(context).pop();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -344,11 +345,11 @@ void submitClaim(
   double latitude,
   double longitude,
   DateTime selectedDate,
-  VoidCallback clearForm,
   BuildContext context,
 ) async {
   String claimId = uuid.v4();
   List<String> imageUrls = [];
+  List<String> matchedWith = [];
   String formattedAddress = '';
   imageUrls = await ui_services.getImagesDownloadUrls(
     selectedImages: selectedImages,
@@ -377,9 +378,9 @@ void submitClaim(
         'type': type,
         'imageUrls': imageUrls,
         'region': region,
+        'matchedWith': matchedWith,
       },
     );
-    clearForm();
     Navigator.of(context).pop();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(

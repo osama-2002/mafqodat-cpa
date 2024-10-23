@@ -28,7 +28,7 @@ void _showNotificationPrompt(context) {
     context: context,
     builder: (BuildContext context) {
       return AlertDialog(
-        title: Text("EnableNotifications"),
+        title: Text(translate("EnableNotifications")),
         content: Text(translate("EnableNotificationsMessage")),
         actions: [
           TextButton(

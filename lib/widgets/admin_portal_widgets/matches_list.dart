@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_translate/flutter_translate.dart';
+import 'package:mafqodat/services/matching.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 import 'package:mafqodat/screens/admin_portal/match_screen.dart';
@@ -17,6 +18,7 @@ class Matches extends StatefulWidget {
 class _MatchesState extends State<Matches> {
   String? filter;
   final TextEditingController _searchController = TextEditingController();
+  bool _isMatching = false;
 
   void _onDropdownValueChanged(String? value) {
     setState(() {
@@ -24,12 +26,9 @@ class _MatchesState extends State<Matches> {
     });
   }
 
-  void _findMatches() async {}
-
   @override
   void initState() {
     super.initState();
-    _findMatches();
   }
 
   @override
@@ -103,7 +102,37 @@ class _MatchesState extends State<Matches> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 280),
+                    const SizedBox(height: 12),
+                    ElevatedButton.icon(
+                    onPressed: () async {
+                      setState(() {
+                        _isMatching = true;
+                      });
+                      await runMatchingEngine();
+                      setState(() {
+                        _isMatching = false;
+                      });
+                    },
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor:
+                            Theme.of(context).colorScheme.secondary),
+                    label: Text(
+                      translate("FindMatches"),
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.surface,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                      ),
+                    ),
+                    icon: _isMatching ? CircularProgressIndicator(
+                      color: Colors.white,
+                    ) : Icon(
+                      Icons.youtube_searched_for,
+                      color: Theme.of(context).colorScheme.surface,
+                      size: 30,
+                    ),
+                  ),
+                    const SizedBox(height: 260),
                     Center(
                       child: Text(
                         translate("NoMatch"),
@@ -148,6 +177,36 @@ class _MatchesState extends State<Matches> {
                     ],
                   ),
                   const SizedBox(height: 12),
+                  ElevatedButton.icon(
+                    onPressed: () async {
+                      setState(() {
+                        _isMatching = true;
+                      });
+                      await runMatchingEngine();
+                      setState(() {
+                        _isMatching = false;
+                      });
+                    },
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor:
+                            Theme.of(context).colorScheme.secondary),
+                    label: Text(
+                      translate("FindMatches"),
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.surface,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                      ),
+                    ),
+                    icon: _isMatching ? CircularProgressIndicator(
+                      color: Colors.white,
+                    ) : Icon(
+                      Icons.youtube_searched_for,
+                      color: Theme.of(context).colorScheme.surface,
+                      size: 30,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
                   ListView.builder(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
@@ -170,7 +229,7 @@ class _MatchesState extends State<Matches> {
                         },
                         child: Container(
                           margin: const EdgeInsets.only(
-                              bottom: 12, left: 6, right: 6),
+                              bottom: 6, left: 6, right: 6),
                           child: Card(
                             elevation: 8,
                             child: Container(

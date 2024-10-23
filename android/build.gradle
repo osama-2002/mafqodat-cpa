@@ -1,7 +1,16 @@
+def javaHome = System.getenv("JAVA_HOME")
+if (javaHome == null || javaHome.isEmpty()) {
+    throw new Exception("JAVA_HOME environment variable is not set.")
+}
+
 allprojects {
     repositories {
         google()
         mavenCentral()
+    }
+    tasks.withType(JavaCompile) {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 }
 

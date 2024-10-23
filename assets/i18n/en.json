@@ -178,6 +178,7 @@
     "EnableNotifications" : "Enable Notifications",
     "EnableNotificationsMessage" : "Please enable notifications to stay updated.",
     "Settings" : "Settings",
+    "FindMatches" : "Find New Matches",
     "notificationTitle" : "You have a new notification!",
     "notificationBody" : "Open the app and check notifications tab"
 }

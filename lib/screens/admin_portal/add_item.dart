@@ -64,7 +64,6 @@ class _AddItemState extends State<AddItem> {
         _selectedImage!,
         _selectedColor!.value,
         widget.adminData['location'],
-        _clearForm,
         context,
       );
     } else {

@@ -178,6 +178,7 @@
     "EnableNotifications": "تفعيل الإشعارات",
     "EnableNotificationsMessage": "يرجى تفعيل الإشعارات للبقاء على اطلاع.",
     "Settings" : "الإعدادات",
+    "FindMatches" : "العثور على مطابقات جديدة",
     "notificationTitle": "لديك إشعار جديد!",
     "notificationBody": "افتح التطبيق وتحقق من الإشعارات."
 }

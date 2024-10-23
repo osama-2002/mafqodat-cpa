@@ -7,44 +7,6 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:876147097974:android:29d78d090439366608ba57",
-        "android_client_info": {
-          "package_name": "com.android.application"
-        }
-      },
-      "oauth_client": [],
-      "api_key": [
-        {
-          "current_key": "AIzaSyAijVnoF4nZBPbKG3xJDq9E5jasSBXcgE8"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": []
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:876147097974:android:2dfd1e569be9a5f108ba57",
-        "android_client_info": {
-          "package_name": "com.example.mafqodat"
-        }
-      },
-      "oauth_client": [],
-      "api_key": [
-        {
-          "current_key": "AIzaSyAijVnoF4nZBPbKG3xJDq9E5jasSBXcgE8"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": []
-        }
-      }
-    },
-    {
-      "client_info": {
         "mobilesdk_app_id": "1:876147097974:android:d0771ab14029713e08ba57",
         "android_client_info": {
           "package_name": "com.osama.mafqodat"
@@ -53,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyAijVnoF4nZBPbKG3xJDq9E5jasSBXcgE8"
+          "current_key": "AIzaSyClEI8m3Pb9lYGFXmJydjBp9ypMoSVtrh8"
         }
       ],
       "services": {

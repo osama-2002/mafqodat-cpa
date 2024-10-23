@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
@@ -8,9 +7,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:time_picker_spinner_pop_up/time_picker_spinner_pop_up.dart';
 import 'package:uuid/uuid.dart';
 
-import 'package:mafqodat/services/auth_services.dart' as auth_services;
 import 'package:mafqodat/services/user_interaction_services.dart' as ui_services;
-import 'package:mafqodat/services/location_services.dart' as location_services;
+import 'package:mafqodat/services/entity_management_services.dart' as entity_services;
 import 'package:mafqodat/widgets/custom_dropdown_button.dart';
 import 'package:mafqodat/widgets/custom_text_field.dart';
 import 'package:mafqodat/widgets/location_input.dart';
@@ -80,54 +78,27 @@ class _ClaimFormState extends State<ClaimForm> {
     });
   }
 
-  void _submitClaim() async {
-    setState(() {
-      _isLoading = true;
-    });
-    final db = FirebaseFirestore.instance;
-    String claimId = uuid.v4();
-
-    if (_selectedImages != null) {
-      imageUrls = await ui_services.getImagesDownloadUrls(
-        selectedImages: _selectedImages!,
-        id: claimId,
-        context: context,
+  Future<void> _submit() async {
+    if (_formKey.currentState!.validate() &&
+        _selectedDropDownValue != null &&
+        _selectedColor != null) {
+      setState(() {
+        _isLoading = true;
+      });
+      entity_services.submitClaim(
+        _selectedDropDownValue!,
+        _descriptionController.text,
+        _selectedImages ?? [],
+        _selectedColor!.value,
+        latitude!,
+        longitude!,
+        _selectedDate,
+        context,
       );
-    }
-    formattedAddress = await location_services.getFormattedAddress(latitude!, longitude!);
-    String region;
-    if (formattedAddress.toLowerCase().contains("amman")) {
-      region = "amman";
-    } else if (formattedAddress.toLowerCase().contains("zarqa")) {
-      region = "zarqa";
     } else {
-      region = "other";
-    }
-    try {
-      await db.collection('claims').doc(claimId).set(
-        {
-          'userId': auth_services.currentUid,
-          'description': _descriptionController.text,
-          'color': _selectedColor!.value,
-          'date': _selectedDate,
-          'location': GeoPoint(latitude!, longitude!),
-          'status': 'pending',
-          'type': _selectedDropDownValue,
-          'imageUrls': imageUrls,
-          'region': region,
-        },
-      );
-      _clearForm();
-      if (mounted) Navigator.of(context).pop();
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(translate("GoodSubmit2")),
-        ),
-      );
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text("${translate("BadSubmit2")} $e"),
+          content: Text(translate("PleaseFill")),
         ),
       );
     }
@@ -420,18 +391,8 @@ class _ClaimFormState extends State<ClaimForm> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               ElevatedButton(
-                                onPressed: () {
-                                  if (_formKey.currentState!.validate() &&
-                                      _selectedDropDownValue != null &&
-                                      _selectedColor != null) {
-                                    _submitClaim();
-                                  } else {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text(translate("PleaseFill")),
-                                      ),
-                                    );
-                                  }
+                                onPressed: () async {
+                                  await _submit();
                                 },
                                 child: _isLoading
                                     ? const CircularProgressIndicator()

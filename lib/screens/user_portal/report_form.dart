@@ -92,7 +92,6 @@ class _ReportFormState extends State<ReportForm> {
         latitude!,
         longitude!,
         _selectedDate,
-        _clearForm,
         context,
       );
     } else {
