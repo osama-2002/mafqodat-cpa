@@ -371,6 +371,7 @@ void submitClaim(
       {
         'userId': auth_services.currentUid,
         'description': description,
+        'imagesDescriptions': '',
         'color': color,
         'date': selectedDate,
         'location': GeoPoint(latitude, longitude),
@@ -387,6 +388,9 @@ void submitClaim(
         content: Text(translate("GoodSubmit2")),
       ),
     );
+    await firestore.collection('claims').doc(claimId).update({
+      'imagesDescriptions': await ai_services.getImagesDescriptions(imageUrls),
+    });
   } catch (e) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(

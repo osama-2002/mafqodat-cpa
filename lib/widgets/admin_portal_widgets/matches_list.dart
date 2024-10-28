@@ -108,7 +108,7 @@ class _MatchesState extends State<Matches> {
                       setState(() {
                         _isMatching = true;
                       });
-                      await runMatchingEngine();
+                      await runMatchingEngine(widget.adminData);
                       setState(() {
                         _isMatching = false;
                       });
@@ -125,7 +125,7 @@ class _MatchesState extends State<Matches> {
                       ),
                     ),
                     icon: _isMatching ? CircularProgressIndicator(
-                      color: Colors.white,
+                      color: Theme.of(context).colorScheme.surface,
                     ) : Icon(
                       Icons.youtube_searched_for,
                       color: Theme.of(context).colorScheme.surface,
@@ -182,7 +182,7 @@ class _MatchesState extends State<Matches> {
                       setState(() {
                         _isMatching = true;
                       });
-                      await runMatchingEngine();
+                      await runMatchingEngine(widget.adminData);
                       setState(() {
                         _isMatching = false;
                       });
@@ -199,7 +199,7 @@ class _MatchesState extends State<Matches> {
                       ),
                     ),
                     icon: _isMatching ? CircularProgressIndicator(
-                      color: Colors.white,
+                      color: Theme.of(context).colorScheme.surface,
                     ) : Icon(
                       Icons.youtube_searched_for,
                       color: Theme.of(context).colorScheme.surface,

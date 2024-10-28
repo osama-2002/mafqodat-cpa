@@ -49,3 +49,12 @@ Future<String> areMatchedDescriptions(
   print(response.text);
   return response.text ?? '';
 }
+
+Future<String> getImagesDescriptions(List<String> imageUrls) async {
+  String imageDescriptions = '';
+  for(String url in imageUrls) {
+    String description = await getImageDescription(url);
+    imageDescriptions += description;
+  }
+  return imageDescriptions;
+}

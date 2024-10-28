@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:mafqodat/services/auth_services.dart' as auth_services;
 import 'package:mafqodat/services/ai_services.dart' as ai_services;
 
 FirebaseFirestore firestore = FirebaseFirestore.instance;
@@ -24,9 +23,7 @@ final List<String> types = [
   'Miscellaneous',
 ];
 
-Future<void> runMatchingEngine() async {
-  DocumentSnapshot adminData =
-      await firestore.collection('admins').doc(auth_services.currentUid).get();
+Future<void> runMatchingEngine(DocumentSnapshot<Map<String, dynamic>> adminData) async {
   for (String type in types) {
     QuerySnapshot claims = await firestore
         .collection('claims')
@@ -42,9 +39,10 @@ Future<void> runMatchingEngine() async {
       for (QueryDocumentSnapshot item in items.docs) {
         if (!matchedWith.contains(item.id)) {
           if (item['color'] == claim['color']) {
-            String matchDescriptionsResult = await ai_services.areMatchedDescriptions(
-              claim['description'] + claim['imagesDescriptions'],
-              item['description'] + item['imageDescription'],
+            String matchDescriptionsResult =
+                await ai_services.areMatchedDescriptions(
+              "${claim['description']} , ${claim['imagesDescriptions']}",
+              "${item['description']} , ${item['imageDescription']}",
             );
             if ((matchDescriptionsResult.trim() == 'Match')) {
               await firestore.collection('matches').add({
@@ -54,14 +52,14 @@ Future<void> runMatchingEngine() async {
                 'type': type
               });
               matchedWith.add(item.id);
-              firestore
-                  .collection('claims')
-                  .doc(claim.id)
-                  .update({'matchedWith': matchedWith});
             }
           }
         }
       }
+      firestore
+          .collection('claims')
+          .doc(claim.id)
+          .update({'matchedWith': matchedWith});
     }
   }
 }
