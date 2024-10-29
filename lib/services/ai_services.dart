@@ -45,14 +45,12 @@ Future<String> areMatchedDescriptions(
   response with one single word "Match" or "NoMatch"''';
   final content = [Content.text(prompt)];
   final response = await model.generateContent(content);
-  print('inside function');
-  print(response.text);
   return response.text ?? '';
 }
 
 Future<String> getImagesDescriptions(List<String> imageUrls) async {
   String imageDescriptions = '';
-  for(String url in imageUrls) {
+  for (String url in imageUrls) {
     String description = await getImageDescription(url);
     imageDescriptions += description;
   }

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:mafqodat/screens/auth.dart';
 import 'package:mafqodat/screens/user_portal/email_verification.dart';
@@ -19,12 +19,15 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
+  final prefs = await SharedPreferences.getInstance();
+  String savedLanguage = prefs.getString('selectedLanguage') ?? 'ar';
   var delegate = await LocalizationDelegate.create(
-    fallbackLocale: 'ar',
+    fallbackLocale: savedLanguage,
     supportedLocales: ['ar', 'en'],
   );
+  delegate.changeLocale(Locale(savedLanguage));
   runApp(
-    LocalizedApp(delegate, const ProviderScope(child: MyApp())),
+    LocalizedApp(delegate, MyApp()),
   );
 }
 

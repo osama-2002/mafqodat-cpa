@@ -23,7 +23,9 @@ final List<String> types = [
   'Miscellaneous',
 ];
 
-Future<void> runMatchingEngine(DocumentSnapshot<Map<String, dynamic>> adminData) async {
+Future<void> runMatchingEngine(
+  DocumentSnapshot<Map<String, dynamic>> adminData,
+) async {
   for (String type in types) {
     QuerySnapshot claims = await firestore
         .collection('claims')

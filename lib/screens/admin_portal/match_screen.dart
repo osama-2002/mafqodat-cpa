@@ -104,8 +104,7 @@ class _MatchScreenState extends State<MatchScreen> {
                           ),
                           child: _isClosingCase
                               ? CircularProgressIndicator(
-                                  color:
-                                      Colors.black,
+                                  color: Colors.black,
                                 )
                               : Text(
                                   translate("CloseCase"),

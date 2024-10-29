@@ -6,6 +6,7 @@
         "dotenv",
         "geocoder",
         "googleapis",
+        "prefs",
         "removebg",
         "roboto",
         "webp"

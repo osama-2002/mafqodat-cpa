@@ -10,6 +10,7 @@ import 'package:mafqodat/widgets/admin_portal_widgets/matches_list.dart';
 import 'package:mafqodat/widgets/admin_portal_widgets/items_list.dart';
 import 'package:mafqodat/widgets/admin_portal_widgets/claims_and_reports.dart';
 import 'package:mafqodat/widgets/admin_portal_widgets/admin_profile.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -132,16 +133,21 @@ class _HomeState extends State<Home> {
             ListTile(
               leading: const Icon(Icons.translate),
               title: Text(translate("changeLanguage")),
-              onTap: () {
-                if (LocalizedApp.of(context)
-                        .delegate
-                        .currentLocale
-                        .toString() ==
-                    'en') {
-                  changeLocale(context, 'ar');
-                } else {
-                  changeLocale(context, 'en');
-                }
+              onTap: () async {
+                final prefs = await SharedPreferences.getInstance();
+                String newLanguage = LocalizedApp.of(context)
+                            .delegate
+                            .currentLocale
+                            .toString() ==
+                        'en'
+                    ? 'ar'
+                    : 'en';
+
+                changeLocale(context, newLanguage);
+                await prefs.setString(
+                  'selectedLanguage',
+                  newLanguage,
+                );
                 Navigator.of(context).pop();
               },
             ),

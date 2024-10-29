@@ -85,7 +85,7 @@ Future<Map<String, dynamic>> fetchServiceAccountKey() async {
   Uri url = Uri.parse(urlString);
 
   final response = await http.get(url);
-  
+
   if (response.statusCode == 200) {
     return jsonDecode(response.body);
   } else {
@@ -99,11 +99,12 @@ Future<String> getAccessToken() async {
     'https://www.googleapis.com/auth/firebase.messaging',
     'https://www.googleapis.com/auth/cloud-platform',
   ];
-  
+
   final auth.ServiceAccountCredentials credentials =
       auth.ServiceAccountCredentials.fromJson(serviceAccountJson);
-  
-  final auth.AccessCredentials accessCredentials = await auth.obtainAccessCredentialsViaServiceAccount(
+
+  final auth.AccessCredentials accessCredentials =
+      await auth.obtainAccessCredentialsViaServiceAccount(
     credentials,
     scopes,
     http.Client(),
@@ -122,7 +123,7 @@ Future<void> sendNotification(String userId, String title, String body) async {
   final String serverAccessTokenKey = await getAccessToken();
   const String fcmEndpoint = 'https://fcm.googleapis.com/v1/projects/mafqodat-b14a9/messages:send';
   String? token = await getUserToken(userId);
-  
+
   if (token != null) {
     final Map<String, dynamic> message = {
       'message': {

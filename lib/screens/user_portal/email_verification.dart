@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:mafqodat/services/auth_services.dart' as auth_services;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class EmailVerificationScreen extends StatefulWidget {
   const EmailVerificationScreen({super.key});
@@ -21,13 +22,19 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
         ),
         actions: [
           IconButton(
-            onPressed: () {
-              if (LocalizedApp.of(context).delegate.currentLocale.toString() ==
-                  'en') {
-                changeLocale(context, 'ar');
-              } else {
-                changeLocale(context, 'en');
-              }
+            onPressed: () async {
+              final prefs = await SharedPreferences.getInstance();
+              String newLanguage =
+                  LocalizedApp.of(context).delegate.currentLocale.toString() ==
+                          'en'
+                      ? 'ar'
+                      : 'en';
+
+              changeLocale(context, newLanguage);
+              await prefs.setString(
+                'selectedLanguage',
+                newLanguage,
+              );
             },
             icon: const Icon(Icons.translate),
           ),

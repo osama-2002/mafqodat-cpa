@@ -247,8 +247,7 @@ Future<void> addItem(
     context: context,
   );
   try {
-    String imageDescription =
-          await ai_services.getImageDescription(imageUrl);
+    String imageDescription = await ai_services.getImageDescription(imageUrl);
     await firestore.collection('items').doc(itemId).set(
       {
         'adminId': auth_services.currentUid,
@@ -321,7 +320,6 @@ void submitReport(
       },
     );
     generateReportNotification(latitude, longitude, context, imageUrl);
-    //add chatGPT description
     Navigator.of(context).pop();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(

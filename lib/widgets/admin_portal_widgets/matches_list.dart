@@ -104,34 +104,36 @@ class _MatchesState extends State<Matches> {
                     ),
                     const SizedBox(height: 12),
                     ElevatedButton.icon(
-                    onPressed: () async {
-                      setState(() {
-                        _isMatching = true;
-                      });
-                      await runMatchingEngine(widget.adminData);
-                      setState(() {
-                        _isMatching = false;
-                      });
-                    },
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor:
-                            Theme.of(context).colorScheme.secondary),
-                    label: Text(
-                      translate("FindMatches"),
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.surface,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
+                      onPressed: () async {
+                        setState(() {
+                          _isMatching = true;
+                        });
+                        await runMatchingEngine(widget.adminData);
+                        setState(() {
+                          _isMatching = false;
+                        });
+                      },
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor:
+                              Theme.of(context).colorScheme.secondary),
+                      label: Text(
+                        translate("FindMatches"),
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.surface,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                        ),
                       ),
+                      icon: _isMatching
+                          ? CircularProgressIndicator(
+                              color: Theme.of(context).colorScheme.surface,
+                            )
+                          : Icon(
+                              Icons.youtube_searched_for,
+                              color: Theme.of(context).colorScheme.surface,
+                              size: 30,
+                            ),
                     ),
-                    icon: _isMatching ? CircularProgressIndicator(
-                      color: Theme.of(context).colorScheme.surface,
-                    ) : Icon(
-                      Icons.youtube_searched_for,
-                      color: Theme.of(context).colorScheme.surface,
-                      size: 30,
-                    ),
-                  ),
                     const SizedBox(height: 260),
                     Center(
                       child: Text(
@@ -198,13 +200,15 @@ class _MatchesState extends State<Matches> {
                         fontSize: 18,
                       ),
                     ),
-                    icon: _isMatching ? CircularProgressIndicator(
-                      color: Theme.of(context).colorScheme.surface,
-                    ) : Icon(
-                      Icons.youtube_searched_for,
-                      color: Theme.of(context).colorScheme.surface,
-                      size: 30,
-                    ),
+                    icon: _isMatching
+                        ? CircularProgressIndicator(
+                            color: Theme.of(context).colorScheme.surface,
+                          )
+                        : Icon(
+                            Icons.youtube_searched_for,
+                            color: Theme.of(context).colorScheme.surface,
+                            size: 30,
+                          ),
                   ),
                   const SizedBox(height: 12),
                   ListView.builder(
