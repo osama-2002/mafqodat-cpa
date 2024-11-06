@@ -410,9 +410,11 @@ Future<void> reportHandOver(
     reportData['imageUrl'],
     itemId,
   );
+  String imageDescription = await ai_services.getImageDescription(imageUrl);
   await firestore.collection('items').doc(itemId).set({
     'adminId': auth_services.currentUid,
     'description': reportData['description'],
+    'imageDescription': imageDescription,
     'color': reportData['color'],
     'date': DateTime.now(),
     'location': adminData['location'],
